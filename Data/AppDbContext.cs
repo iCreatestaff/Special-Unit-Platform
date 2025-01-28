@@ -1,24 +1,25 @@
 using Microsoft.EntityFrameworkCore;
+using WeatherApi.Models;
 
-namespace WeatherApi.Models  
-{  
-    public class AppDbContext : DbContext  
-    {  
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }  
+namespace WeatherApi
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Equipment> Equipments { get; set; }  
-        public DbSet<SubEquipment> SubEquipments { get; set; }  
+        public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<SubEquipment> SubEquipments { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)  
-        {  
-            // Configure foreign key relationship  
-            modelBuilder.Entity<SubEquipment>()  
-                .HasOne(se => se.Equipment) // Each SubEquipment has one Equipment  
-                .WithMany(e => e.SubEquipments) // Each Equipment has many SubEquipments  
-                .HasForeignKey(se => se.EquipmentId) // Set foreign key  
-                .OnDelete(DeleteBehavior.Cascade); // Optional: Defines cascade delete behavior  
-        }  
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Configure Equipment-SubEquipment relationship
+            modelBuilder.Entity<Equipment>()
+                .HasMany(e => e.SubEquipments)
+                .WithOne(se => se.Equipment)
+                .HasForeignKey(se => se.EquipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
-
-    
 }

@@ -1,103 +1,75 @@
-using Microsoft.AspNetCore.Mvc;  
-using Microsoft.EntityFrameworkCore;  
-using WeatherApi.Models;  
-using System.Collections.Generic;  
-using System.Linq;  
-using System.Threading.Tasks;  
+using Microsoft.AspNetCore.Mvc;
+using WeatherApi.Interfaces;
+using WeatherApi.Models;
+using WeatherApi.DTOs;
+using AutoMapper;
 
-namespace WeatherApi.Controllers  
-{  
-    [ApiController]  
-    [Route("api/[controller]")]  
-    public class SubEquipmentController : ControllerBase  
-    {  
-        private readonly AppDbContext _context;  
+namespace WeatherApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SubEquipmentController : ControllerBase
+    {
+        private readonly ISubEquipmentService _subEquipmentService;
+        private readonly IMapper _mapper;
 
-        public SubEquipmentController(AppDbContext context)  
-        {  
-            _context = context;  
-        }  
+        public SubEquipmentController(ISubEquipmentService subEquipmentService, IMapper mapper)
+        {
+            _subEquipmentService = subEquipmentService;
+            _mapper = mapper;
+        }
 
-        // GET: api/subequipment  
-        [HttpGet]  
-        public async Task<ActionResult<IEnumerable<SubEquipment>>> GetSubEquipments()  
-        {  
-            return await _context.SubEquipments.Include(se => se.Equipment).ToListAsync(); // Optionally include Equipment  
-        }  
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<SubEquipmentDto>>> GetSubEquipments()
+        {
+            var subEquipments = await _subEquipmentService.GetAllSubEquipmentsAsync();
+            var subEquipmentDtos = _mapper.Map<IEnumerable<SubEquipmentDto>>(subEquipments);
+            return Ok(subEquipmentDtos);
+        }
 
-        // GET: api/subequipment/{id}  
-        [HttpGet("{id}")]  
-        public async Task<ActionResult<SubEquipment>> GetSubEquipment(int id)  
-        {  
-            var subEquipment = await _context.SubEquipments.FindAsync(id);  
-            if (subEquipment == null)  
-            {  
-                return NotFound();  
-            }  
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SubEquipmentDto>> GetSubEquipment(int id)
+        {
+            var subEquipment = await _subEquipmentService.GetSubEquipmentByIdAsync(id);
+            if (subEquipment == null)
+            {
+                return NotFound();
+            }
+            var subEquipmentDto = _mapper.Map<SubEquipmentDto>(subEquipment);
+            return Ok(subEquipmentDto);
+        }
 
-            return subEquipment;  
-        }  
+        [HttpPost]
+        public async Task<ActionResult<SubEquipmentDto>> CreateSubEquipment([FromBody] SubEquipmentDto subEquipmentDto)
+        {
+            var subEquipment = _mapper.Map<SubEquipment>(subEquipmentDto);
+            var createdSubEquipment = await _subEquipmentService.CreateSubEquipmentAsync(subEquipment);
+            var createdSubEquipmentDto = _mapper.Map<SubEquipmentDto>(createdSubEquipment);
+            return CreatedAtAction(nameof(GetSubEquipment), new { id = createdSubEquipmentDto.Id }, createdSubEquipmentDto);
+        }
 
-        // POST: api/subequipment  
-        [HttpPost]  
-        public async Task<ActionResult<SubEquipment>> AddSubEquipment([FromBody] SubEquipment subEquipment)  
-        {  
-            var equipment = await _context.Equipments.FindAsync(subEquipment.EquipmentId);  
-            if (equipment == null)  
-            {  
-                return NotFound("Associated equipment not found.");  
-            }  
+        [HttpPut("{id}")]
+        public async Task<ActionResult<SubEquipmentDto>> UpdateSubEquipment(int id, [FromBody] SubEquipmentDto subEquipmentDto)
+        {
+            var subEquipment = _mapper.Map<SubEquipment>(subEquipmentDto);
+            var updatedSubEquipment = await _subEquipmentService.UpdateSubEquipmentAsync(id, subEquipment);
+            if (updatedSubEquipment == null)
+            {
+                return NotFound();
+            }
+            var updatedSubEquipmentDto = _mapper.Map<SubEquipmentDto>(updatedSubEquipment);
+            return Ok(updatedSubEquipmentDto);
+        }
 
-            _context.SubEquipments.Add(subEquipment);  
-            await _context.SaveChangesAsync();  
-
-            return CreatedAtAction(nameof(GetSubEquipment), new { id = subEquipment.Id }, subEquipment);  
-        }  
-
-        // PUT: api/subequipment/{id}  
-        [HttpPut("{id}")]  
-        public async Task<IActionResult> UpdateSubEquipment(int id, [FromBody] SubEquipment subEquipment)  
-        {  
-            if (id != subEquipment.Id)  
-            {  
-                return BadRequest();  
-            }  
-
-            _context.Entry(subEquipment).State = EntityState.Modified;  
-
-            try  
-            {  
-                await _context.SaveChangesAsync();  
-            }  
-            catch (DbUpdateConcurrencyException)  
-            {  
-                if (!_context.SubEquipments.Any(se => se.Id == id))  
-                {  
-                    return NotFound();  
-                }  
-                else  
-                {  
-                    throw;  
-                }  
-            }  
-
-            return NoContent();  
-        }  
-
-        // DELETE: api/subequipment/{id}  
-        [HttpDelete("{id}")]  
-        public async Task<IActionResult> DeleteSubEquipment(int id)  
-        {  
-            var subEquipment = await _context.SubEquipments.FindAsync(id);  
-            if (subEquipment == null)  
-            {  
-                return NotFound();  
-            }  
-
-            _context.SubEquipments.Remove(subEquipment);  
-            await _context.SaveChangesAsync();  
-
-            return NoContent();  
-        }  
-    }  
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSubEquipment(int id)
+        {
+            var result = await _subEquipmentService.DeleteSubEquipmentAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+    }
 }

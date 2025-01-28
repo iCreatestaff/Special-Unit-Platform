@@ -1,0 +1,63 @@
+using WeatherApi.Interfaces;
+using WeatherApi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace WeatherApi.Services
+{
+    public class EquipmentService : IEquipmentService
+    {
+        private readonly AppDbContext _context;
+
+        public EquipmentService(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Equipment>> GetAllEquipmentsAsync()
+        {
+            return await _context.Equipments.Include(e => e.SubEquipments).ToListAsync();
+        }
+
+        public async Task<Equipment?> GetEquipmentByIdAsync(int id)
+        {
+            return await _context.Equipments.Include(e => e.SubEquipments)
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public async Task<Equipment> CreateEquipmentAsync(Equipment equipment)
+        {
+            _context.Equipments.Add(equipment);
+            await _context.SaveChangesAsync();
+            return equipment;
+        }
+
+        public async Task<Equipment?> UpdateEquipmentAsync(int id, Equipment equipment)
+        {
+            var existingEquipment = await _context.Equipments.FindAsync(id);
+            if (existingEquipment == null)
+            {
+                return null;
+            }
+
+            existingEquipment.Name = equipment.Name ?? existingEquipment.Name;
+            existingEquipment.Availability = equipment.Availability ?? existingEquipment.Availability;
+            existingEquipment.Type = equipment.Type ?? existingEquipment.Type;
+
+            await _context.SaveChangesAsync();
+            return existingEquipment;
+        }
+
+        public async Task<bool> DeleteEquipmentAsync(int id)
+        {
+            var equipment = await _context.Equipments.FindAsync(id);
+            if (equipment == null)
+            {
+                return false;
+            }
+
+            _context.Equipments.Remove(equipment);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+    }
+}

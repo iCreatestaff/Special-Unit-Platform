@@ -1,98 +1,75 @@
-using Microsoft.AspNetCore.Mvc;  
-using Microsoft.EntityFrameworkCore;  
-using WeatherApi.Models;  
-using System.Collections.Generic;  
-using System.Linq;  
-using System.Threading.Tasks;  
+using Microsoft.AspNetCore.Mvc;
+using WeatherApi.Interfaces;
+using WeatherApi.Models;
+using WeatherApi.DTOs;
+using AutoMapper;
 
-namespace WeatherApi.Controllers  
-{  
-    [ApiController]  
-    [Route("api/[controller]")]  
-    public class EquipmentController : ControllerBase  
-    {  
-        private readonly AppDbContext _context;  
+namespace WeatherApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EquipmentController : ControllerBase
+    {
+        private readonly IEquipmentService _equipmentService;
+        private readonly IMapper _mapper;
 
-        public EquipmentController(AppDbContext context)  
-        {  
-            _context = context;  
-        }  
+        public EquipmentController(IEquipmentService equipmentService, IMapper mapper)
+        {
+            _equipmentService = equipmentService;
+            _mapper = mapper;
+        }
 
-        // GET: api/equipment  
-        [HttpGet]  
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipments()  
-        {  
-            return await _context.Equipments.Include(e => e.SubEquipments).ToListAsync();  
-        }  
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<EquipmentDto>>> GetEquipments()
+        {
+            var equipments = await _equipmentService.GetAllEquipmentsAsync();
+            var equipmentDtos = _mapper.Map<IEnumerable<EquipmentDto>>(equipments);
+            return Ok(equipmentDtos);
+        }
 
-        // GET: api/equipment/{id}  
-        [HttpGet("{id}")]  
-        public async Task<ActionResult<Equipment>> GetEquipment(int id)  
-        {  
-            var equipment = await _context.Equipments.Include(e => e.SubEquipments)  
-                .FirstOrDefaultAsync(e => e.Id == id);  
-            if (equipment == null)  
-            {  
-                return NotFound();  
-            }  
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EquipmentDto>> GetEquipment(int id)
+        {
+            var equipment = await _equipmentService.GetEquipmentByIdAsync(id);
+            if (equipment == null)
+            {
+                return NotFound();
+            }
+            var equipmentDto = _mapper.Map<EquipmentDto>(equipment);
+            return Ok(equipmentDto);
+        }
 
-            return equipment;  
-        }  
+        [HttpPost]
+        public async Task<ActionResult<EquipmentDto>> CreateEquipment([FromBody] EquipmentDto equipmentDto)
+        {
+            var equipment = _mapper.Map<Equipment>(equipmentDto);
+            var createdEquipment = await _equipmentService.CreateEquipmentAsync(equipment);
+            var createdEquipmentDto = _mapper.Map<EquipmentDto>(createdEquipment);
+            return CreatedAtAction(nameof(GetEquipment), new { id = createdEquipmentDto.Id }, createdEquipmentDto);
+        }
 
-        // POST: api/equipment  
-        [HttpPost]  
-        public async Task<ActionResult<Equipment>> AddEquipment([FromBody] Equipment equipment)  
-        {  
-            _context.Equipments.Add(equipment);  
-            await _context.SaveChangesAsync();  
+        [HttpPut("{id}")]
+        public async Task<ActionResult<EquipmentDto>> UpdateEquipment(int id, [FromBody] EquipmentDto equipmentDto)
+        {
+            var equipment = _mapper.Map<Equipment>(equipmentDto);
+            var updatedEquipment = await _equipmentService.UpdateEquipmentAsync(id, equipment);
+            if (updatedEquipment == null)
+            {
+                return NotFound();
+            }
+            var updatedEquipmentDto = _mapper.Map<EquipmentDto>(updatedEquipment);
+            return Ok(updatedEquipmentDto);
+        }
 
-            return CreatedAtAction(nameof(GetEquipment), new { id = equipment.Id }, equipment);  
-        }  
-
-        // PUT: api/equipment/{id}  
-        [HttpPut("{id}")]  
-        public async Task<IActionResult> UpdateEquipment(int id, [FromBody] Equipment equipment)  
-        {  
-            if (id != equipment.Id)  
-            {  
-                return BadRequest();  
-            }  
-
-            _context.Entry(equipment).State = EntityState.Modified;  
-
-            try  
-            {  
-                await _context.SaveChangesAsync();  
-            }  
-            catch (DbUpdateConcurrencyException)  
-            {  
-                if (!_context.Equipments.Any(e => e.Id == id))  
-                {  
-                    return NotFound();  
-                }  
-                else  
-                {  
-                    throw;  
-                }  
-            }  
-
-            return NoContent();  
-        }  
-
-        // DELETE: api/equipment/{id}  
-        [HttpDelete("{id}")]  
-        public async Task<IActionResult> DeleteEquipment(int id)  
-        {  
-            var equipment = await _context.Equipments.FindAsync(id);  
-            if (equipment == null)  
-            {  
-                return NotFound();  
-            }  
-
-            _context.Equipments.Remove(equipment);  
-            await _context.SaveChangesAsync();  
-
-            return NoContent();  
-        }  
-    }  
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEquipment(int id)
+        {
+            var result = await _equipmentService.DeleteEquipmentAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+    }
 }
