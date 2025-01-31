@@ -1,43 +1,71 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using AutoMapper;
-using WeatherApi; // Ensure this is the correct namespace where MappingProfile is defined
-using WeatherApi.Interfaces; // For IEquipmentService, ISubEquipmentService
-using WeatherApi.Services; // For EquipmentService, SubEquipmentService
+using WeatherApi; // Ensure correct namespace
+using WeatherApi.Interfaces; // For service interfaces
+using WeatherApi.Services;
+using sp_backend.Interfaces;
+using sp_backend.Services; // For service implementations
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 🔹 Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("spApiDb"))); // Ensure the correct connection string is used
+    options.UseSqlServer(builder.Configuration.GetConnectionString("spApiDb")));
 
-// Fix ambiguity with AutoMapper by specifying the correct assembly
-builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly); // This tells AutoMapper to look for profiles in the specified assembly
+// 🔹 Add AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-// Add your services (e.g., IEquipmentService, ISubEquipmentService)
+// 🔹 Register Services
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<ISubEquipmentService, SubEquipmentService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<INonavailabilityService, NonavailabilityService>(); // Register NonAvailability service
+builder.Services.AddScoped<IMissionService, MissionService>(); // ✅ Register Mission Service
 
-// Add controllers
-builder.Services.AddControllers();
+// 🔹 Register Password Hasher
+builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 
-// Add Swagger services
+// 🔹 Add Controllers
+builder.Services.AddControllers();  // Ensure controllers are added
+
+// 🔹 Enable CORS (for frontend communication)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
+// 🔹 Add Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Special Units Platform API", Version = "v1" });
+});
 
+// Build and run the app
 var app = builder.Build();
 
-// Enable Swagger middleware
+// 🔹 Enable Swagger Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weather API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Special Units Platform API v1");
     });
 }
 
+// 🔹 Enable Middleware
 app.UseRouting();
-app.UseAuthorization(); // Ensure this is added if you're using authentication
+app.UseCors("AllowAll");
+
+app.UseAuthorization(); // 
+
 app.MapControllers();
+
 app.Run();

@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "LN/quXlnX69uBf6OfxFexWZ5910FGDRdR+8lyJjwwFs=",
+  "Hash": "wfBoN28h9DZZ/rwgEOzXGlAeToxsWvifeZTnYFp96DM=",
   "Source": "sp_back",
   "BasePath": "_content/sp_back",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }

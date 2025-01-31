@@ -1,3 +1,3 @@
 ﻿<Project>
-  <Import Project="..\buildMultiTargeting\sp_back.props" />
+  <Import Project="../buildMultiTargeting/sp_back.props" />
 </Project>

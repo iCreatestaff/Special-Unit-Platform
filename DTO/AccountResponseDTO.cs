@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using sp_backend.Models;
+
+namespace sp_backend.DTO
+{
+    public class AccountResponseDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
+        public string Role { get; set; }
+        public List<int> AssignedMissions { get; set; } // Add this line to include the assigned missions
+    }
+
+
+}

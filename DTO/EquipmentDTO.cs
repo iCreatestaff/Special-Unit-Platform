@@ -1,3 +1,5 @@
+using sp_backend.Models;
+
 namespace WeatherApi.DTOs
 {
     public class EquipmentDto
@@ -7,5 +9,7 @@ namespace WeatherApi.DTOs
         public bool? Availability { get; set; }
         public string? Type { get; set; }
         public List<SubEquipmentDto>? SubEquipments { get; set; }
+
+        public List<Mission> Missions { get; set; } = new List<Mission>();
     }
 }
