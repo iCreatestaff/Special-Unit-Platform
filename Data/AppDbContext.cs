@@ -12,7 +12,9 @@ namespace WeatherApi
         public DbSet<SubEquipment> SubEquipments { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Nonavailability> Nonavailabilities { get; set; }
-        public DbSet<Mission> Missions { get; set; } // Added Mission entity
+        public DbSet<Mission> Missions { get; set; }
+        public DbSet<AccountMission> AccountMissions { get; set; }  // Explicit many-to-many table
+        public DbSet<EquipmentMission> EquipmentMissions { get; set; }  // Explicit many-to-many table
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,43 +37,49 @@ namespace WeatherApi
                 .HasForeignKey(n => n.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Mission and Assigned Accounts (Many-to-Many)
-            modelBuilder.Entity<Mission>()
-                .HasMany(m => m.AssignedAccounts)
-                .WithMany(a => a.Missions)
-                .UsingEntity(j => j.ToTable("MissionAccounts")); // Many-to-many relationship table
+            // Configure Many-to-Many: Mission and Account via AccountMission table
+            modelBuilder.Entity<AccountMission>()
+                .HasKey(am => new { am.AccountId, am.MissionId }); // Composite primary key
 
-            // Mission and Assigned Equipment (Many-to-Many)
-            modelBuilder.Entity<Mission>()
-                .HasMany(m => m.AssignedEquipment)
-                .WithMany(e => e.Missions)
-                .UsingEntity(j => j.ToTable("MissionEquipment")); // Many-to-many relationship table
+            modelBuilder.Entity<AccountMission>()
+                .HasOne(am => am.Account)
+                .WithMany(a => a.AccountMissions)
+                .HasForeignKey(am => am.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AccountMission>()
+                .HasOne(am => am.Mission)
+                .WithMany(m => m.AccountMissions)
+                .HasForeignKey(am => am.MissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Many-to-Many: Mission and Equipment via EquipmentMission table
+            modelBuilder.Entity<EquipmentMission>()
+                .HasKey(em => new { em.EquipmentId, em.MissionId }); // Composite primary key
+
+            modelBuilder.Entity<EquipmentMission>()
+                .HasOne(em => em.Equipment)
+                .WithMany(e => e.EquipmentMissions)
+                .HasForeignKey(em => em.EquipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EquipmentMission>()
+                .HasOne(em => em.Mission)
+                .WithMany(m => m.EquipmentMissions)
+                .HasForeignKey(em => em.MissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Ensure AssignedDate in AccountMission has default value (optional)
+            modelBuilder.Entity<AccountMission>()
+                .Property(am => am.AssignedDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             base.OnModelCreating(modelBuilder);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            // Update AssignedMissions for Accounts and Equipments when a mission is created or modified
-            var addedEntities = ChangeTracker.Entries<Mission>()
-                .Where(e => e.State == EntityState.Added)
-                .Select(e => e.Entity);
-
-            foreach (var mission in addedEntities)
-            {
-                // Update AssignedAccounts in Accounts and Missions in Accounts
-                foreach (var account in mission.AssignedAccounts)
-                {
-                    account.Missions.Add(mission);  // Adding the mission to the account's Missions list
-                }
-
-                // Update AssignedEquipment in Equipments and Missions in Equipments
-                foreach (var equipment in mission.AssignedEquipment)
-                {
-                    equipment.Missions.Add(mission);  // Adding the mission to the equipment's Missions list
-                }
-            }
-
+            // Add general-purpose logic here (e.g., auditing, soft deletes)
             return await base.SaveChangesAsync(cancellationToken);
         }
     }

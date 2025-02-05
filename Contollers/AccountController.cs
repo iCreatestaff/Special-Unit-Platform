@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
     }
 
     // Ensure only SuperAdmin can create Admin accounts
-    [Authorize(Roles = "SuperAdmin")]
+    //[Authorize(Roles = "SuperAdmin")]
     [HttpPost("create-admin")]
     public async Task<IActionResult> CreateAdmin([FromBody] AccountCreateDTO dto)
     {
@@ -38,7 +38,7 @@ public class AccountController : ControllerBase
     }
 
     // Ensure only Admin users can create Agent accounts
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost("create-agent")]
     public async Task<IActionResult> CreateAgent([FromBody] AccountCreateDTO dto)
     {
@@ -51,29 +51,6 @@ public class AccountController : ControllerBase
             return Ok("Agent created successfully.");
         return BadRequest("Failed to create agent. Email might already exist.");
     }
-
-    // Fix for Mission-related mapping issues:
-    // [Authorize(Roles = "SuperAdmin, Admin")]
-    [HttpPost("assign-mission")]
-    public async Task<IActionResult> AssignMission([FromBody] MissionCreateDTO missionCreateDto)
-    {
-        // Assuming you have a list of accounts and equipment available for mapping
-        List<Account> accounts = await _accountService.GetAllAccountsAsync();
-        List<Equipment> equipment = await _missionService.GetAllEquipmentAsync();
-
-        var mission = MissionMapper.ToEntity(missionCreateDto, accounts, equipment);
-
-        // Convert the mission to DTO
-        var missionDto = mission.ToDto();
-
-        // Now pass the DTO to the service
-        var result = await _missionService.CreateMissionAsync(missionDto);
-
-        if (result)
-            return Ok("Mission assigned successfully.");
-        return BadRequest("Failed to assign mission.");
-    }
-
 
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet("all")]

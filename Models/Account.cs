@@ -4,6 +4,7 @@ using sp_backend.Models;
 
 public class Account
 {
+
     [Key]
     public int Id { get; set; }
 
@@ -15,20 +16,23 @@ public class Account
     [EmailAddress]
     public string Username { get; set; }
 
-    [Required]
-    public string PasswordHash { get; set; } // Store hashed passwords
+    public string PasswordHash { get; set; }
 
     [Required]
     [MaxLength(20)]
-    public string Role { get; set; } // "SuperAdmin", "Admin", "Agent"
+    public string Role { get; set; }
 
     // Additional details
     public string? SocialFile { get; set; }
     public string? MedicalFile { get; set; }
     public string? CareerFile { get; set; }
+    public string? Photo { get; set; }
 
     // Relationships
-    public List<Nonavailability>? Nonavailabilities { get; set; } = new List<Nonavailability>();
+    public List<Nonavailability> Nonavailabilities { get; set; } = new();
 
-    public ICollection<Mission> Missions { get; set; } = new List<Mission>();
+    // Many-to-many relationship with Mission
+    public List<Mission> Missions { get; set; } = new();
+
+    public List<AccountMission> AccountMissions { get; set; } = new();
 }

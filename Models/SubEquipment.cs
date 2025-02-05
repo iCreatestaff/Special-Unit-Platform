@@ -14,8 +14,8 @@ namespace WeatherApi.Models
         public bool? Status { get; set; }
 
         public int? EquipmentId { get; set; }
-        
-        
+
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public Equipment? Equipment { get; set; }
     }
 }

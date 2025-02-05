@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApi;
 
@@ -11,9 +12,11 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250204111602_equipmentmission")]
+    partial class equipmentmission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,9 +46,6 @@ namespace sp_back.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
@@ -83,6 +83,21 @@ namespace sp_back.Migrations
                     b.ToTable("AccountMission");
                 });
 
+            modelBuilder.Entity("EquipmentMission", b =>
+                {
+                    b.Property<int>("AssignedEquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MissionsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AssignedEquipmentId", "MissionsId");
+
+                    b.HasIndex("MissionsId");
+
+                    b.ToTable("EquipmentMission");
+                });
+
             modelBuilder.Entity("Nonavailability", b =>
                 {
                     b.Property<int>("Id")
@@ -118,9 +133,6 @@ namespace sp_back.Migrations
                     b.Property<bool?>("Availability")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MissionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -135,8 +147,6 @@ namespace sp_back.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MissionId");
 
                     b.ToTable("Equipments");
                 });
@@ -252,6 +262,21 @@ namespace sp_back.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EquipmentMission", b =>
+                {
+                    b.HasOne("WeatherApi.Models.Equipment", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("sp_backend.Models.Mission", null)
+                        .WithMany()
+                        .HasForeignKey("MissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Nonavailability", b =>
                 {
                     b.HasOne("Account", "Account")
@@ -261,13 +286,6 @@ namespace sp_back.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("WeatherApi.Models.Equipment", b =>
-                {
-                    b.HasOne("sp_backend.Models.Mission", null)
-                        .WithMany("AssignedEquipment")
-                        .HasForeignKey("MissionId");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
@@ -335,8 +353,6 @@ namespace sp_back.Migrations
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
                 {
                     b.Navigation("AccountMissions");
-
-                    b.Navigation("AssignedEquipment");
 
                     b.Navigation("EquipmentMissions");
                 });

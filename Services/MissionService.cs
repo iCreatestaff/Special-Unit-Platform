@@ -27,18 +27,21 @@ public class MissionService : IMissionService
             EndTime = missionDTO.EndTime,
             Location = missionDTO.Location,
             Status = missionDTO.Status,
-            AdminId = missionDTO.AdminId,  // Ensure the Admin is set
-            AssignedAccounts = await _context.Accounts
-                .Where(a => missionDTO.AssignedAccountIds.Contains(a.Id))
-                .ToListAsync(),
-            AssignedEquipment = await _context.Equipments
-                .Where(e => missionDTO.AssignedEquipmentIds.Contains(e.Id))
-                .ToListAsync()
+            AdminId = missionDTO.AdminId
         };
 
         _context.Missions.Add(mission);
+        await _context.SaveChangesAsync();  // Save to generate MissionId
+
+        // Create many-to-many relationships
+        var accountMissions = missionDTO.AssignedAccountIds
+            .Select(accountId => new AccountMission { AccountId = accountId, MissionId = mission.Id })
+            .ToList();
+
+        _context.AccountMissions.AddRange(accountMissions);
         return await _context.SaveChangesAsync() > 0;
     }
+
 
     // Get mission by ID, including related accounts and equipment
     public async Task<MissionDTO?> GetMissionByIdAsync(int id)

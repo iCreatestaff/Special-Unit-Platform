@@ -13,6 +13,8 @@ namespace sp_backend.DTO
         public string Username { get; set; }
         public string Role { get; set; }
         public List<int> AssignedMissions { get; set; } // Add this line to include the assigned missions
+        public List<AccountMission> AccountMissions { get; set; } = new();
+
     }
 
 

@@ -43,6 +43,7 @@ namespace WeatherApi.Controllers
         public async Task<ActionResult<SubEquipmentDto>> CreateSubEquipment([FromBody] SubEquipmentDto subEquipmentDto)
         {
             var subEquipment = _mapper.Map<SubEquipment>(subEquipmentDto);
+            subEquipment.CreationDate = DateTime.UtcNow;
             var createdSubEquipment = await _subEquipmentService.CreateSubEquipmentAsync(subEquipment);
             var createdSubEquipmentDto = _mapper.Map<SubEquipmentDto>(createdSubEquipment);
             return CreatedAtAction(nameof(GetSubEquipment), new { id = createdSubEquipmentDto.Id }, createdSubEquipmentDto);
@@ -52,6 +53,15 @@ namespace WeatherApi.Controllers
         public async Task<ActionResult<SubEquipmentDto>> UpdateSubEquipment(int id, [FromBody] SubEquipmentDto subEquipmentDto)
         {
             var subEquipment = _mapper.Map<SubEquipment>(subEquipmentDto);
+            // Ensure the CreationDate is not modified during the update
+            var existingSubEquipment = await _subEquipmentService.GetSubEquipmentByIdAsync(id);
+            if (existingSubEquipment == null)
+            {
+                return NotFound();
+            }
+
+            // Keep the existing CreationDate unchanged
+            subEquipment.CreationDate = existingSubEquipment.CreationDate;
             var updatedSubEquipment = await _subEquipmentService.UpdateSubEquipmentAsync(id, subEquipment);
             if (updatedSubEquipment == null)
             {
@@ -60,7 +70,6 @@ namespace WeatherApi.Controllers
             var updatedSubEquipmentDto = _mapper.Map<SubEquipmentDto>(updatedSubEquipment);
             return Ok(updatedSubEquipmentDto);
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubEquipment(int id)
         {

@@ -10,6 +10,5 @@ namespace WeatherApi.DTOs
         public string? Type { get; set; }
         public List<SubEquipmentDto>? SubEquipments { get; set; }
 
-        public List<Mission> Missions { get; set; } = new List<Mission>();
     }
 }

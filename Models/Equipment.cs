@@ -15,7 +15,7 @@ namespace WeatherApi.Models
 
         public ICollection<SubEquipment>? SubEquipments { get; set; }
 
-        public List<Mission> Missions { get; set; } = new List<Mission>();
+        public List<EquipmentMission> EquipmentMissions { get; set; } = new();
 
         // New attributes
         public string Status { get; set; } = "Normal"; // Default status

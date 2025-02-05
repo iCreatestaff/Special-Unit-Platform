@@ -24,13 +24,18 @@ namespace sp_backend.Models
         public string Location { get; set; } = string.Empty;
 
         [Required]
-        public string Status { get; set; } = "Pending"; // Default to "Pending"
+        public string Status { get; set; } = "Pending";
 
         [ForeignKey("Admin")]
         public int AdminId { get; set; }
 
-        public virtual List<Account> AssignedAccounts { get; set; } = new();
+        // Many-to-many relationship with Account
+        public List<Account> AssignedAccounts { get; set; } = new();
 
-        public virtual List<Equipment> AssignedEquipment { get; set; } = new();
+        // Many-to-many relationship with Equipment
+        public List<Equipment> AssignedEquipment { get; set; } = new();
+
+        public List<AccountMission> AccountMissions { get; set; } = new();
+        public List<EquipmentMission> EquipmentMissions { get; set; } = new();
     }
 }
