@@ -26,6 +26,18 @@ namespace WeatherApi.Controllers
             var equipmentDtos = _mapper.Map<IEnumerable<EquipmentDto>>(equipments);
             return Ok(equipmentDtos);
         }
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailableEquipment()
+        {
+            var availableEquipment = await _equipmentService.GetAvailableEquipmentAsync();
+
+            if (availableEquipment == null || availableEquipment.Count == 0)
+            {
+                return NotFound(new { Message = "No available equipment found." });
+            }
+
+            return Ok(availableEquipment);
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentDto>> GetEquipment(int id)

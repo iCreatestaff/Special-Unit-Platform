@@ -1,6 +1,7 @@
 using WeatherApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WeatherApi.DTOs;
 
 namespace WeatherApi.Interfaces
 {
@@ -11,5 +12,6 @@ namespace WeatherApi.Interfaces
         Task<Equipment> CreateEquipmentAsync(Equipment equipment);
         Task<Equipment?> UpdateEquipmentAsync(int id, Equipment equipment);
         Task<bool> DeleteEquipmentAsync(int id);
+        Task<List<EquipmentDto>> GetAvailableEquipmentAsync();
     }
 }

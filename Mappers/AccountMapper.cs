@@ -14,8 +14,7 @@ namespace sp_backend.Mappers
                 Name = account.Name,
                 Username = account.Username,
                 Role = account.Role,
-                AssignedMissions = account.Missions?.Select(m => m.Id).ToList(), // Using null-conditional operator in case Missions is null
-                AccountMissions = account.AccountMissions
+                Photo = account.Photo
             };
         }
 
@@ -27,7 +26,8 @@ namespace sp_backend.Mappers
                 Name = dto.Name,
                 Username = dto.Username,
                 PasswordHash = passwordHash,
-                Role = dto.Role
+                Role = dto.Role,
+                Photo = dto.Photo
             };
         }
     }

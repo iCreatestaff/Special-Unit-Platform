@@ -8,6 +8,8 @@ namespace WeatherApi.DTOs
         public string? Name { get; set; }
         public bool? Availability { get; set; }
         public string? Type { get; set; }
+
+        public string? Photo { get; set; }
         public List<SubEquipmentDto>? SubEquipments { get; set; }
 
     }

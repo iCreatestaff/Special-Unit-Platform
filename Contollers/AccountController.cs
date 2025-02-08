@@ -49,7 +49,7 @@ public class AccountController : ControllerBase
         var result = await _accountService.CreateAccountAsync(account);
         if (result)
             return Ok("Agent created successfully.");
-        return BadRequest("Failed to create agent. Email might already exist.");
+        return BadRequest("Failed to create agent. Username might already exist.");
     }
 
     // [Authorize(Roles = "SuperAdmin,Admin")]

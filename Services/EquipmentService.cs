@@ -1,6 +1,7 @@
 using WeatherApi.Interfaces;
 using WeatherApi.Models;
 using Microsoft.EntityFrameworkCore;
+using WeatherApi.DTOs;
 
 namespace WeatherApi.Services
 {
@@ -24,6 +25,28 @@ namespace WeatherApi.Services
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<List<EquipmentDto>> GetAvailableEquipmentAsync()
+        {
+            return await _context.Equipments
+                .Where(e => (bool)e.Availability) // Fetch only available equipment
+                .Select(e => new EquipmentDto
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Availability = e.Availability,
+                    Type = e.Type,
+                    Photo = e.Photo,
+                    SubEquipments = e.SubEquipments.Select(se => new SubEquipmentDto
+                    {
+                        Id = se.Id,
+                        Name = se.Name,
+                        Status = se.Status
+                    }).ToList()
+                })
+                .ToListAsync();
+        }
+
+
         public async Task<Equipment> CreateEquipmentAsync(Equipment equipment)
         {
             _context.Equipments.Add(equipment);
@@ -46,6 +69,8 @@ namespace WeatherApi.Services
             await _context.SaveChangesAsync();
             return existingEquipment;
         }
+
+
 
         public async Task<bool> DeleteEquipmentAsync(int id)
         {

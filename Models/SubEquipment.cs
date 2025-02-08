@@ -11,7 +11,7 @@ namespace WeatherApi.Models
 
         public string? Cycle { get; set; } // Optional, nullable field
 
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
 
         public int? EquipmentId { get; set; }
 

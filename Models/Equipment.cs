@@ -9,7 +9,7 @@ namespace WeatherApi.Models
 
         public string? Name { get; set; } = string.Empty;
 
-        public bool? Availability { get; set; }
+        public bool? Availability { get; set; } = true;
 
         public string? Type { get; set; } = string.Empty;
 
@@ -17,8 +17,6 @@ namespace WeatherApi.Models
 
         public List<EquipmentMission> EquipmentMissions { get; set; } = new();
 
-        // New attributes
-        public string Status { get; set; } = "Normal"; // Default status
 
         public string? Photo { get; set; } // Store the file path or URL of the photo
     }

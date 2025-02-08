@@ -62,8 +62,6 @@ public class MissionService : IMissionService
             Location = mission.Location,
             Status = mission.Status,
             AdminId = mission.AdminId,
-            AssignedAccountIds = mission.AssignedAccounts.Select(a => a.Id).ToList(),
-            AssignedEquipmentIds = mission.AssignedEquipment.Select(e => e.Id).ToList()
         };
     }
 
@@ -82,8 +80,6 @@ public class MissionService : IMissionService
                 Location = m.Location,
                 Status = m.Status,
                 AdminId = m.AdminId,
-                AssignedAccountIds = m.AssignedAccounts.Select(a => a.Id).ToList(),
-                AssignedEquipmentIds = m.AssignedEquipment.Select(e => e.Id).ToList()
             })
             .ToListAsync();
     }
@@ -100,13 +96,6 @@ public class MissionService : IMissionService
         mission.Location = missionDTO.Location;
         mission.Status = missionDTO.Status;
         mission.AdminId = missionDTO.AdminId;
-        mission.AssignedAccounts = await _context.Accounts
-            .Where(a => missionDTO.AssignedAccountIds.Contains(a.Id))
-            .ToListAsync();
-        mission.AssignedEquipment = await _context.Equipments
-            .Where(e => missionDTO.AssignedEquipmentIds.Contains(e.Id))
-            .ToListAsync();
-
         return await _context.SaveChangesAsync() > 0;
     }
 
@@ -136,8 +125,6 @@ public class MissionService : IMissionService
                 Location = m.Location,
                 Status = m.Status,
                 AdminId = m.AdminId,
-                AssignedAccountIds = m.AssignedAccounts.Select(a => a.Id).ToList(),
-                AssignedEquipmentIds = m.AssignedEquipment.Select(e => e.Id).ToList()
             })
             .ToListAsync();
     }
