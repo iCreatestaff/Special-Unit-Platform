@@ -72,6 +72,16 @@ public class AccountController : ControllerBase
         }
         return NotFound("Account not found.");
     }
+    [HttpGet("username/{username}")]
+    public async Task<ActionResult<AccountResponseDTO>> GetByUsername(string username)
+    {
+        var account = await _accountService.GetByUsernameAsync(username);
+
+        if (account == null)
+            return NotFound(new { message = "Account not found" });
+
+        return Ok(account);
+    }
 
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpPut("update/{id}")]

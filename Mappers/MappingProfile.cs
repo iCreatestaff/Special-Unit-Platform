@@ -1,6 +1,7 @@
 using AutoMapper;
 using WeatherApi.Models;
 using WeatherApi.DTOs;
+using sp_backend.DTO;
 
 namespace WeatherApi
 {
@@ -16,6 +17,7 @@ namespace WeatherApi
             // SubEquipment Model -> DTO
             CreateMap<SubEquipment, SubEquipmentDto>();
             CreateMap<SubEquipmentDto, SubEquipment>();
+            CreateMap<Account, AccountResponseDTO>();
         }
     }
 }

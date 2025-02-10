@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using sp_backend.DTO;
 using sp_backend.Interfaces;
@@ -10,10 +11,12 @@ using WeatherApi;
 public class AccountService : IAccountService
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public AccountService(AppDbContext context)
+    public AccountService(AppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<bool> CreateAccountAsync(Account account)
@@ -27,16 +30,21 @@ public class AccountService : IAccountService
         return true;
     }
 
-    public async Task<Account?> GetAccountByUsernameAsync(string username)
-    {
-        // Fetch account by username
-        return await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
-    }
-
     public async Task<Account?> GetAccountByIdAsync(int id)
     {
         // Fetch account by ID
         return await _context.Accounts.FindAsync(id);
+    }
+
+    public async Task<AccountResponseDTO> GetByUsernameAsync(string username)
+    {
+        var account = await _context.Accounts
+            .FirstOrDefaultAsync(a => a.Username == username);
+
+        if (account == null)
+            return null;
+
+        return _mapper.Map<AccountResponseDTO>(account);
     }
 
     public async Task<List<Account>> GetAllAccountsAsync()
@@ -79,5 +87,6 @@ public class AccountService : IAccountService
         _context.Accounts.Remove(account);
         return await _context.SaveChangesAsync() > 0;
     }
+
 
 }

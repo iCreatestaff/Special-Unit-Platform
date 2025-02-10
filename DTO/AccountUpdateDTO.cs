@@ -6,6 +6,8 @@ public class AccountUpdateDTO
     public string SocialFile { get; set; }
     public string MedicalFile { get; set; }
     public string CareerFile { get; set; }
+
+    public string? Photo { get; set; }
     // Other updatable fields...
 
     public Account ToEntity()
@@ -17,7 +19,8 @@ public class AccountUpdateDTO
             Role = Role,
             SocialFile = SocialFile,
             MedicalFile = MedicalFile,
-            CareerFile = CareerFile
+            CareerFile = CareerFile,
+            Photo = Photo
         };
     }
 }
