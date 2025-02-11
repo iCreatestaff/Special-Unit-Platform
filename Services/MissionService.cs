@@ -23,6 +23,7 @@ public class MissionService : IMissionService
         var mission = new Mission
         {
             Description = missionDTO.Description,
+            Type = missionDTO.Type,
             StartTime = missionDTO.StartTime,
             EndTime = missionDTO.EndTime,
             Location = missionDTO.Location,
@@ -31,16 +32,11 @@ public class MissionService : IMissionService
         };
 
         _context.Missions.Add(mission);
-        await _context.SaveChangesAsync();  // Save to generate MissionId
 
-        // Create many-to-many relationships
-        var accountMissions = missionDTO.AssignedAccountIds
-            .Select(accountId => new AccountMission { AccountId = accountId, MissionId = mission.Id })
-            .ToList();
-
-        _context.AccountMissions.AddRange(accountMissions);
+        // Save once and check if any rows were affected
         return await _context.SaveChangesAsync() > 0;
     }
+
 
 
     // Get mission by ID, including related accounts and equipment
@@ -57,6 +53,7 @@ public class MissionService : IMissionService
         {
             Id = mission.Id,
             Description = mission.Description,
+            Type = mission.Type,
             StartTime = mission.StartTime,
             EndTime = mission.EndTime,
             Location = mission.Location,
@@ -75,6 +72,7 @@ public class MissionService : IMissionService
             {
                 Id = m.Id,
                 Description = m.Description,
+                Type = m.Type,
                 StartTime = m.StartTime,
                 EndTime = m.EndTime,
                 Location = m.Location,
@@ -91,6 +89,7 @@ public class MissionService : IMissionService
         if (mission == null) return false;
 
         mission.Description = missionDTO.Description;
+        mission.Type = missionDTO.Type;
         mission.StartTime = missionDTO.StartTime;
         mission.EndTime = missionDTO.EndTime;
         mission.Location = missionDTO.Location;
@@ -120,6 +119,7 @@ public class MissionService : IMissionService
             {
                 Id = m.Id,
                 Description = m.Description,
+                Type = m.Type,
                 StartTime = m.StartTime,
                 EndTime = m.EndTime,
                 Location = m.Location,

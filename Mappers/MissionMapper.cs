@@ -18,8 +18,6 @@ public static class MissionMapper
             Location = mission.Location,
             Status = mission.Status,
             AdminId = mission.AdminId,
-            AssignedAccountIds = mission.AssignedAccounts.Select(a => a.Id).ToList(),
-            AssignedEquipmentIds = mission.AssignedEquipment.Select(e => e.Id).ToList()
         };
     }
 
@@ -35,15 +33,7 @@ public static class MissionMapper
             Status = dto.Status,
             AdminId = dto.AdminId,
             // Initialize lists for AssignedAccounts and AssignedEquipment
-            AssignedAccounts = new List<Account>(),
-            AssignedEquipment = new List<Equipment>()
         };
-
-        // Assigning accounts that are part of the mission (based on IDs from dto)
-        mission.AssignedAccounts = accounts.Where(a => dto.AssignedAccountIds.Contains(a.Id)).ToList();
-
-        // Assigning equipment that is part of the mission (based on IDs from dto)
-        mission.AssignedEquipment = equipment.Where(e => dto.AssignedEquipmentIds.Contains(e.Id)).ToList();
 
         return mission;
     }

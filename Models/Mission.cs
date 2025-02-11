@@ -13,6 +13,8 @@ namespace sp_backend.Models
 
         [Required]
         public string Description { get; set; } = string.Empty;
+        [Required]
+        public string Type { get; set; } = string.Empty;
 
         [Required]
         public DateTime StartTime { get; set; }

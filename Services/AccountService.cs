@@ -36,7 +36,7 @@ public class AccountService : IAccountService
         return await _context.Accounts.FindAsync(id);
     }
 
-    public async Task<AccountResponseDTO> GetByUsernameAsync(string username)
+    public async Task<AccountDTO> GetByUsernameAsync(string username)
     {
         var account = await _context.Accounts
             .FirstOrDefaultAsync(a => a.Username == username);
@@ -44,7 +44,7 @@ public class AccountService : IAccountService
         if (account == null)
             return null;
 
-        return _mapper.Map<AccountResponseDTO>(account);
+        return _mapper.Map<AccountDTO>(account);
     }
 
     public async Task<List<Account>> GetAllAccountsAsync()
@@ -87,6 +87,5 @@ public class AccountService : IAccountService
         _context.Accounts.Remove(account);
         return await _context.SaveChangesAsync() > 0;
     }
-
 
 }

@@ -1,0 +1,34 @@
+using System.Collections.Generic;
+using sp_backend.Models;
+
+namespace sp_backend.DTO
+{
+    public class AccountDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; } // Used only for creation
+        public string Role { get; set; }
+        public string? SocialFile { get; set; }
+        public string? MedicalFile { get; set; }
+        public string? CareerFile { get; set; }
+        public string? Photo { get; set; }
+
+        public Account ToEntity(string passwordHash)
+        {
+            return new Account
+            {
+                Id = Id,
+                Username = Username,
+                Name = Name,
+                PasswordHash = passwordHash, // Corrected this
+                Role = Role,
+                SocialFile = SocialFile,
+                MedicalFile = MedicalFile,
+                CareerFile = CareerFile,
+                Photo = Photo
+            };
+        }
+    }
+}

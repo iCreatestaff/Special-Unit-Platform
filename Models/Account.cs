@@ -13,7 +13,6 @@ public class Account
     public string Name { get; set; }
 
     [Required]
-    [EmailAddress]
     public string Username { get; set; }
 
     public string PasswordHash { get; set; }
@@ -32,7 +31,6 @@ public class Account
     public List<Nonavailability> Nonavailabilities { get; set; } = new();
 
     // Many-to-many relationship with Mission
-    public List<Mission> Missions { get; set; } = new();
 
     public List<AccountMission> AccountMissions { get; set; } = new();
 }

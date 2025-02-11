@@ -18,6 +18,10 @@ namespace WeatherApi
             CreateMap<SubEquipment, SubEquipmentDto>();
             CreateMap<SubEquipmentDto, SubEquipment>();
             CreateMap<Account, AccountResponseDTO>();
+            CreateMap<Account, AccountDTO>();
+
+            // Map AccountDTO -> Account
+            CreateMap<AccountDTO, Account>();
         }
     }
 }

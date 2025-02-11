@@ -25,7 +25,7 @@ public class AccountController : ControllerBase
     // Ensure only SuperAdmin can create Admin accounts
     //[Authorize(Roles = "SuperAdmin")]
     [HttpPost("create-admin")]
-    public async Task<IActionResult> CreateAdmin([FromBody] AccountCreateDTO dto)
+    public async Task<IActionResult> CreateAdmin([FromBody] AccountDTO dto)
     {
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
         var account = dto.ToEntity(passwordHash);
@@ -34,14 +34,17 @@ public class AccountController : ControllerBase
         var result = await _accountService.CreateAccountAsync(account);
         if (result)
             return Ok("Admin created successfully.");
-        return BadRequest("Failed to create admin. Email might already exist.");
+        return BadRequest("Failed to create admin. username might already exist.");
     }
 
     // Ensure only Admin users can create Agent accounts
     //[Authorize(Roles = "Admin")]
     [HttpPost("create-agent")]
-    public async Task<IActionResult> CreateAgent([FromBody] AccountCreateDTO dto)
+    public async Task<IActionResult> CreateAgent([FromBody] AccountDTO dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Password))
+            return BadRequest("Password is required.");
+
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
         var account = dto.ToEntity(passwordHash);
         account.Role = "Agent"; // Assign role as Agent
@@ -49,12 +52,14 @@ public class AccountController : ControllerBase
         var result = await _accountService.CreateAccountAsync(account);
         if (result)
             return Ok("Agent created successfully.");
+
         return BadRequest("Failed to create agent. Username might already exist.");
     }
 
+
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet("all")]
-    public async Task<ActionResult<List<AccountResponseDTO>>> GetAllAccounts()
+    public async Task<ActionResult<List<AccountDTO>>> GetAllAccounts()
     {
         var accounts = await _accountService.GetAllAccountsAsync();
         var accountDtos = accounts.Select(a => a.ToDto()).ToList();
@@ -63,7 +68,7 @@ public class AccountController : ControllerBase
 
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet("{id}")]
-    public async Task<ActionResult<AccountResponseDTO>> GetAccountById(int id)
+    public async Task<ActionResult<AccountDTO>> GetAccountById(int id)
     {
         var account = await _accountService.GetAccountByIdAsync(id);
         if (account != null)
@@ -73,7 +78,7 @@ public class AccountController : ControllerBase
         return NotFound("Account not found.");
     }
     [HttpGet("username/{username}")]
-    public async Task<ActionResult<AccountResponseDTO>> GetByUsername(string username)
+    public async Task<ActionResult<AccountDTO>> GetByUsername(string username)
     {
         var account = await _accountService.GetByUsernameAsync(username);
 
@@ -85,7 +90,7 @@ public class AccountController : ControllerBase
 
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountUpdateDTO dto)
+    public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountDTO dto)
     {
         var existingAccount = await _accountService.GetAccountByIdAsync(id);
         if (existingAccount == null)
@@ -93,13 +98,28 @@ public class AccountController : ControllerBase
             return NotFound("Account not found.");
         }
 
-        // Map DTO to entity and update the account
-        var updatedAccount = dto.ToEntity();
-        updatedAccount.Id = existingAccount.Id; // Ensure the Id remains unchanged
+        // Update fields
+        existingAccount.Username = dto.Username;
+        existingAccount.Name = dto.Name;
+        existingAccount.Role = dto.Role;
+        existingAccount.SocialFile = dto.SocialFile;
+        existingAccount.MedicalFile = dto.MedicalFile;
+        existingAccount.CareerFile = dto.CareerFile;
+        existingAccount.Photo = dto.Photo;
 
-        var result = await _accountService.UpdateAccountAsync(id, updatedAccount);
+        // Update password only if provided
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            existingAccount.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        }
+
+        // Pass both parameters to match the method signature
+        var result = await _accountService.UpdateAccountAsync(id, existingAccount);
+
         return result ? Ok("Account updated successfully.") : BadRequest("Failed to update account.");
     }
+
+
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAccount(int id)
