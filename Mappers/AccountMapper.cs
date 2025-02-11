@@ -1,3 +1,4 @@
+using sp_back.Migrations;
 using sp_backend.DTO;
 using sp_backend.Models;
 
@@ -6,15 +7,20 @@ namespace sp_backend.Mappers
     public static class AccountMapper
     {
         // Mapping Account entity to AccountResponseDTO
-        public static AccountResponseDTO ToDto(this Account account)
+        public static AccountDTO ToDto(this Account account)
         {
-            return new AccountResponseDTO
+            return new AccountDTO
             {
                 Id = account.Id,
                 Name = account.Name,
                 Username = account.Username,
+                Type = account.Type,
+                Password = account.PasswordHash,
                 Role = account.Role,
                 Photo = account.Photo,
+                SocialFile = account.SocialFile,
+                MedicalFile = account.MedicalFile,
+                CareerFile = account.CareerFile
 
             };
         }
@@ -27,6 +33,7 @@ namespace sp_backend.Mappers
                 Id = dto.Id,
                 Name = dto.Name,
                 Username = dto.Username,
+                Type = dto.Type,
                 PasswordHash = passwordHash,
                 Role = dto.Role,
                 Photo = dto.Photo,
@@ -35,5 +42,6 @@ namespace sp_backend.Mappers
                 CareerFile = dto.CareerFile
             };
         }
+
     }
 }

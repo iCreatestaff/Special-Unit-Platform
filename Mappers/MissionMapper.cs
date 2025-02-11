@@ -13,6 +13,7 @@ public static class MissionMapper
         {
             Id = mission.Id,
             Description = mission.Description,
+            Type = mission.Type,
             StartTime = mission.StartTime,
             EndTime = mission.EndTime,
             Location = mission.Location,
@@ -28,6 +29,7 @@ public static class MissionMapper
         {
             Description = dto.Description,
             StartTime = dto.StartTime,
+            Type = dto.Type,
             EndTime = dto.EndTime,
             Location = dto.Location,
             Status = dto.Status,

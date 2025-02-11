@@ -101,6 +101,7 @@ public class AccountController : ControllerBase
         // Update fields
         existingAccount.Username = dto.Username;
         existingAccount.Name = dto.Name;
+        existingAccount.Type = dto.Type;
         existingAccount.Role = dto.Role;
         existingAccount.SocialFile = dto.SocialFile;
         existingAccount.MedicalFile = dto.MedicalFile;

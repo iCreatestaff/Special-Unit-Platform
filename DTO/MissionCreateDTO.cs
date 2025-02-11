@@ -6,6 +6,7 @@ namespace sp_backend.DTO
     public class MissionCreateDTO
     {
         public string Description { get; set; }
+        public string Type { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Location { get; set; }

@@ -12,7 +12,7 @@ namespace sp_backend.DTO
         public string Name { get; set; }
         public string Username { get; set; }
         public string Role { get; set; }
-
+        public string Type { get; set; }
         public string? Photo { get; set; }
         public List<AccountMission> AccountMissions { get; set; } = new();
 

@@ -14,6 +14,7 @@ public class Account
 
     [Required]
     public string Username { get; set; }
+    public string Type { get; set; }
 
     public string PasswordHash { get; set; }
 
