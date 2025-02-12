@@ -32,10 +32,10 @@ namespace sp_backend.Models
         public int AdminId { get; set; }
 
         // Many-to-many relationship with Account
-        public List<Account> AssignedAccounts { get; set; } = new();
+        public List<int> AssignedAccounts { get; set; } = new();
 
         // Many-to-many relationship with Equipment
-        public List<Equipment> AssignedEquipment { get; set; } = new();
+        public List<int> AssignedEquipments { get; set; } = new();
 
         public List<AccountMission> AccountMissions { get; set; } = new();
         public List<EquipmentMission> EquipmentMissions { get; set; } = new();
