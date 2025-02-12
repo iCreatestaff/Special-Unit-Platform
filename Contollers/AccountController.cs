@@ -66,6 +66,25 @@ public class AccountController : ControllerBase
         return Ok(accountDtos);
     }
 
+    [HttpGet("available")]
+    public async Task<ActionResult<List<Account>>> GetAvailableAccounts(
+    [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+    {
+        if (startDate > endDate)
+        {
+            return BadRequest("Start date must be before end date.");
+        }
+
+        var availableAccounts = await _accountService.GetAvailableAccountsAsync(startDate, endDate);
+
+        if (!availableAccounts.Any())
+        {
+            return NotFound("No available accounts found for the given period.");
+        }
+
+        return Ok(availableAccounts);
+    }
+
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<AccountDTO>> GetAccountById(int id)

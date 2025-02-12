@@ -20,9 +20,15 @@ namespace sp_backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNonAvailability([FromBody] NonAvailabilityDTO nonAvailabilityDTO)
         {
+            if (nonAvailabilityDTO.Date1 >= nonAvailabilityDTO.Date2)
+            {
+                return BadRequest("The start date (Date1) must be before the end date (Date2).");
+            }
+
             var result = await _nonavailabilityService.CreateNonAvailabilityAsync(nonAvailabilityDTO);
             return result ? Ok("NonAvailability created successfully") : BadRequest("Failed to create NonAvailability.");
         }
+
 
 
         [HttpGet("account/{accountId}")]

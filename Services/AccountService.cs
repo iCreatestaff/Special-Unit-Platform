@@ -36,6 +36,17 @@ public class AccountService : IAccountService
         return await _context.Accounts.FindAsync(id);
     }
 
+    public async Task<List<Account>> GetAvailableAccountsAsync(DateTime d1, DateTime d2)
+    {
+        return await _context.Accounts
+            .Where(a => !a.Nonavailabilities.Any(n =>
+                (d1 >= n.Date1 && d1 <= n.Date2) ||  // d1 falls within a non-availability range
+                (d2 >= n.Date1 && d2 <= n.Date2) ||  // d2 falls within a non-availability range
+                (n.Date1 >= d1 && n.Date2 <= d2)     // non-availability is fully within the mission range
+            ))
+            .ToListAsync();
+    }
+
     public async Task<AccountDTO> GetByUsernameAsync(string username)
     {
         var account = await _context.Accounts
