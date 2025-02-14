@@ -63,11 +63,14 @@ namespace sp_backend.Controllers
             var missionsList = equipmentMissions.Select(em => new MissionDTO
             {
                 Id = em.Mission.Id,
+                Type = em.Mission.Type,
                 Description = em.Mission.Description,
                 StartTime = em.Mission.StartTime,
                 EndTime = em.Mission.EndTime,
                 Location = em.Mission.Location,
-                Status = em.Mission.Status
+                Status = em.Mission.Status,
+                AdminId = em.Mission.AdminId
+
             }).ToList();
 
             return Ok(missionsList);

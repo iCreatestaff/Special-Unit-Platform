@@ -11,17 +11,41 @@ namespace sp_backend.Controllers
     public class MissionController : ControllerBase
     {
         private readonly IMissionService _missionService;
+        private readonly IAccountService _accountService;
 
-        public MissionController(IMissionService missionService)
+        public MissionController(IMissionService missionService, IAccountService accountService)
         {
             _missionService = missionService;
+            _accountService = accountService;
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateMission([FromBody] MissionDTO missionDTO)
         {
+            if (missionDTO == null)
+            {
+                return BadRequest("Mission data is required.");
+            }
+
+            // Validate AdminId
+            var account = await _accountService.GetAccountByIdAsync(missionDTO.AdminId);
+            if (account == null)
+            {
+                return BadRequest("Invalid AdminId: No Admin Found.");
+            }
+            if (account.Role != "Admin")
+            {
+                return BadRequest("Invalid AdminId: The user must be an Admin.");
+            }
+
+            // Create the mission
             var result = await _missionService.CreateMissionAsync(missionDTO);
-            return result ? Ok("Mission created successfully") : BadRequest("Failed to create mission.");
+            if (!result)
+            {
+                return BadRequest("Failed to create mission. Check if assigned accounts or equipment IDs are valid.");
+            }
+
+            return Ok("Mission created successfully.");
         }
 
         [HttpGet("{id}")]

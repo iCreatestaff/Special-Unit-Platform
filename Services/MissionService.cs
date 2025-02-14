@@ -20,53 +20,76 @@ public class MissionService : IMissionService
     // Create a new mission and associate it with the admin and assigned accounts/equipment
     public async Task<bool> CreateMissionAsync(MissionDTO missionDTO)
     {
-        var mission = new Mission
+        try
         {
-            Description = missionDTO.Description,
-            Type = missionDTO.Type,
-            StartTime = missionDTO.StartTime,
-            EndTime = missionDTO.EndTime,
-            Location = missionDTO.Location,
-            Status = missionDTO.Status,
-            AdminId = missionDTO.AdminId
-        };
-
-        _context.Missions.Add(mission);
-
-        // Save mission first to get its ID
-        await _context.SaveChangesAsync();
-
-        // Create AccountMission entries
-        if (missionDTO.AssignedAccounts != null)
-        {
-            foreach (var accountId in missionDTO.AssignedAccounts)
+            // Validate AdminId
+            var adminAccount = await _context.Accounts.FindAsync(missionDTO.AdminId);
+            if (adminAccount == null || adminAccount.Role != "Admin")
             {
-                var accountMission = new AccountMission
-                {
-                    MissionId = mission.Id,
-                    AccountId = accountId
-                };
-                _context.AccountMissions.Add(accountMission);
+                return false; // Admin validation failed
             }
-        }
 
-        // Create EquipmentMission entries
-        if (missionDTO.AssignedEquipments != null)
-        {
-            foreach (var equipmentId in missionDTO.AssignedEquipments)
+            var mission = new Mission
             {
-                var equipmentMission = new EquipmentMission
-                {
-                    MissionId = mission.Id,
-                    EquipmentId = equipmentId
-                };
-                _context.EquipmentMissions.Add(equipmentMission);
-            }
-        }
+                Description = missionDTO.Description,
+                Type = missionDTO.Type,
+                StartTime = missionDTO.StartTime,
+                EndTime = missionDTO.EndTime,
+                Location = missionDTO.Location,
+                Status = missionDTO.Status,
+                AdminId = missionDTO.AdminId
+            };
 
-        // Save changes for AccountMission and EquipmentMission
-        return await _context.SaveChangesAsync() > 0;
+            _context.Missions.Add(mission);
+            await _context.SaveChangesAsync(); // Save first to get Mission ID
+
+            // Add assigned accounts
+            if (missionDTO.AssignedAccounts != null && missionDTO.AssignedAccounts.Any())
+            {
+                var validAccounts = await _context.Accounts
+                    .Where(a => missionDTO.AssignedAccounts.Contains(a.Id))
+                    .Select(a => a.Id)
+                    .ToListAsync();
+
+                var accountMissions = validAccounts
+                    .Select(accountId => new AccountMission { MissionId = mission.Id, AccountId = accountId })
+                    .ToList();
+
+                _context.AccountMissions.AddRange(accountMissions);
+            }
+
+            // Add assigned equipment
+            if (missionDTO.AssignedEquipments != null && missionDTO.AssignedEquipments.Any())
+            {
+                var validEquipments = await _context.Equipments
+                    .Where(e => missionDTO.AssignedEquipments.Contains(e.Id))
+                    .Select(e => e.Id)
+                    .ToListAsync();
+
+                var equipmentMissions = validEquipments
+                    .Select(equipmentId => new EquipmentMission { MissionId = mission.Id, EquipmentId = equipmentId })
+                    .ToList();
+
+                _context.EquipmentMissions.AddRange(equipmentMissions);
+            }
+
+            // Save related assignments
+            int changes = await _context.SaveChangesAsync();
+            if (changes == 0)
+            {
+                Console.WriteLine("Error: No database changes detected");
+            }
+
+            return changes > 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating mission: {ex.Message}");
+            return false;
+        }
     }
+
+
 
 
 

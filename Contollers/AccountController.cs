@@ -42,10 +42,8 @@ public class AccountController : ControllerBase
     [HttpPost("create-agent")]
     public async Task<IActionResult> CreateAgent([FromBody] AccountDTO dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Password))
-            return BadRequest("Password is required.");
 
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        var passwordHash = "";
         var account = dto.ToEntity(passwordHash);
         account.Role = "Agent"; // Assign role as Agent
 
@@ -84,6 +82,25 @@ public class AccountController : ControllerBase
 
         return Ok(availableAccounts);
     }
+
+    [HttpGet("byType/{type}")]
+    public async Task<IActionResult> GetAccountsByType(string type)
+    {
+        var accounts = await _accountService.GetAccountsByTypeAsync(type);
+        return accounts.Any() ? Ok(accounts) : NotFound("No accounts found for the specified type.");
+    }
+
+    [HttpGet("by-role/{role}")]
+    public async Task<IActionResult> GetAccountsByRole(string role)
+    {
+        var accounts = await _accountService.GetAccountsByRoleAsync(role);
+        if (accounts == null || !accounts.Any())
+        {
+            return NotFound("No accounts found with the specified role.");
+        }
+        return Ok(accounts);
+    }
+
 
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet("{id}")]

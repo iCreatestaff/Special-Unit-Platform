@@ -47,6 +47,34 @@ public class AccountService : IAccountService
             .ToListAsync();
     }
 
+    public async Task<List<AccountDTO>> GetAccountsByTypeAsync(string type)
+    {
+        return await _context.Accounts
+            .Where(a => a.Type == type)
+            .Select(a => new AccountDTO
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Role = a.Role,
+                Type = a.Type
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<AccountDTO>> GetAccountsByRoleAsync(string role)
+    {
+        return await _context.Accounts
+            .Where(a => a.Role == role)  // Filter by role
+            .Select(a => new AccountDTO
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Role = a.Role,
+                Photo = a.Photo // Assuming URL storage
+            })
+            .ToListAsync();
+    }
+
     public async Task<AccountDTO> GetByUsernameAsync(string username)
     {
         var account = await _context.Accounts
