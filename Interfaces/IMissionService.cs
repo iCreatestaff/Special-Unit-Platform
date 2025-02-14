@@ -11,6 +11,7 @@ namespace sp_backend.Interfaces
         Task<bool> CreateMissionAsync(MissionDTO missionDTO);
         Task<MissionDTO?> GetMissionByIdAsync(int id);
         Task<List<MissionDTO>> GetAllMissionsAsync();
+        Task<List<MissionDTO>> GetMissionsByAdminIdAsync(int adminId);
         Task<bool> UpdateMissionAsync(int id, MissionDTO missionDTO);
         Task<bool> DeleteMissionAsync(int id);
 

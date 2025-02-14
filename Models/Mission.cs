@@ -25,8 +25,7 @@ namespace sp_backend.Models
         [Required]
         public string Location { get; set; } = string.Empty;
 
-        [Required]
-        public string Status { get; set; } = "Pending";
+        public string? Status { get; set; } = "Pending";
 
         [ForeignKey("Admin")]
         public int AdminId { get; set; }

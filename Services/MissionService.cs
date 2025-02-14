@@ -92,15 +92,13 @@ public class MissionService : IMissionService
 
 
 
-
-
-
     // Get mission by ID, including related accounts and equipment
     public async Task<MissionDTO?> GetMissionByIdAsync(int id)
     {
         var mission = await _context.Missions
             .Include(m => m.AccountMissions) // Load AccountMission relations
-            .Include(m => m.EquipmentMissions) // Load EquipmentMission relations
+            .Include(m => m.EquipmentMissions)
+            .AsSplitQuery() // Load EquipmentMission relations
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (mission == null) return null;
@@ -125,12 +123,14 @@ public class MissionService : IMissionService
     }
 
 
+
     // Get all missions, including related accounts and equipment
     public async Task<List<MissionDTO>> GetAllMissionsAsync()
     {
         return await _context.Missions
             .Include(m => m.AccountMissions) // Load AccountMission relations
-            .Include(m => m.EquipmentMissions) // Load EquipmentMission relations
+            .Include(m => m.EquipmentMissions)
+            .AsSplitQuery() // Load EquipmentMission relations
             .Select(m => new MissionDTO
             {
                 Id = m.Id,
@@ -157,7 +157,8 @@ public class MissionService : IMissionService
     {
         var mission = await _context.Missions
             .Include(m => m.AccountMissions) // Load current AccountMissions
-            .Include(m => m.EquipmentMissions) // Load current EquipmentMissions
+            .Include(m => m.EquipmentMissions)
+            .AsSplitQuery() // Load current EquipmentMissions
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (mission == null) return false;
@@ -215,9 +216,7 @@ public class MissionService : IMissionService
     public async Task<List<MissionDTO>> GetMissionsByAdminIdAsync(int adminId)
     {
         return await _context.Missions
-            .Where(m => m.AdminId == adminId)  // Filter by AdminId
-            .Include(m => m.AssignedAccounts)  // Eagerly load related accounts
-            .Include(m => m.AssignedEquipments) // Eagerly load related equipment
+            .Where(m => m.AdminId == adminId)
             .Select(m => new MissionDTO
             {
                 Id = m.Id,
@@ -227,7 +226,7 @@ public class MissionService : IMissionService
                 EndTime = m.EndTime,
                 Location = m.Location,
                 Status = m.Status,
-                AdminId = m.AdminId,
+                AdminId = m.AdminId
             })
             .ToListAsync();
     }

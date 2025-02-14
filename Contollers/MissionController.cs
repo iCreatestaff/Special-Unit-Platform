@@ -55,6 +55,19 @@ namespace sp_backend.Controllers
             return mission == null ? NotFound("Mission not found.") : Ok(mission);
         }
 
+        [HttpGet("admin/{adminId}")]
+        public async Task<IActionResult> GetMissionsByAdminId(int adminId)
+        {
+            var missions = await _missionService.GetMissionsByAdminIdAsync(adminId);
+
+            if (missions == null || !missions.Any())
+            {
+                return NotFound($"No missions found for Admin ID {adminId}.");
+            }
+
+            return Ok(missions);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<MissionDTO>>> GetAllMissions()
         {
