@@ -40,6 +40,7 @@ namespace sp_backend.Controllers
 
             // Create the mission
             var result = await _missionService.CreateMissionAsync(missionDTO);
+            missionDTO.Status = "Pending";
             if (!result)
             {
                 return BadRequest("Failed to create mission. Check if assigned accounts or equipment IDs are valid.");

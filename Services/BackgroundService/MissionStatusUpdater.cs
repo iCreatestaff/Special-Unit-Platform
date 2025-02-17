@@ -12,11 +12,13 @@ public class MissionStatusUpdater : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<MissionStatusUpdater> _logger;
+    private readonly TimeZoneInfo _localTimeZone;
 
     public MissionStatusUpdater(IServiceProvider serviceProvider, ILogger<MissionStatusUpdater> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"); // UTC+1
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,28 +33,30 @@ public class MissionStatusUpdater : BackgroundService
                 {
                     var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                    var now = DateTime.UtcNow; // Use UTC to avoid timezone issues
+                    // Convert UTC to local time (UTC+1)
+                    var nowUtc = DateTime.UtcNow;
+                    var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, _localTimeZone);
 
                     // Find missions that need to be updated
                     var missionsToStart = await _context.Missions
-                        .Where(m => m.StartTime <= now && m.Status != "Started" && m.Status != "Accomplished")
+                        .Where(m => m.StartTime <= nowLocal && m.Status != "Started" && m.Status != "Accomplished")
                         .ToListAsync();
 
                     var missionsToFinish = await _context.Missions
-                        .Where(m => m.EndTime <= now && m.Status == "Started")
+                        .Where(m => m.EndTime <= nowLocal && m.Status == "Started")
                         .ToListAsync();
 
                     // Update mission statuses
                     foreach (var mission in missionsToStart)
                     {
                         mission.Status = "Started";
-                        _logger.LogInformation($"Mission {mission.Id} started.");
+                        _logger.LogInformation($"Mission {mission.Id} started at {nowLocal}.");
                     }
 
                     foreach (var mission in missionsToFinish)
                     {
                         mission.Status = "Accomplished";
-                        _logger.LogInformation($"Mission {mission.Id} accomplished.");
+                        _logger.LogInformation($"Mission {mission.Id} accomplished at {nowLocal}.");
                     }
 
                     if (missionsToStart.Any() || missionsToFinish.Any())
