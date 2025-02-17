@@ -1,4 +1,4 @@
-using sp_back.Migrations;
+//using sp_backend.Migrations;
 using sp_backend.DTO;
 using sp_backend.Models;
 
@@ -15,6 +15,7 @@ namespace sp_backend.Mappers
                 Name = account.Name,
                 Username = account.Username,
                 Type = account.Type,
+                Badge = account.Badge,
                 Password = account.PasswordHash,
                 Role = account.Role,
                 Photo = account.Photo,
@@ -34,6 +35,7 @@ namespace sp_backend.Mappers
                 Name = dto.Name,
                 Username = dto.Username,
                 Type = dto.Type,
+                Badge = dto.Badge,
                 PasswordHash = passwordHash,
                 Role = dto.Role,
                 Photo = dto.Photo,

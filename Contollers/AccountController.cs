@@ -46,7 +46,6 @@ public class AccountController : ControllerBase
         var passwordHash = "";
         var account = dto.ToEntity(passwordHash);
         account.Role = "Agent"; // Assign role as Agent
-
         var result = await _accountService.CreateAccountAsync(account);
         if (result)
             return Ok("Agent created successfully.");

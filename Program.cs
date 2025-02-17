@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using WeatherApi; // Ensure correct namespace
 using WeatherApi.Interfaces; // For service interfaces
@@ -10,6 +13,8 @@ using sp_backend.Interfaces;
 using sp_backend.Services; // For service implementations
 
 var builder = WebApplication.CreateBuilder(args);
+/*TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris"); // Change to your timezone
+TimeZoneInfo.Local = localTimeZone; */
 
 // 🔹 Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>

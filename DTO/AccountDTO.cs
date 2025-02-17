@@ -9,6 +9,7 @@ namespace sp_backend.DTO
         public string Name { get; set; }
         public string Username { get; set; }
         public string Type { get; set; }
+        public string Badge { get; set; }
         public string Password { get; set; } // Used only for creation
         public string Role { get; set; }
         public string? SocialFile { get; set; }
@@ -24,6 +25,7 @@ namespace sp_backend.DTO
                 Username = Username,
                 Name = Name,
                 Type = Type,
+                Badge = Badge,
                 PasswordHash = passwordHash, // Corrected this
                 Role = Role,
                 SocialFile = SocialFile,

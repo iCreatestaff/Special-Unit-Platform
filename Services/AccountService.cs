@@ -106,6 +106,7 @@ public class AccountService : IAccountService
         existingAccount.Name = account.Name;
         existingAccount.Role = account.Role;
         existingAccount.Type = account.Type;
+        existingAccount.Badge = account.Badge;
         existingAccount.SocialFile = account.SocialFile;
         existingAccount.MedicalFile = account.MedicalFile;
         existingAccount.CareerFile = account.CareerFile;
