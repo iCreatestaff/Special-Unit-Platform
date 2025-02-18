@@ -39,13 +39,50 @@ namespace WeatherApi.Services
                 return null;
             }
 
+            // Check if the status is changing
+            bool wasBroken = existingSubEquipment.Status == "broken-down";
+            bool isNowNormal = subEquipment.Status == "Normal";
+            bool wasWorking = existingSubEquipment.Status != "broken-down";
+            bool isNowBroken = subEquipment.Status == "broken-down";
+
             existingSubEquipment.Name = subEquipment.Name ?? existingSubEquipment.Name;
             existingSubEquipment.Cycle = subEquipment.Cycle ?? existingSubEquipment.Cycle;
             existingSubEquipment.Status = subEquipment.Status ?? existingSubEquipment.Status;
 
+            // Save changes immediately to reflect the updated status in the database
             await _context.SaveChangesAsync();
+
+            // Find the related Equipment
+            var equipment = await _context.Equipments.FindAsync(existingSubEquipment.EquipmentId);
+            if (equipment != null)
+            {
+                if (wasWorking && isNowBroken)
+                {
+                    // If a SubEquipment breaks down, mark the Equipment as unavailable
+                    equipment.Availability = false;
+                }
+                else if (wasBroken && isNowNormal)
+                {
+                    // Check if all other SubEquipments are "Normal" AND include this one as "Normal"
+                    bool allNormal = await _context.SubEquipments
+                        .Where(se => se.EquipmentId == existingSubEquipment.EquipmentId && se.Id != existingSubEquipment.Id)
+                        .AllAsync(se => se.Status == "Normal");
+
+                    if (allNormal && isNowNormal) // Ensure the current one is also "Normal"
+                    {
+                        equipment.Availability = true;
+                    }
+                }
+
+                await _context.SaveChangesAsync(); // Save Equipment changes
+            }
+
             return existingSubEquipment;
         }
+
+
+
+
 
         public async Task<bool> DeleteSubEquipmentAsync(int id)
         {
