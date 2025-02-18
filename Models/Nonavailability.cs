@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WeatherApi.Models;
 
 public class Nonavailability
 {
@@ -13,10 +14,17 @@ public class Nonavailability
     [Required]
     public DateTime Date2 { get; set; }
 
-    // Foreign key reference to Account
-    [Required]
-    public int AccountId { get; set; }
+    public string? Type { get; set; }  // Values: "Account" or "SubEquipment"
+
+    // Foreign key reference to Account (nullable)
+    public int? AccountId { get; set; }
 
     [ForeignKey("AccountId")]
-    public Account Account { get; set; }
+    public Account? Account { get; set; }
+
+    // Foreign key reference to SubEquipment (nullable)
+    public int? SubEquipmentId { get; set; }
+
+    [ForeignKey("SubEquipmentId")]
+    public SubEquipment? SubEquipment { get; set; }
 }

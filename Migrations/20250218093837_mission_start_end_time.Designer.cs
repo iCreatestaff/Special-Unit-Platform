@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApi;
 
@@ -11,9 +12,11 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250218093837_mission_start_end_time")]
+    partial class mission_start_end_time
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +86,7 @@ namespace sp_back.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AccountId")
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date1")
@@ -92,17 +95,9 @@ namespace sp_back.Migrations
                     b.Property<DateTime>("Date2")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("SubEquipmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("SubEquipmentId");
 
                     b.ToTable("Nonavailabilities");
                 });
@@ -247,16 +242,10 @@ namespace sp_back.Migrations
                     b.HasOne("Account", "Account")
                         .WithMany("Nonavailabilities")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("WeatherApi.Models.SubEquipment", "SubEquipment")
-                        .WithMany("Nonavailabilities")
-                        .HasForeignKey("SubEquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
-
-                    b.Navigation("SubEquipment");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
@@ -319,11 +308,6 @@ namespace sp_back.Migrations
                     b.Navigation("EquipmentMissions");
 
                     b.Navigation("SubEquipments");
-                });
-
-            modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
-                {
-                    b.Navigation("Nonavailabilities");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

@@ -23,7 +23,24 @@ namespace sp_backend.Services
             return nonAvailabilityList.Select(na => new NonAvailabilityDTO
             {
                 Id = na.Id,
+                Type = "Account",
                 AccountId = na.AccountId,
+                Date1 = na.Date1,
+                Date2 = na.Date2
+            }).ToList();
+        }
+
+        public async Task<List<NonAvailabilityDTO>> GetNonAvailabilityBySubEquipmentIdAsync(int subEquipmentId)
+        {
+            var nonAvailabilityList = await _context.Nonavailabilities
+                .Where(na => na.SubEquipmentId == subEquipmentId)
+                .ToListAsync();
+
+            return nonAvailabilityList.Select(na => new NonAvailabilityDTO
+            {
+                Id = na.Id,
+                Type = "SubEquipment",
+                SubEquipmentId = na.SubEquipmentId,
                 Date1 = na.Date1,
                 Date2 = na.Date2
             }).ToList();
@@ -31,9 +48,18 @@ namespace sp_backend.Services
 
         public async Task<bool> CreateNonAvailabilityAsync(NonAvailabilityDTO nonAvailabilityDTO)
         {
+            // Validate input: only one ID must be provided
+            if ((nonAvailabilityDTO.AccountId == null && nonAvailabilityDTO.SubEquipmentId == null) ||
+                (nonAvailabilityDTO.AccountId != null && nonAvailabilityDTO.SubEquipmentId != null))
+            {
+                return false; // Invalid request
+            }
+
             var nonAvailability = new Nonavailability
             {
                 AccountId = nonAvailabilityDTO.AccountId,
+                Type = nonAvailabilityDTO.Type,
+                SubEquipmentId = nonAvailabilityDTO.SubEquipmentId,
                 Date1 = nonAvailabilityDTO.Date1,
                 Date2 = nonAvailabilityDTO.Date2
             };
@@ -49,6 +75,13 @@ namespace sp_backend.Services
             if (nonAvailability == null)
             {
                 return false; // Not found
+            }
+
+            // Prevent changing type (Account or SubEquipment) during update
+            if (nonAvailability.AccountId != nonAvailabilityDTO.AccountId ||
+                nonAvailability.SubEquipmentId != nonAvailabilityDTO.SubEquipmentId)
+            {
+                return false; // Cannot change ownership type
             }
 
             nonAvailability.Date1 = nonAvailabilityDTO.Date1;
@@ -71,5 +104,6 @@ namespace sp_backend.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
     }
 }

@@ -30,11 +30,17 @@ namespace WeatherApi
                 .HasIndex(a => a.Username)
                 .IsUnique();
 
-            // Relationship between Account and Nonavailability
             modelBuilder.Entity<Nonavailability>()
                 .HasOne(n => n.Account)
                 .WithMany(a => a.Nonavailabilities)
                 .HasForeignKey(n => n.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relationship: Nonavailability - SubEquipment
+            modelBuilder.Entity<Nonavailability>()
+                .HasOne(n => n.SubEquipment)
+                .WithMany(se => se.Nonavailabilities)
+                .HasForeignKey(n => n.SubEquipmentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Configure Many-to-Many: Mission and Account via AccountMission table

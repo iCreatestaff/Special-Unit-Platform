@@ -22,6 +22,12 @@ namespace sp_backend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateMission([FromBody] MissionDTO missionDTO)
         {
+
+            if (missionDTO.StartTime > missionDTO.EndTime)
+            {
+                return BadRequest("Start Time must be before End Time.");
+            }
+
             if (missionDTO == null)
             {
                 return BadRequest("Mission data is required.");

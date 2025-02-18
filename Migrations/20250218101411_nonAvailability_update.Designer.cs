@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApi;
 
@@ -11,9 +12,11 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250218101411_nonAvailability_update")]
+    partial class nonAvailability_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,6 +99,7 @@ namespace sp_back.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -250,9 +254,8 @@ namespace sp_back.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("WeatherApi.Models.SubEquipment", "SubEquipment")
-                        .WithMany("Nonavailabilities")
-                        .HasForeignKey("SubEquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("SubEquipmentId");
 
                     b.Navigation("Account");
 
@@ -319,11 +322,6 @@ namespace sp_back.Migrations
                     b.Navigation("EquipmentMissions");
 
                     b.Navigation("SubEquipments");
-                });
-
-            modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
-                {
-                    b.Navigation("Nonavailabilities");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

@@ -17,5 +17,6 @@ namespace WeatherApi.Models
 
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public Equipment? Equipment { get; set; }
+        public List<Nonavailability> Nonavailabilities { get; set; } = new();
     }
 }

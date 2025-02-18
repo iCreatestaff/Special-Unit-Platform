@@ -36,7 +36,6 @@ public class MissionService : IMissionService
                 StartTime = missionDTO.StartTime,
                 EndTime = missionDTO.EndTime,
                 Location = missionDTO.Location,
-                Status = missionDTO.Status,
                 AdminId = missionDTO.AdminId
             };
 

@@ -25,11 +25,16 @@ namespace sp_backend.Controllers
                 return BadRequest("The start date (Date1) must be before the end date (Date2).");
             }
 
+            // Ensure only one type of non-availability is provided
+            if ((nonAvailabilityDTO.AccountId == null && nonAvailabilityDTO.SubEquipmentId == null) ||
+                (nonAvailabilityDTO.AccountId != null && nonAvailabilityDTO.SubEquipmentId != null))
+            {
+                return BadRequest("NonAvailability must be associated with either an Account or a SubEquipment, but not both.");
+            }
+
             var result = await _nonavailabilityService.CreateNonAvailabilityAsync(nonAvailabilityDTO);
             return result ? Ok("NonAvailability created successfully") : BadRequest("Failed to create NonAvailability.");
         }
-
-
 
         [HttpGet("account/{accountId}")]
         public async Task<ActionResult<List<NonAvailabilityDTO>>> GetNonAvailabilityByAccountId(int accountId)
@@ -38,11 +43,18 @@ namespace sp_backend.Controllers
             return Ok(nonAvailabilityList);
         }
 
+        [HttpGet("subequipment/{subEquipmentId}")]
+        public async Task<ActionResult<List<NonAvailabilityDTO>>> GetNonAvailabilityBySubEquipmentId(int subEquipmentId)
+        {
+            var nonAvailabilityList = await _nonavailabilityService.GetNonAvailabilityBySubEquipmentIdAsync(subEquipmentId);
+            return Ok(nonAvailabilityList);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNonAvailability(int id, [FromBody] NonAvailabilityDTO nonAvailabilityDTO)
         {
             var result = await _nonavailabilityService.UpdateNonAvailabilityAsync(id, nonAvailabilityDTO);
-            return result ? Ok("NonAvailability updated successfully") : NotFound("NonAvailability not found.");
+            return result ? Ok("NonAvailability updated successfully") : NotFound("NonAvailability not found or invalid update.");
         }
 
         [HttpDelete("{id}")]

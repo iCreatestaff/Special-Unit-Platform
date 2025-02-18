@@ -17,7 +17,6 @@ public static class MissionMapper
             StartTime = mission.StartTime,
             EndTime = mission.EndTime,
             Location = mission.Location,
-            Status = mission.Status,
             AdminId = mission.AdminId,
         };
     }
@@ -32,7 +31,6 @@ public static class MissionMapper
             Type = dto.Type,
             EndTime = dto.EndTime,
             Location = dto.Location,
-            Status = dto.Status,
             AdminId = dto.AdminId,
             // Initialize lists for AssignedAccounts and AssignedEquipment
         };
