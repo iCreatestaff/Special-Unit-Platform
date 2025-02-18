@@ -27,9 +27,20 @@ namespace WeatherApi.Services
         public async Task<SubEquipment> CreateSubEquipmentAsync(SubEquipment subEquipment)
         {
             _context.SubEquipments.Add(subEquipment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save first to get a valid ID
+
+            // Find the related Equipment
+            var equipment = await _context.Equipments.FindAsync(subEquipment.EquipmentId);
+            if (equipment != null && subEquipment.Status != "bon_etat")
+            {
+                // If the new SubEquipment is not "Normal", mark Equipment as unavailable
+                equipment.Availability = false;
+                await _context.SaveChangesAsync(); // Save Equipment changes
+            }
+
             return subEquipment;
         }
+
 
         public async Task<SubEquipment?> UpdateSubEquipmentAsync(int id, SubEquipment subEquipment)
         {
@@ -40,10 +51,10 @@ namespace WeatherApi.Services
             }
 
             // Check if the status is changing
-            bool wasBroken = existingSubEquipment.Status == "En panne";
-            bool isNowNormal = subEquipment.Status == "Bon état";
+            bool wasBroken = existingSubEquipment.Status == "en_panne";
+            bool isNowNormal = subEquipment.Status == "bon_etat";
             bool wasWorking = existingSubEquipment.Status != "En panne";
-            bool isNowBroken = subEquipment.Status == "En panne";
+            bool isNowBroken = subEquipment.Status == "en_panne";
 
             existingSubEquipment.Name = subEquipment.Name ?? existingSubEquipment.Name;
             existingSubEquipment.Cycle = subEquipment.Cycle ?? existingSubEquipment.Cycle;
@@ -66,7 +77,7 @@ namespace WeatherApi.Services
                     // Check if all other SubEquipments are "Normal" AND include this one as "Normal"
                     bool allNormal = await _context.SubEquipments
                         .Where(se => se.EquipmentId == existingSubEquipment.EquipmentId && se.Id != existingSubEquipment.Id)
-                        .AllAsync(se => se.Status == "Bon état");
+                        .AllAsync(se => se.Status == "bon_etat");
 
                     if (allNormal && isNowNormal) // Ensure the current one is also "Normal"
                     {
