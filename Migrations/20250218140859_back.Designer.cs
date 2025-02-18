@@ -12,8 +12,8 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250217094028_AccountBadge")]
-    partial class AccountBadge
+    [Migration("20250218140859_back")]
+    partial class back
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,7 +86,7 @@ namespace sp_back.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
+                    b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date1")
@@ -95,9 +95,17 @@ namespace sp_back.Migrations
                     b.Property<DateTime>("Date2")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("SubEquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("SubEquipmentId");
 
                     b.ToTable("Nonavailabilities");
                 });
@@ -242,10 +250,16 @@ namespace sp_back.Migrations
                     b.HasOne("Account", "Account")
                         .WithMany("Nonavailabilities")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WeatherApi.Models.SubEquipment", "SubEquipment")
+                        .WithMany("Nonavailabilities")
+                        .HasForeignKey("SubEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Account");
+
+                    b.Navigation("SubEquipment");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
@@ -308,6 +322,11 @@ namespace sp_back.Migrations
                     b.Navigation("EquipmentMissions");
 
                     b.Navigation("SubEquipments");
+                });
+
+            modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
+                {
+                    b.Navigation("Nonavailabilities");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

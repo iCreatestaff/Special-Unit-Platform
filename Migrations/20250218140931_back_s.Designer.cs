@@ -12,8 +12,8 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250218101411_nonAvailability_update")]
-    partial class nonAvailability_update
+    [Migration("20250218140931_back_s")]
+    partial class back_s
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,7 +99,6 @@ namespace sp_back.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -254,8 +253,9 @@ namespace sp_back.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("WeatherApi.Models.SubEquipment", "SubEquipment")
-                        .WithMany()
-                        .HasForeignKey("SubEquipmentId");
+                        .WithMany("Nonavailabilities")
+                        .HasForeignKey("SubEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Account");
 
@@ -322,6 +322,11 @@ namespace sp_back.Migrations
                     b.Navigation("EquipmentMissions");
 
                     b.Navigation("SubEquipments");
+                });
+
+            modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
+                {
+                    b.Navigation("Nonavailabilities");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

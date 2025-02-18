@@ -125,8 +125,22 @@ public class AccountService : IAccountService
         if (account == null)
             return false;
 
+        // Check if the account is an Admin
+        if (account.Role == "Admin")
+        {
+            // Find all missions assigned to this admin and delete them
+            var missions = await _context.Missions.Where(m => m.AdminId == id).ToListAsync();
+            if (missions.Any())
+            {
+                _context.Missions.RemoveRange(missions);
+            }
+        }
+
+        // Now delete the admin account
         _context.Accounts.Remove(account);
+
         return await _context.SaveChangesAsync() > 0;
     }
+
 
 }
