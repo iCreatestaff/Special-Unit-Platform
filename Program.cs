@@ -30,6 +30,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<INonavailabilityService, NonavailabilityService>(); // Register NonAvailability service
 builder.Services.AddScoped<IMissionService, MissionService>(); // ✅ Register Mission Service
 builder.Services.AddHostedService<MissionStatusUpdater>();
+builder.Services.AddHostedService<SubEquipmentStatusUpdater>();
 // 🔹 Register Password Hasher
 builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 
