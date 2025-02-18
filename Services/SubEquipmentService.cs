@@ -40,10 +40,10 @@ namespace WeatherApi.Services
             }
 
             // Check if the status is changing
-            bool wasBroken = existingSubEquipment.Status == "broken-down";
-            bool isNowNormal = subEquipment.Status == "Normal";
-            bool wasWorking = existingSubEquipment.Status != "broken-down";
-            bool isNowBroken = subEquipment.Status == "broken-down";
+            bool wasBroken = existingSubEquipment.Status == "En panne";
+            bool isNowNormal = subEquipment.Status == "Bon état";
+            bool wasWorking = existingSubEquipment.Status != "En panne";
+            bool isNowBroken = subEquipment.Status == "En panne";
 
             existingSubEquipment.Name = subEquipment.Name ?? existingSubEquipment.Name;
             existingSubEquipment.Cycle = subEquipment.Cycle ?? existingSubEquipment.Cycle;
@@ -66,7 +66,7 @@ namespace WeatherApi.Services
                     // Check if all other SubEquipments are "Normal" AND include this one as "Normal"
                     bool allNormal = await _context.SubEquipments
                         .Where(se => se.EquipmentId == existingSubEquipment.EquipmentId && se.Id != existingSubEquipment.Id)
-                        .AllAsync(se => se.Status == "Normal");
+                        .AllAsync(se => se.Status == "Bon état");
 
                     if (allNormal && isNowNormal) // Ensure the current one is also "Normal"
                     {
