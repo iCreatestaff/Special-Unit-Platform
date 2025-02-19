@@ -30,27 +30,28 @@ namespace sp_backend.Services
             }).ToList();
         }
 
-        public async Task<List<NonAvailabilityDTO>> GetNonAvailabilityBySubEquipmentIdAsync(int subEquipmentId)
+        public async Task<List<NonAvailabilityDTO>> GetNonAvailabilityByEquipmentIdAsync(int equipmentId)
         {
             var nonAvailabilityList = await _context.Nonavailabilities
-                .Where(na => na.SubEquipmentId == subEquipmentId)
+                .Where(na => na.EquipmentId == equipmentId)
                 .ToListAsync();
 
             return nonAvailabilityList.Select(na => new NonAvailabilityDTO
             {
                 Id = na.Id,
-                Type = "SubEquipment",
-                SubEquipmentId = na.SubEquipmentId,
+                Type = "Equipment",
+                EquipmentId = na.EquipmentId,
                 Date1 = na.Date1,
                 Date2 = na.Date2
             }).ToList();
         }
 
+
         public async Task<bool> CreateNonAvailabilityAsync(NonAvailabilityDTO nonAvailabilityDTO)
         {
             // Validate input: only one ID must be provided
-            if ((nonAvailabilityDTO.AccountId == null && nonAvailabilityDTO.SubEquipmentId == null) ||
-                (nonAvailabilityDTO.AccountId != null && nonAvailabilityDTO.SubEquipmentId != null))
+            if ((nonAvailabilityDTO.AccountId == null && nonAvailabilityDTO.EquipmentId == null) ||
+                (nonAvailabilityDTO.AccountId != null && nonAvailabilityDTO.EquipmentId != null))
             {
                 return false; // Invalid request
             }
@@ -59,7 +60,7 @@ namespace sp_backend.Services
             {
                 AccountId = nonAvailabilityDTO.AccountId,
                 Type = nonAvailabilityDTO.Type,
-                SubEquipmentId = nonAvailabilityDTO.SubEquipmentId,
+                EquipmentId = nonAvailabilityDTO.EquipmentId,
                 Date1 = nonAvailabilityDTO.Date1,
                 Date2 = nonAvailabilityDTO.Date2
             };
@@ -79,7 +80,7 @@ namespace sp_backend.Services
 
             // Prevent changing type (Account or SubEquipment) during update
             if (nonAvailability.AccountId != nonAvailabilityDTO.AccountId ||
-                nonAvailability.SubEquipmentId != nonAvailabilityDTO.SubEquipmentId)
+                nonAvailability.EquipmentId != nonAvailabilityDTO.EquipmentId)
             {
                 return false; // Cannot change ownership type
             }

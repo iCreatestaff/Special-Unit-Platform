@@ -11,6 +11,6 @@ namespace sp_backend.Interfaces
         Task<bool> CreateNonAvailabilityAsync(NonAvailabilityDTO nonAvailabilityDTO);
         Task<bool> UpdateNonAvailabilityAsync(int id, NonAvailabilityDTO nonAvailabilityDTO);
         Task<bool> DeleteNonAvailabilityAsync(int id);
-        Task<List<NonAvailabilityDTO>> GetNonAvailabilityBySubEquipmentIdAsync(int subEquipmentId);
+        Task<List<NonAvailabilityDTO>> GetNonAvailabilityByEquipmentIdAsync(int EquipmentId);
     }
 }

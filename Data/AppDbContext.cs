@@ -38,9 +38,9 @@ namespace WeatherApi
 
             // Relationship: Nonavailability - SubEquipment
             modelBuilder.Entity<Nonavailability>()
-                .HasOne(n => n.SubEquipment)
+                .HasOne(n => n.Equipment)
                 .WithMany(se => se.Nonavailabilities)
-                .HasForeignKey(n => n.SubEquipmentId)
+                .HasForeignKey(n => n.EquipmentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Configure Many-to-Many: Mission and Account via AccountMission table

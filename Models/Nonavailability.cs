@@ -23,8 +23,8 @@ public class Nonavailability
     public Account? Account { get; set; }
 
     // Foreign key reference to SubEquipment (nullable)
-    public int? SubEquipmentId { get; set; }
+    public int? EquipmentId { get; set; }
 
-    [ForeignKey("SubEquipmentId")]
-    public SubEquipment? SubEquipment { get; set; }
+    [ForeignKey("EquipmentId")]
+    public Equipment? Equipment { get; set; }
 }

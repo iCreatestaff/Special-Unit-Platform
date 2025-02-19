@@ -26,10 +26,10 @@ namespace sp_backend.Controllers
             }
 
             // Ensure only one type of non-availability is provided
-            if ((nonAvailabilityDTO.AccountId == null && nonAvailabilityDTO.SubEquipmentId == null) ||
-                (nonAvailabilityDTO.AccountId != null && nonAvailabilityDTO.SubEquipmentId != null))
+            if ((nonAvailabilityDTO.AccountId == null && nonAvailabilityDTO.EquipmentId == null) ||
+                (nonAvailabilityDTO.AccountId != null && nonAvailabilityDTO.EquipmentId != null))
             {
-                return BadRequest("NonAvailability must be associated with either an Account or a SubEquipment, but not both.");
+                return BadRequest("NonAvailability must be associated with either an Account or a Equipment, but not both.");
             }
 
             var result = await _nonavailabilityService.CreateNonAvailabilityAsync(nonAvailabilityDTO);
@@ -43,10 +43,10 @@ namespace sp_backend.Controllers
             return Ok(nonAvailabilityList);
         }
 
-        [HttpGet("subequipment/{subEquipmentId}")]
-        public async Task<ActionResult<List<NonAvailabilityDTO>>> GetNonAvailabilityBySubEquipmentId(int subEquipmentId)
+        [HttpGet("Equipment/{EquipmentId}")]
+        public async Task<ActionResult<List<NonAvailabilityDTO>>> GetNonAvailabilityBySubEquipmentId(int EquipmentId)
         {
-            var nonAvailabilityList = await _nonavailabilityService.GetNonAvailabilityBySubEquipmentIdAsync(subEquipmentId);
+            var nonAvailabilityList = await _nonavailabilityService.GetNonAvailabilityByEquipmentIdAsync(EquipmentId);
             return Ok(nonAvailabilityList);
         }
 
