@@ -89,6 +89,27 @@ public class AccountController : ControllerBase
         return accounts.Any() ? Ok(accounts) : NotFound("No accounts found for the specified type.");
     }
 
+    [HttpGet("available-by-type")]
+    public async Task<IActionResult> GetAvailableAccountsByType(
+       [FromQuery] DateTime date1,
+       [FromQuery] DateTime date2,
+       [FromQuery] string type)
+    {
+        if (date1 >= date2)
+        {
+            return BadRequest("Invalid date range: date1 must be before date2.");
+        }
+
+        var availableAccounts = await _accountService.GetAvailableAccountsByTypeAsync(date1, date2, type);
+
+        if (availableAccounts == null || availableAccounts.Count == 0)
+        {
+            return NotFound("No available accounts found for the given type and date range.");
+        }
+
+        return Ok(availableAccounts);
+    }
+
     [HttpGet("by-role/{role}")]
     public async Task<IActionResult> GetAccountsByRole(string role)
     {

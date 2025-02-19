@@ -18,6 +18,7 @@ namespace WeatherApi.Models
         public List<EquipmentMission> EquipmentMissions { get; set; } = new();
 
 
+
         public string? Photo { get; set; } // Store the file path or URL of the photo
     }
 }

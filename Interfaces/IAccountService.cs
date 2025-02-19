@@ -15,5 +15,6 @@ namespace sp_backend.Interfaces
         Task<bool> UpdateAccountAsync(int id, Account account);
         Task<bool> DeleteAccountAsync(int id); // Added DeleteAccountAsync
         Task<List<Account>> GetAvailableAccountsAsync(DateTime startDate, DateTime endDate);
+        Task<List<AccountDTO>> GetAvailableAccountsByTypeAsync(DateTime d1, DateTime d2, string type);
     }
 }

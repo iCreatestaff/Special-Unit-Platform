@@ -61,6 +61,25 @@ public class AccountService : IAccountService
             .ToListAsync();
     }
 
+    public async Task<List<AccountDTO>> GetAvailableAccountsByTypeAsync(DateTime d1, DateTime d2, string type)
+    {
+        return await _context.Accounts
+            .Where(a => a.Type == type && !a.Nonavailabilities.Any(n =>
+                (d1 >= n.Date1 && d1 <= n.Date2) ||  // d1 falls within a non-availability range
+                (d2 >= n.Date1 && d2 <= n.Date2) ||  // d2 falls within a non-availability range
+                (n.Date1 >= d1 && n.Date2 <= d2)     // non-availability is fully within the range
+            ))
+            .Select(a => new AccountDTO
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Role = a.Role,
+                Type = a.Type
+            })
+            .ToListAsync();
+    }
+
+
     public async Task<List<AccountDTO>> GetAccountsByRoleAsync(string role)
     {
         return await _context.Accounts

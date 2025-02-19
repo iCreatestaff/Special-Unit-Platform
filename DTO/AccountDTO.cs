@@ -10,7 +10,7 @@ namespace sp_backend.DTO
         public string Username { get; set; }
         public string Type { get; set; }
         public string Badge { get; set; }
-        public string Password { get; set; } // Used only for creation
+        public string? Password { get; set; } // Used only for creation
         public string Role { get; set; }
         public string? SocialFile { get; set; }
         public string? MedicalFile { get; set; }
