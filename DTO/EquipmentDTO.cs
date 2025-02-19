@@ -10,7 +10,7 @@ namespace WeatherApi.DTOs
         public string? Type { get; set; }
 
         public string? Photo { get; set; }
-        public List<Nonavailability> Nonavailabilities { get; set; } = new();
+
         public List<SubEquipmentDto>? SubEquipments { get; set; }
 
     }
