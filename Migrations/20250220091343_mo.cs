@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace sp_back.Migrations
 {
     /// <inheritdoc />
-    public partial class back : Migration
+    public partial class mo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -151,7 +151,9 @@ namespace sp_back.Migrations
                     Date1 = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Date2 = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MissionID = table.Column<int>(type: "int", nullable: true),
                     AccountId = table.Column<int>(type: "int", nullable: true),
+                    EquipmentId = table.Column<int>(type: "int", nullable: true),
                     SubEquipmentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -164,11 +166,16 @@ namespace sp_back.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Nonavailabilities_Equipments_EquipmentId",
+                        column: x => x.EquipmentId,
+                        principalTable: "Equipments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Nonavailabilities_SubEquipments_SubEquipmentId",
                         column: x => x.SubEquipmentId,
                         principalTable: "SubEquipments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -191,6 +198,11 @@ namespace sp_back.Migrations
                 name: "IX_Nonavailabilities_AccountId",
                 table: "Nonavailabilities",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Nonavailabilities_EquipmentId",
+                table: "Nonavailabilities",
+                column: "EquipmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Nonavailabilities_SubEquipmentId",

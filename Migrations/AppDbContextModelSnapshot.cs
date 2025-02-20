@@ -95,6 +95,9 @@ namespace sp_back.Migrations
                     b.Property<int?>("EquipmentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MissionID")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SubEquipmentId")
                         .HasColumnType("int");
 
@@ -106,6 +109,8 @@ namespace sp_back.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("EquipmentId");
+
+                    b.HasIndex("MissionID");
 
                     b.HasIndex("SubEquipmentId");
 
@@ -259,6 +264,10 @@ namespace sp_back.Migrations
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("sp_backend.Models.Mission", "Mission")
+                        .WithMany()
+                        .HasForeignKey("MissionID");
+
                     b.HasOne("WeatherApi.Models.SubEquipment", null)
                         .WithMany("Nonavailabilities")
                         .HasForeignKey("SubEquipmentId");
@@ -266,6 +275,8 @@ namespace sp_back.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Equipment");
+
+                    b.Navigation("Mission");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>

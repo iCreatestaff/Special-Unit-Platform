@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using sp_backend.Models;
 using WeatherApi.Models;
 
 public class Nonavailability
@@ -15,6 +16,11 @@ public class Nonavailability
     public DateTime Date2 { get; set; }
 
     public string? Type { get; set; }  // Values: "Account" or "SubEquipment"
+
+    public int? MissionID { get; set; }
+
+    [ForeignKey(nameof(MissionID))]
+    public Mission? Mission { get; set; }
 
     // Foreign key reference to Account (nullable)
     public int? AccountId { get; set; }

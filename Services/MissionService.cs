@@ -42,6 +42,8 @@ public class MissionService : IMissionService
             _context.Missions.Add(mission);
             await _context.SaveChangesAsync(); // Save first to get Mission ID
 
+            var nonavailabilities = new List<Nonavailability>();
+
             // Add assigned accounts
             if (missionDTO.AssignedAccounts != null && missionDTO.AssignedAccounts.Any())
             {
@@ -55,6 +57,16 @@ public class MissionService : IMissionService
                     .ToList();
 
                 _context.AccountMissions.AddRange(accountMissions);
+
+                // Create nonavailability records for assigned accounts
+                nonavailabilities.AddRange(validAccounts.Select(accountId => new Nonavailability
+                {
+                    Date1 = mission.StartTime,
+                    Date2 = mission.EndTime,
+                    Type = "Account",
+                    AccountId = accountId,
+                    MissionID = mission.Id
+                }));
             }
 
             // Add assigned equipment
@@ -70,9 +82,26 @@ public class MissionService : IMissionService
                     .ToList();
 
                 _context.EquipmentMissions.AddRange(equipmentMissions);
+
+                // Create nonavailability records for assigned equipment
+                nonavailabilities.AddRange(validEquipments.Select(equipmentId => new Nonavailability
+                {
+                    Date1 = mission.StartTime,
+                    Date2 = mission.EndTime,
+                    Type = "Equipment",
+                    EquipmentId = equipmentId,
+                    MissionID = mission.Id
+
+                }));
             }
 
-            // Save related assignments
+            // Add nonavailability records to DB
+            if (nonavailabilities.Any())
+            {
+                _context.Nonavailabilities.AddRange(nonavailabilities);
+            }
+
+            // Save related assignments and nonavailability records
             int changes = await _context.SaveChangesAsync();
             if (changes == 0)
             {
@@ -155,9 +184,9 @@ public class MissionService : IMissionService
     public async Task<bool> UpdateMissionAsync(int id, MissionDTO missionDTO)
     {
         var mission = await _context.Missions
-            .Include(m => m.AccountMissions) // Load current AccountMissions
+            .Include(m => m.AccountMissions)
             .Include(m => m.EquipmentMissions)
-            .AsSplitQuery() // Load current EquipmentMissions
+            .AsSplitQuery()
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (mission == null) return false;
@@ -171,6 +200,18 @@ public class MissionService : IMissionService
         mission.Status = missionDTO.Status;
         mission.AdminId = missionDTO.AdminId;
 
+        // Remove existing nonavailability records for this mission
+        // Remove existing nonavailability records for this mission
+        var existingNonavailabilities = await _context.Nonavailabilities
+            .Where(n => n.MissionID == id)
+            .ToListAsync(); // Ensure we fetch the list first
+
+        if (existingNonavailabilities.Any()) // Only remove if there are records
+        {
+            _context.Nonavailabilities.RemoveRange(existingNonavailabilities);
+        }
+
+
         // Handle assigned accounts
         var existingAccountIds = mission.AccountMissions.Select(am => am.AccountId).ToList();
         var newAccountIds = missionDTO.AssignedAccounts ?? new List<int>();
@@ -178,7 +219,7 @@ public class MissionService : IMissionService
         // Remove accounts that are no longer assigned
         mission.AccountMissions.RemoveAll(am => !newAccountIds.Contains(am.AccountId));
 
-        // Add new assigned accounts
+        // Add new assigned accounts and their nonavailability records
         foreach (var accountId in newAccountIds.Except(existingAccountIds))
         {
             mission.AccountMissions.Add(new AccountMission { MissionId = id, AccountId = accountId });
@@ -191,14 +232,45 @@ public class MissionService : IMissionService
         // Remove equipment that is no longer assigned
         mission.EquipmentMissions.RemoveAll(em => !newEquipmentIds.Contains(em.EquipmentId));
 
-        // Add new assigned equipment
+        // Add new assigned equipment and their nonavailability records
         foreach (var equipmentId in newEquipmentIds.Except(existingEquipmentIds))
         {
             mission.EquipmentMissions.Add(new EquipmentMission { MissionId = id, EquipmentId = equipmentId });
         }
 
+        // Add new nonavailability records for assigned accounts and equipment
+        var newNonavailabilities = new List<Nonavailability>();
+
+        foreach (var accountId in newAccountIds)
+        {
+            newNonavailabilities.Add(new Nonavailability
+            {
+                Date1 = mission.StartTime,
+                Date2 = mission.EndTime,
+                Type = "Account",
+                AccountId = accountId,
+                MissionID = mission.Id
+            });
+        }
+
+        foreach (var equipmentId in newEquipmentIds)
+        {
+            newNonavailabilities.Add(new Nonavailability
+            {
+                Date1 = mission.StartTime,
+                Date2 = mission.EndTime,
+                Type = "Equipment",
+                EquipmentId = equipmentId,
+                MissionID = mission.Id
+            });
+        }
+
+        // Add new nonavailability records to the database
+        await _context.Nonavailabilities.AddRangeAsync(newNonavailabilities);
+
         return await _context.SaveChangesAsync() > 0;
     }
+
 
 
     // Delete a mission by ID
