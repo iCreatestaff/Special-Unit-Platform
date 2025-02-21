@@ -12,8 +12,8 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250220091343_mo")]
-    partial class mo
+    [Migration("20250221084105_DeleteNonAvailabilitiesbyMissionID")]
+    partial class DeleteNonAvailabilitiesbyMissionID
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,6 +113,8 @@ namespace sp_back.Migrations
 
                     b.HasIndex("EquipmentId");
 
+                    b.HasIndex("MissionID");
+
                     b.HasIndex("SubEquipmentId");
 
                     b.ToTable("Nonavailabilities");
@@ -129,6 +131,9 @@ namespace sp_back.Migrations
                     b.Property<bool?>("Availability")
                         .HasColumnType("bit");
 
+                    b.Property<int>("EquipmentStockId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -139,6 +144,8 @@ namespace sp_back.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EquipmentStockId");
 
                     b.ToTable("Equipments");
                 });
@@ -208,6 +215,26 @@ namespace sp_back.Migrations
                     b.ToTable("EquipmentMissions");
                 });
 
+            modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EquipmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EquipmentStock");
+                });
+
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
                 {
                     b.Property<int>("Id")
@@ -265,6 +292,10 @@ namespace sp_back.Migrations
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("sp_backend.Models.Mission", "Mission")
+                        .WithMany()
+                        .HasForeignKey("MissionID");
+
                     b.HasOne("WeatherApi.Models.SubEquipment", null)
                         .WithMany("Nonavailabilities")
                         .HasForeignKey("SubEquipmentId");
@@ -272,6 +303,19 @@ namespace sp_back.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Equipment");
+
+                    b.Navigation("Mission");
+                });
+
+            modelBuilder.Entity("WeatherApi.Models.Equipment", b =>
+                {
+                    b.HasOne("sp_backend.Models.EquipmentStock", "EquipmentStock")
+                        .WithMany("Equipments")
+                        .HasForeignKey("EquipmentStockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EquipmentStock");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
@@ -341,6 +385,11 @@ namespace sp_back.Migrations
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
                 {
                     b.Navigation("Nonavailabilities");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
+                {
+                    b.Navigation("Equipments");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

@@ -180,6 +180,21 @@ public class MissionService : IMissionService
     }
 
 
+    public async Task DeleteNonavailabilitiesByMissionId(int missionId)
+    {
+        var existingNonavailabilities = await _context.Nonavailabilities
+            .Where(n => n.MissionID == missionId)
+            .ToListAsync();
+
+        if (existingNonavailabilities.Any())
+        {
+            _context.Nonavailabilities.RemoveRange(existingNonavailabilities);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+
+
     // Update an existing mission and associate it with updated accounts/equipment
     public async Task<bool> UpdateMissionAsync(int id, MissionDTO missionDTO)
     {
@@ -199,17 +214,6 @@ public class MissionService : IMissionService
         mission.Location = missionDTO.Location;
         mission.Status = missionDTO.Status;
         mission.AdminId = missionDTO.AdminId;
-
-        // Remove existing nonavailability records for this mission
-        // Remove existing nonavailability records for this mission
-        var existingNonavailabilities = await _context.Nonavailabilities
-            .Where(n => n.MissionID == id)
-            .ToListAsync(); // Ensure we fetch the list first
-
-        if (existingNonavailabilities.Any()) // Only remove if there are records
-        {
-            _context.Nonavailabilities.RemoveRange(existingNonavailabilities);
-        }
 
 
         // Handle assigned accounts
@@ -276,12 +280,27 @@ public class MissionService : IMissionService
     // Delete a mission by ID
     public async Task<bool> DeleteMissionAsync(int id)
     {
+        // Delete related Nonavailabilities first
+        var existingNonavailabilities = await _context.Nonavailabilities
+            .Where(n => n.MissionID == id)
+            .ToListAsync();
+
+        if (existingNonavailabilities.Any())
+        {
+            _context.Nonavailabilities.RemoveRange(existingNonavailabilities);
+        }
+
+        // Find the mission
         var mission = await _context.Missions.FindAsync(id);
         if (mission == null) return false;
 
+        // Remove the mission
         _context.Missions.Remove(mission);
+
+        // Save changes
         return await _context.SaveChangesAsync() > 0;
     }
+
 
     // Get missions for a specific admin by AdminId, including related accounts/equipment
     public async Task<List<MissionDTO>> GetMissionsByAdminIdAsync(int adminId)

@@ -12,8 +12,8 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250220091401_moss")]
-    partial class moss
+    [Migration("20250221085141_DeleteMission")]
+    partial class DeleteMission
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,6 +130,9 @@ namespace sp_back.Migrations
 
                     b.Property<bool?>("Availability")
                         .HasColumnType("bit");
+
+                    b.Property<int>("EquipmentStockId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

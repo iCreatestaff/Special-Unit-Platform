@@ -13,6 +13,7 @@ namespace sp_backend.Interfaces
         Task<List<MissionDTO>> GetAllMissionsAsync();
         Task<List<MissionDTO>> GetMissionsByAdminIdAsync(int adminId);
         Task<bool> UpdateMissionAsync(int id, MissionDTO missionDTO);
+        Task DeleteNonavailabilitiesByMissionId(int missionId);
         Task<bool> DeleteMissionAsync(int id);
 
         // New method to get all equipment

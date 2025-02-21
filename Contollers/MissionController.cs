@@ -81,6 +81,13 @@ namespace sp_backend.Controllers
             return Ok(await _missionService.GetAllMissionsAsync());
         }
 
+        [HttpDelete("{missionId}/nonavailabilities")]
+        public async Task<IActionResult> DeleteNonavailabilities(int missionId)
+        {
+            await _missionService.DeleteNonavailabilitiesByMissionId(missionId);
+            return NoContent();
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMission(int id, [FromBody] MissionDTO missionDTO)
         {

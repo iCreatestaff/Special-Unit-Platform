@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApi;
 
@@ -11,9 +12,11 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250220141649_EquipmentStock")]
+    partial class EquipmentStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,6 +145,8 @@ namespace sp_back.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EquipmentStockId");
+
                     b.ToTable("Equipments");
                 });
 
@@ -208,6 +213,26 @@ namespace sp_back.Migrations
                     b.HasIndex("MissionId");
 
                     b.ToTable("EquipmentMissions");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EquipmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EquipmentStock");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
@@ -282,6 +307,17 @@ namespace sp_back.Migrations
                     b.Navigation("Mission");
                 });
 
+            modelBuilder.Entity("WeatherApi.Models.Equipment", b =>
+                {
+                    b.HasOne("sp_backend.Models.EquipmentStock", "EquipmentStock")
+                        .WithMany("Equipments")
+                        .HasForeignKey("EquipmentStockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EquipmentStock");
+                });
+
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
                 {
                     b.HasOne("WeatherApi.Models.Equipment", "Equipment")
@@ -349,6 +385,11 @@ namespace sp_back.Migrations
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
                 {
                     b.Navigation("Nonavailabilities");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
+                {
+                    b.Navigation("Equipments");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
