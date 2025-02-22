@@ -34,7 +34,7 @@ namespace sp_back.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EquipmentStock",
+                name: "EquipmentStocks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -44,7 +44,7 @@ namespace sp_back.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EquipmentStock", x => x.Id);
+                    table.PrimaryKey("PK_EquipmentStocks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,18 +77,17 @@ namespace sp_back.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Availability = table.Column<bool>(type: "bit", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EquipmentStockId = table.Column<int>(type: "int", nullable: false),
-                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EquipmentStockId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Equipments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Equipments_EquipmentStock_EquipmentStockId",
+                        name: "FK_Equipments_EquipmentStocks_EquipmentStockId",
                         column: x => x.EquipmentStockId,
-                        principalTable: "EquipmentStock",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "EquipmentStocks",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -276,7 +275,7 @@ namespace sp_back.Migrations
                 name: "Equipments");
 
             migrationBuilder.DropTable(
-                name: "EquipmentStock");
+                name: "EquipmentStocks");
         }
     }
 }

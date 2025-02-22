@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,4 +21,3 @@ namespace sp_backend.Models
         public List<Equipment> Equipments { get; set; } = new();
     }
 }
-*/

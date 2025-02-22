@@ -29,8 +29,10 @@ builder.Services.AddScoped<ISubEquipmentService, SubEquipmentService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<INonavailabilityService, NonavailabilityService>(); // Register NonAvailability service
 builder.Services.AddScoped<IMissionService, MissionService>(); // ✅ Register Mission Service
+builder.Services.AddScoped<IEquipmentStockService, EquipmentStockService>();
 builder.Services.AddHostedService<MissionStatusUpdater>();
 builder.Services.AddHostedService<EquipmentStatusUpdater>();
+
 // 🔹 Register Password Hasher
 builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 

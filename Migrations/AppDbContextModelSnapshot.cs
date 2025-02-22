@@ -128,7 +128,7 @@ namespace sp_back.Migrations
                     b.Property<bool?>("Availability")
                         .HasColumnType("bit");
 
-                    b.Property<int>("EquipmentStockId")
+                    b.Property<int?>("EquipmentStockId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -141,6 +141,8 @@ namespace sp_back.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EquipmentStockId");
 
                     b.ToTable("Equipments");
                 });
@@ -208,6 +210,26 @@ namespace sp_back.Migrations
                     b.HasIndex("MissionId");
 
                     b.ToTable("EquipmentMissions");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EquipmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EquipmentStocks");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
@@ -282,6 +304,13 @@ namespace sp_back.Migrations
                     b.Navigation("Mission");
                 });
 
+            modelBuilder.Entity("WeatherApi.Models.Equipment", b =>
+                {
+                    b.HasOne("sp_backend.Models.EquipmentStock", null)
+                        .WithMany("Equipments")
+                        .HasForeignKey("EquipmentStockId");
+                });
+
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
                 {
                     b.HasOne("WeatherApi.Models.Equipment", "Equipment")
@@ -349,6 +378,11 @@ namespace sp_back.Migrations
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
                 {
                     b.Navigation("Nonavailabilities");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
+                {
+                    b.Navigation("Equipments");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

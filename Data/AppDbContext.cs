@@ -15,6 +15,8 @@ namespace WeatherApi
         public DbSet<Mission> Missions { get; set; }
         public DbSet<AccountMission> AccountMissions { get; set; }  // Explicit many-to-many table
         public DbSet<EquipmentMission> EquipmentMissions { get; set; }  // Explicit many-to-many table
+        public DbSet<EquipmentStock> EquipmentStocks { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

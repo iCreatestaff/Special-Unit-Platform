@@ -12,8 +12,8 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250221084105_DeleteNonAvailabilitiesbyMissionID")]
-    partial class DeleteNonAvailabilitiesbyMissionID
+    [Migration("20250222082238_equipmentStockController")]
+    partial class equipmentStockController
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,7 +131,7 @@ namespace sp_back.Migrations
                     b.Property<bool?>("Availability")
                         .HasColumnType("bit");
 
-                    b.Property<int>("EquipmentStockId")
+                    b.Property<int?>("EquipmentStockId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -232,7 +232,7 @@ namespace sp_back.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EquipmentStock");
+                    b.ToTable("EquipmentStocks");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
@@ -309,13 +309,9 @@ namespace sp_back.Migrations
 
             modelBuilder.Entity("WeatherApi.Models.Equipment", b =>
                 {
-                    b.HasOne("sp_backend.Models.EquipmentStock", "EquipmentStock")
+                    b.HasOne("sp_backend.Models.EquipmentStock", null)
                         .WithMany("Equipments")
-                        .HasForeignKey("EquipmentStockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EquipmentStock");
+                        .HasForeignKey("EquipmentStockId");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>

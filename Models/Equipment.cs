@@ -20,7 +20,7 @@ namespace WeatherApi.Models
 
         public List<Nonavailability> Nonavailabilities { get; set; } = new();
 
-        public int EquipmentStockId { get; set; }
+        // public int EquipmentStockId { get; set; }
 
         /*  [ForeignKey(nameof(EquipmentStockId))]
           public EquipmentStock EquipmentStock { get; set; } = null!;
