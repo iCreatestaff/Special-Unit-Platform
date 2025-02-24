@@ -27,6 +27,12 @@ namespace WeatherApi
                 .HasForeignKey(se => se.EquipmentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Equipment>()
+                            .HasOne(e => e.EquipmentStock)
+                            .WithMany(es => es.Equipments)
+                            .HasForeignKey(e => e.EquipmentStockId)
+                            .OnDelete(DeleteBehavior.Cascade);
+
             // Configure Account uniqueness on Username
             modelBuilder.Entity<Account>()
                 .HasIndex(a => a.Username)

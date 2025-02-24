@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace sp_back.Migrations
 {
     /// <inheritdoc />
-    public partial class EquipmentStock : Migration
+    public partial class foreignkey : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -77,8 +77,8 @@ namespace sp_back.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Availability = table.Column<bool>(type: "bit", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EquipmentStockId = table.Column<int>(type: "int", nullable: true)
+                    EquipmentStockId = table.Column<int>(type: "int", nullable: false),
+                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -87,7 +87,8 @@ namespace sp_back.Migrations
                         name: "FK_Equipments_EquipmentStocks_EquipmentStockId",
                         column: x => x.EquipmentStockId,
                         principalTable: "EquipmentStocks",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

@@ -20,11 +20,11 @@ namespace WeatherApi.Models
 
         public List<Nonavailability> Nonavailabilities { get; set; } = new();
 
-        // public int EquipmentStockId { get; set; }
+        public int EquipmentStockId { get; set; }
 
-        /*  [ForeignKey(nameof(EquipmentStockId))]
-          public EquipmentStock EquipmentStock { get; set; } = null!;
-  */
+        [ForeignKey(nameof(EquipmentStockId))]
+        public EquipmentStock EquipmentStock { get; set; } = null!;
+
         public string? Photo { get; set; } // Store the file path or URL of the photo
     }
 }

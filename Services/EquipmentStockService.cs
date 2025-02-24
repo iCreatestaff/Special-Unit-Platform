@@ -21,7 +21,8 @@ namespace sp_backend.Services
                 {
                     Id = es.Id,
                     EquipmentName = es.EquipmentName,
-                    Quantity = es.Quantity
+                    Quantity = es.Quantity,
+                    Equipments = es.Equipments
                 })
                 .ToListAsync();
         }

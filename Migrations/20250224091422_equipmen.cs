@@ -5,7 +5,7 @@
 namespace sp_back.Migrations
 {
     /// <inheritdoc />
-    public partial class equipmentStockController : Migration
+    public partial class equipmen : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
