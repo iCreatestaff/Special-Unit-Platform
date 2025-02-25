@@ -72,6 +72,18 @@ namespace sp_backend.Controllers
             }
         }
 
+        [HttpPut("update-subequipment/{equipmentStockId}/{subEquipmentName}")]
+        public async Task<IActionResult> UpdateSubEquipment(int equipmentStockId, string subEquipmentName, [FromBody] SubEquipment updatedSubEquipment)
+        {
+            var updated = await _equipmentStockService.UpdateSubEquipmentByNameAsync(equipmentStockId, subEquipmentName, updatedSubEquipment);
+            if (!updated)
+            {
+                return NotFound("No matching SubEquipments found.");
+            }
+            return Ok("SubEquipments updated successfully.");
+        }
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

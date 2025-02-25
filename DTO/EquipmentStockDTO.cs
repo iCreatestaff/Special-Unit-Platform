@@ -11,6 +11,7 @@ namespace sp_backend.DTO
         public int Id { get; set; }
         public string EquipmentName { get; set; } = string.Empty;
         public int Quantity { get; set; }
+        public string? Photo { get; set; }
         public List<Equipment> Equipments { get; set; } = new();
     }
 }

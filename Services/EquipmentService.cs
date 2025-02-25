@@ -103,6 +103,14 @@ namespace WeatherApi.Services
                     EquipmentStockId = equipmentStock.Id,
                     Photo = equipment.Photo,
                     SubEquipments = equipment.SubEquipments
+                        .Select(se => new SubEquipment
+                        {
+                            Name = se.Name,
+                            Cycle = se.Cycle,
+                            Status = se.Status,
+                            CreationDate = DateTime.UtcNow
+                        })
+                        .ToList() // Ensure a new list is created
                 };
 
                 _context.Equipments.Add(newEquipment);
@@ -116,6 +124,7 @@ namespace WeatherApi.Services
 
             return createdEquipments;
         }
+
 
 
 

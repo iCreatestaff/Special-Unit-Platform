@@ -17,6 +17,7 @@ namespace sp_backend.Models
 
         [Required]
         public int Quantity { get; set; }
+        public string? Photo { get; set; }
 
         public List<Equipment> Equipments { get; set; } = new();
     }

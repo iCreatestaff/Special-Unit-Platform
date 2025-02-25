@@ -23,6 +23,7 @@ namespace sp_backend.Services
                     Id = es.Id,
                     EquipmentName = es.EquipmentName,
                     Quantity = es.Quantity,
+                    Photo = es.Photo,
                     Equipments = es.Equipments
                 })
                 .ToListAsync();
@@ -36,7 +37,9 @@ namespace sp_backend.Services
                 {
                     Id = es.Id,
                     EquipmentName = es.EquipmentName,
-                    Quantity = es.Quantity
+                    Quantity = es.Quantity,
+                    Photo = es.Photo
+
                 })
                 .FirstOrDefaultAsync();
         }
@@ -46,7 +49,9 @@ namespace sp_backend.Services
             var equipmentStock = new EquipmentStock
             {
                 EquipmentName = equipmentStockDto.EquipmentName,
-                Quantity = equipmentStockDto.Quantity
+                Quantity = equipmentStockDto.Quantity,
+                Photo = equipmentStockDto.Photo
+
             };
 
             _context.EquipmentStocks.Add(equipmentStock);
@@ -60,6 +65,7 @@ namespace sp_backend.Services
 
             existing.EquipmentName = equipmentStockDto.EquipmentName;
             existing.Quantity = equipmentStockDto.Quantity;
+            existing.Photo = equipmentStockDto.Photo;
 
             return await _context.SaveChangesAsync() > 0;
         }
@@ -68,8 +74,11 @@ namespace sp_backend.Services
         {
             // Find the EquipmentStock by its ID
             var equipmentStock = await _context.EquipmentStocks
-                .Include(es => es.Equipments) // Include related Equipment objects
-                .FirstOrDefaultAsync(es => es.Id == equipmentStockId);
+     .Include(es => es.Equipments)
+         .ThenInclude(e => e.SubEquipments)
+     .AsSplitQuery() // 👈 This tells EF Core to split queries instead of using a single large query
+     .FirstOrDefaultAsync(es => es.Id == equipmentStockId);
+
 
             if (equipmentStock == null)
             {
@@ -89,22 +98,81 @@ namespace sp_backend.Services
                     equipment.Availability = updatedEquipment.Availability;
                 }
 
-                if (updatedEquipment.Photo != null) // Check if Photo is provided
+                if (!string.IsNullOrEmpty(updatedEquipment.Name)) // Check if Name is provided
+                {
+                    equipment.Name = updatedEquipment.Name;
+                    equipmentStock.EquipmentName = updatedEquipment.Name; // Also update EquipmentStock name
+                }
+
+                if (!string.IsNullOrEmpty(updatedEquipment.Photo)) // Check if Photo is provided
                 {
                     equipment.Photo = updatedEquipment.Photo;
                 }
-                if (updatedEquipment.SubEquipments != null) // Check if Photo is provided
-                {
-                    equipment.SubEquipments = updatedEquipment.SubEquipments;
-                }
 
-                // Add more fields if necessary
+                // **Replace all SubEquipments with the new ones**
+                if (updatedEquipment.SubEquipments != null)
+                {
+                    // **Step 1: Remove all existing SubEquipments**
+                    _context.SubEquipments.RemoveRange(equipment.SubEquipments);
+
+                    // **Step 2: Assign the new SubEquipments**
+                    equipment.SubEquipments = updatedEquipment.SubEquipments.Select(se => new SubEquipment
+                    {
+                        Name = se.Name,
+                        Cycle = se.Cycle,
+                        Status = se.Status,
+                        CreationDate = DateTime.UtcNow,
+                        EquipmentId = equipment.Id // Maintain the relationship
+                    }).ToList();
+                }
             }
 
             // Save changes
             await _context.SaveChangesAsync();
 
             return equipmentStock.Equipments;
+        }
+
+
+        public async Task<bool> UpdateSubEquipmentByNameAsync(int equipmentStockId, string subEquipmentName, SubEquipment updatedSubEquipment)
+        {
+            // Fetch the EquipmentStock with related Equipments and SubEquipments using Query Splitting
+            var equipmentStock = await _context.EquipmentStocks
+                .Where(es => es.Id == equipmentStockId)
+                .Include(es => es.Equipments)
+                    .ThenInclude(e => e.SubEquipments)
+                .AsSplitQuery() // ⚡️ This solves the query performance issue!
+                .FirstOrDefaultAsync();
+
+            if (equipmentStock == null || !equipmentStock.Equipments.Any())
+            {
+                return false; // No matching EquipmentStock or Equipments found
+            }
+
+            bool isUpdated = false;
+            foreach (var equipment in equipmentStock.Equipments)
+            {
+                foreach (var subEquipment in equipment.SubEquipments.Where(se => se.Name == subEquipmentName))
+                {
+                    isUpdated = true;
+
+                    if (!string.IsNullOrEmpty(updatedSubEquipment.Name))
+                        subEquipment.Name = updatedSubEquipment.Name;
+
+                    if (!string.IsNullOrEmpty(updatedSubEquipment.Cycle))
+                        subEquipment.Cycle = updatedSubEquipment.Cycle;
+
+                    if (!string.IsNullOrEmpty(updatedSubEquipment.Status))
+                        subEquipment.Status = updatedSubEquipment.Status;
+                }
+            }
+
+            if (isUpdated)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            return isUpdated;
         }
 
 
