@@ -3,6 +3,7 @@ using WeatherApi.Interfaces;
 using WeatherApi.Models;
 using WeatherApi.DTOs;
 using AutoMapper;
+using sp_backend.DTO;
 
 namespace WeatherApi.Controllers
 {
@@ -54,11 +55,46 @@ namespace WeatherApi.Controllers
         [HttpPost]
         public async Task<ActionResult<EquipmentDto>> CreateEquipment([FromBody] EquipmentDto equipmentDto)
         {
-            var equipment = _mapper.Map<Equipment>(equipmentDto);
-            var createdEquipment = await _equipmentService.CreateEquipmentAsync(equipment);
-            var createdEquipmentDto = _mapper.Map<EquipmentDto>(createdEquipment);
-            return CreatedAtAction(nameof(GetEquipment), new { id = createdEquipmentDto.Id }, createdEquipmentDto);
+            try
+            {
+                var equipment = _mapper.Map<Equipment>(equipmentDto);
+                var createdEquipment = await _equipmentService.CreateEquipmentAsync(equipment);
+                var createdEquipmentDto = _mapper.Map<EquipmentDto>(createdEquipment);
+
+                return CreatedAtAction(nameof(GetEquipment), new { id = createdEquipmentDto.Id }, createdEquipmentDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
+        [HttpPost("create-with-quantity")]
+        public async Task<ActionResult<List<EquipmentDto>>> CreateEquipmentWithQuantity(
+    [FromBody] EquipmentWithQuantityDto request)
+        {
+            if (request.Quantity <= 0)
+            {
+                return BadRequest("Quantity must be greater than zero.");
+            }
+            try
+            {
+                var equipment = _mapper.Map<Equipment>(request.Equipment);
+
+                var createdEquipments = await _equipmentService.CreateEquipmentWithQuantityAsync(equipment, request.Quantity);
+
+                var createdEquipmentsDto = _mapper.Map<List<EquipmentDto>>(createdEquipments);
+
+                return Ok(createdEquipmentsDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+
+        }
+
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult<EquipmentDto>> UpdateEquipment(int id, [FromBody] EquipmentDto equipmentDto)

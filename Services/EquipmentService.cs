@@ -76,6 +76,49 @@ namespace WeatherApi.Services
             return equipment;
         }
 
+        public async Task<List<Equipment>> CreateEquipmentWithQuantityAsync(Equipment equipment, int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("Quantity must be greater than zero.");
+            }
+
+            var equipmentStock = await _context.EquipmentStocks
+                .FirstOrDefaultAsync(es => es.EquipmentName == equipment.Name);
+
+            if (equipmentStock == null)
+            {
+                throw new Exception("No matching EquipmentStock found for this equipment.");
+            }
+
+            var createdEquipments = new List<Equipment>();
+
+            for (int i = 0; i < quantity; i++)
+            {
+                var newEquipment = new Equipment
+                {
+                    Name = equipment.Name,
+                    Type = equipment.Type,
+                    Availability = equipment.Availability,
+                    EquipmentStockId = equipmentStock.Id,
+                    Photo = equipment.Photo,
+                    SubEquipments = equipment.SubEquipments
+                };
+
+                _context.Equipments.Add(newEquipment);
+                createdEquipments.Add(newEquipment);
+            }
+
+            // Update stock quantity once after all insertions
+            equipmentStock.Quantity += quantity;
+
+            await _context.SaveChangesAsync();
+
+            return createdEquipments;
+        }
+
+
+
 
         public async Task<Equipment?> UpdateEquipmentAsync(int id, Equipment equipment)
         {

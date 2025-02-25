@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using sp_backend.DTO;
 using sp_backend.Models;
 using WeatherApi;
+using WeatherApi.Models;
 
 namespace sp_backend.Services
 {
@@ -62,6 +63,51 @@ namespace sp_backend.Services
 
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<List<Equipment>> UpdateEquipmentsByEquipmentStockIdAsync(int equipmentStockId, Equipment updatedEquipment)
+        {
+            // Find the EquipmentStock by its ID
+            var equipmentStock = await _context.EquipmentStocks
+                .Include(es => es.Equipments) // Include related Equipment objects
+                .FirstOrDefaultAsync(es => es.Id == equipmentStockId);
+
+            if (equipmentStock == null)
+            {
+                throw new Exception("EquipmentStock not found.");
+            }
+
+            // Update only non-null values in Equipments
+            foreach (var equipment in equipmentStock.Equipments)
+            {
+                if (!string.IsNullOrEmpty(updatedEquipment.Type))
+                {
+                    equipment.Type = updatedEquipment.Type;
+                }
+
+                if (updatedEquipment.Availability.HasValue) // Check for nullable boolean
+                {
+                    equipment.Availability = updatedEquipment.Availability;
+                }
+
+                if (updatedEquipment.Photo != null) // Check if Photo is provided
+                {
+                    equipment.Photo = updatedEquipment.Photo;
+                }
+                if (updatedEquipment.SubEquipments != null) // Check if Photo is provided
+                {
+                    equipment.SubEquipments = updatedEquipment.SubEquipments;
+                }
+
+                // Add more fields if necessary
+            }
+
+            // Save changes
+            await _context.SaveChangesAsync();
+
+            return equipmentStock.Equipments;
+        }
+
+
 
         public async Task<bool> DeleteAsync(int id)
         {

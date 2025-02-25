@@ -1,8 +1,11 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using sp_backend.DTO;
 using sp_backend.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WeatherApi.DTOs;
+using WeatherApi.Models;
 
 namespace sp_backend.Controllers
 {
@@ -11,10 +14,12 @@ namespace sp_backend.Controllers
     public class EquipmentStockController : ControllerBase
     {
         private readonly IEquipmentStockService _equipmentStockService;
+        private readonly IMapper _mapper;
 
-        public EquipmentStockController(IEquipmentStockService equipmentStockService)
+        public EquipmentStockController(IEquipmentStockService equipmentStockService, IMapper mapper)
         {
             _equipmentStockService = equipmentStockService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -48,6 +53,25 @@ namespace sp_backend.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("updateAllEquipment/{equipmentStockId}")]
+        public async Task<ActionResult<List<EquipmentDto>>> UpdateEquipmentsByEquipmentStockId(
+    int equipmentStockId, [FromBody] EquipmentDto updatedEquipmentDto)
+        {
+            try
+            {
+                var updatedEquipment = _mapper.Map<Equipment>(updatedEquipmentDto);
+                var updatedEquipments = await _equipmentStockService.UpdateEquipmentsByEquipmentStockIdAsync(equipmentStockId, updatedEquipment);
+
+                var updatedEquipmentsDto = _mapper.Map<List<EquipmentDto>>(updatedEquipments);
+                return Ok(updatedEquipmentsDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
