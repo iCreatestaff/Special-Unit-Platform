@@ -11,6 +11,7 @@ namespace WeatherApi.DTOs
 
         public string? Photo { get; set; }
 
+        public int EquipmentStockId { get; set; }
         public List<SubEquipmentDto>? SubEquipments { get; set; }
 
     }

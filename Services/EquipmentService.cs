@@ -36,6 +36,7 @@ namespace WeatherApi.Services
                     Availability = e.Availability,
                     Type = e.Type,
                     Photo = e.Photo,
+                    EquipmentStockId = e.EquipmentStockId,
                     SubEquipments = e.SubEquipments.Select(se => new SubEquipmentDto
                     {
                         Id = se.Id,
@@ -140,6 +141,7 @@ namespace WeatherApi.Services
             existingEquipment.Name = equipment.Name ?? existingEquipment.Name;
             existingEquipment.Availability = equipment.Availability ?? existingEquipment.Availability;
             existingEquipment.Type = equipment.Type ?? existingEquipment.Type;
+            existingEquipment.Photo = equipment.Photo ?? existingEquipment.Photo;
 
             await _context.SaveChangesAsync();
             return existingEquipment;

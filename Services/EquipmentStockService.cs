@@ -60,15 +60,29 @@ namespace sp_backend.Services
 
         public async Task<bool> UpdateAsync(int id, EquipmentStockDTO equipmentStockDto)
         {
-            var existing = await _context.EquipmentStocks.FindAsync(id);
+            var existing = await _context.EquipmentStocks
+                .Where(es => es.Id == id)
+                .Include(es => es.Equipments) // Include Equipments in one query
+                .FirstOrDefaultAsync();
+
             if (existing == null) return false;
 
             existing.EquipmentName = equipmentStockDto.EquipmentName;
             existing.Quantity = equipmentStockDto.Quantity;
             existing.Photo = equipmentStockDto.Photo;
 
+            // ✅ Only update Equipments' Name if EquipmentName is modified
+            if (!string.IsNullOrEmpty(equipmentStockDto.EquipmentName))
+            {
+                foreach (var equipment in existing.Equipments)
+                {
+                    equipment.Name = equipmentStockDto.EquipmentName;
+                }
+            }
+
             return await _context.SaveChangesAsync() > 0;
         }
+
 
         public async Task<List<Equipment>> UpdateEquipmentsByEquipmentStockIdAsync(int equipmentStockId, Equipment updatedEquipment)
         {
