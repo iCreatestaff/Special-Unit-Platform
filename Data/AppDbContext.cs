@@ -16,6 +16,8 @@ namespace WeatherApi
         public DbSet<AccountMission> AccountMissions { get; set; }  // Explicit many-to-many table
         public DbSet<EquipmentMission> EquipmentMissions { get; set; }  // Explicit many-to-many table
         public DbSet<EquipmentStock> EquipmentStocks { get; set; }
+        public DbSet<Maintenance> Maintenances { get; set; }
+        public DbSet<Item> Items { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -83,10 +85,28 @@ namespace WeatherApi
                 .HasForeignKey(em => em.MissionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+            // One-to-Many: One SubEquipment has multiple Maintenance records
+
+            modelBuilder.Entity<Maintenance>()
+                .HasMany(m => m.Items)
+                .WithOne(i => i.Maintenance)
+                .HasForeignKey(i => i.MaintenanceId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete items if maintenance is deleted
+
+            // One-to-Many: SubEquipment -> Maintenances
+            modelBuilder.Entity<SubEquipment>()
+                .HasMany(se => se.Maintenances)
+                .WithOne(m => m.SubEquipment)
+                .HasForeignKey(m => m.SubEquipmentId)
+                .OnDelete(DeleteBehavior.SetNull); // Set SubEquipmentId to NULL if subequipment is deleted
+
             // Ensure AssignedDate in AccountMission has default value (optional)
             modelBuilder.Entity<AccountMission>()
                 .Property(am => am.AssignedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+
 
             base.OnModelCreating(modelBuilder);
         }

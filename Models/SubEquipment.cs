@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using sp_backend.Models;
 
 namespace WeatherApi.Models
 {
@@ -18,5 +19,6 @@ namespace WeatherApi.Models
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public Equipment? Equipment { get; set; }
         public List<Nonavailability> Nonavailabilities { get; set; } = new();
+        public List<Maintenance> Maintenances { get; set; } = new();
     }
 }

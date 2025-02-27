@@ -25,27 +25,18 @@ namespace WeatherApi.Services
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<List<EquipmentDto>> GetAvailableEquipmentAsync()
+        public async Task<List<Equipment>> GetAvailableEquipmentAsync(DateTime d1, DateTime d2)
         {
             return await _context.Equipments
-                .Where(e => (bool)e.Availability) // Fetch only available equipment
-                .Select(e => new EquipmentDto
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    Availability = e.Availability,
-                    Type = e.Type,
-                    Photo = e.Photo,
-                    EquipmentStockId = e.EquipmentStockId,
-                    SubEquipments = e.SubEquipments.Select(se => new SubEquipmentDto
-                    {
-                        Id = se.Id,
-                        Name = se.Name,
-                        Status = se.Status
-                    }).ToList()
-                })
+                .Where(e => !e.Nonavailabilities.Any(n =>
+                    (d1 >= n.Date1 && d1 <= n.Date2) ||  // d1 falls within a non-availability range
+                    (d2 >= n.Date1 && d2 <= n.Date2) ||  // d2 falls within a non-availability range
+                    (n.Date1 >= d1 && n.Date2 <= d2)     // non-availability is fully within the requested period
+                ))
                 .ToListAsync();
         }
+
+
 
 
         public async Task<Equipment> CreateEquipmentAsync(Equipment equipment)

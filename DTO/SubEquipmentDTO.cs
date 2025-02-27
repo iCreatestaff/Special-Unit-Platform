@@ -1,3 +1,5 @@
+using sp_backend.Models;
+
 namespace WeatherApi.DTOs
 {
     public class SubEquipmentDto
@@ -8,5 +10,6 @@ namespace WeatherApi.DTOs
         public string? Status { get; set; }
         public DateTime CreationDate { get; set; }
         public int? EquipmentId { get; set; } // The foreign key
+        public List<Maintenance> Maintenances { get; set; } = new();
     }
 }

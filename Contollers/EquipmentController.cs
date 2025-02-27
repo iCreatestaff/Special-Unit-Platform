@@ -27,16 +27,16 @@ namespace WeatherApi.Controllers
             var equipmentDtos = _mapper.Map<IEnumerable<EquipmentDto>>(equipments);
             return Ok(equipmentDtos);
         }
-        [HttpGet("available")]
-        public async Task<IActionResult> GetAvailableEquipment()
-        {
-            var availableEquipment = await _equipmentService.GetAvailableEquipmentAsync();
 
-            if (availableEquipment == null || availableEquipment.Count == 0)
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailableEquipment([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            if (startDate > endDate)
             {
-                return NotFound(new { Message = "No available equipment found." });
+                return BadRequest("Invalid date range.");
             }
 
+            var availableEquipment = await _equipmentService.GetAvailableEquipmentAsync(startDate, endDate);
             return Ok(availableEquipment);
         }
 

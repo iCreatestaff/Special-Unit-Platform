@@ -13,6 +13,6 @@ namespace WeatherApi.Interfaces
         Task<List<Equipment>> CreateEquipmentWithQuantityAsync(Equipment equipment, int quantity);
         Task<Equipment?> UpdateEquipmentAsync(int id, Equipment equipment);
         Task<bool> DeleteEquipmentAsync(int id);
-        Task<List<EquipmentDto>> GetAvailableEquipmentAsync();
+        Task<List<Equipment>> GetAvailableEquipmentAsync(DateTime d1, DateTime d2);
     }
 }

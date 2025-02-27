@@ -235,6 +235,73 @@ namespace sp_back.Migrations
                     b.ToTable("EquipmentStocks");
                 });
 
+            modelBuilder.Entity("sp_backend.Models.Item", b =>
+                {
+                    b.Property<int>("Item_number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Item_number"));
+
+                    b.Property<DateTime>("End_of_repair")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaintenanceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order_number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Packing_quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Packing_unit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Product_group")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Item_number");
+
+                    b.HasIndex("MaintenanceId");
+
+                    b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.Maintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("MaintenanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubEquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubEquipmentId");
+
+                    b.ToTable("Maintenances");
+                });
+
             modelBuilder.Entity("sp_backend.Models.Mission", b =>
                 {
                     b.Property<int>("Id")
@@ -366,6 +433,27 @@ namespace sp_back.Migrations
                     b.Navigation("Mission");
                 });
 
+            modelBuilder.Entity("sp_backend.Models.Item", b =>
+                {
+                    b.HasOne("sp_backend.Models.Maintenance", "Maintenance")
+                        .WithMany("Items")
+                        .HasForeignKey("MaintenanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Maintenance");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.Maintenance", b =>
+                {
+                    b.HasOne("WeatherApi.Models.SubEquipment", "SubEquipment")
+                        .WithMany("Maintenances")
+                        .HasForeignKey("SubEquipmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("SubEquipment");
+                });
+
             modelBuilder.Entity("Account", b =>
                 {
                     b.Navigation("AccountMissions");
@@ -384,12 +472,19 @@ namespace sp_back.Migrations
 
             modelBuilder.Entity("WeatherApi.Models.SubEquipment", b =>
                 {
+                    b.Navigation("Maintenances");
+
                     b.Navigation("Nonavailabilities");
                 });
 
             modelBuilder.Entity("sp_backend.Models.EquipmentStock", b =>
                 {
                     b.Navigation("Equipments");
+                });
+
+            modelBuilder.Entity("sp_backend.Models.Maintenance", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

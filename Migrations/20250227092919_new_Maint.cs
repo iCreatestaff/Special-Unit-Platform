@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace sp_back.Migrations
 {
     /// <inheritdoc />
-    public partial class foreignkey : Migration
+    public partial class new_Maint : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,7 +40,8 @@ namespace sp_back.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EquipmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -164,6 +165,29 @@ namespace sp_back.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Maintenances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaintenanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SubEquipmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Maintenances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Maintenances_SubEquipments_SubEquipmentId",
+                        column: x => x.SubEquipmentId,
+                        principalTable: "SubEquipments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Nonavailabilities",
                 columns: table => new
                 {
@@ -204,6 +228,31 @@ namespace sp_back.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    Item_number = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order_number = table.Column<int>(type: "int", nullable: false),
+                    Product_group = table.Column<int>(type: "int", nullable: false),
+                    Packing_quantity = table.Column<int>(type: "int", nullable: false),
+                    Packing_unit = table.Column<int>(type: "int", nullable: false),
+                    End_of_repair = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaintenanceId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.Item_number);
+                    table.ForeignKey(
+                        name: "FK_Items_Maintenances_MaintenanceId",
+                        column: x => x.MaintenanceId,
+                        principalTable: "Maintenances",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AccountMissions_MissionId",
                 table: "AccountMissions",
@@ -224,6 +273,16 @@ namespace sp_back.Migrations
                 name: "IX_Equipments_EquipmentStockId",
                 table: "Equipments",
                 column: "EquipmentStockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_MaintenanceId",
+                table: "Items",
+                column: "MaintenanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Maintenances_SubEquipmentId",
+                table: "Maintenances",
+                column: "SubEquipmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Nonavailabilities_AccountId",
@@ -261,7 +320,13 @@ namespace sp_back.Migrations
                 name: "EquipmentMissions");
 
             migrationBuilder.DropTable(
+                name: "Items");
+
+            migrationBuilder.DropTable(
                 name: "Nonavailabilities");
+
+            migrationBuilder.DropTable(
+                name: "Maintenances");
 
             migrationBuilder.DropTable(
                 name: "Accounts");
