@@ -9,7 +9,7 @@ namespace sp_backend.Interfaces
         Task<bool> CreateAccountAsync(Account account);
         Task<Account?> GetAccountByIdAsync(int id);
         Task<AccountDTO> GetByUsernameAsync(string username);
-        Task<List<Account>> GetAllAccountsAsync();
+        Task<List<AccountResponseDTO>> GetAllAccountsAsync();
         Task<List<AccountDTO>> GetAccountsByTypeAsync(string type);
         Task<List<AccountDTO>> GetAccountsByRoleAsync(string role);
         Task<bool> UpdateAccountAsync(int id, Account account);

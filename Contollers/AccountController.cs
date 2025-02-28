@@ -56,11 +56,10 @@ public class AccountController : ControllerBase
 
     // [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet("all")]
-    public async Task<ActionResult<List<AccountDTO>>> GetAllAccounts()
+    public async Task<IActionResult> GetAllAccounts()
     {
         var accounts = await _accountService.GetAllAccountsAsync();
-        var accountDtos = accounts.Select(a => a.ToDto()).ToList();
-        return Ok(accountDtos);
+        return Ok(accounts);
     }
 
     [HttpGet("available")]

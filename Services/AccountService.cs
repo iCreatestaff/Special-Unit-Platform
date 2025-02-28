@@ -105,11 +105,12 @@ public class AccountService : IAccountService
         return _mapper.Map<AccountDTO>(account);
     }
 
-    public async Task<List<Account>> GetAllAccountsAsync()
+    public async Task<List<AccountResponseDTO>> GetAllAccountsAsync()
     {
-        // Fetch all accounts
-        return await _context.Accounts.ToListAsync();
+        var accounts = await _context.Accounts.ToListAsync();
+        return _mapper.Map<List<AccountResponseDTO>>(accounts);
     }
+
 
     public async Task<bool> UpdateAccountAsync(int id, Account account)
     {

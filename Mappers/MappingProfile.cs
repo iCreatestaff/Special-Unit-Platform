@@ -23,6 +23,7 @@ namespace WeatherApi
 
             // Map AccountDTO -> Account
             CreateMap<AccountDTO, Account>();
+            CreateMap<Account, AccountResponseDTO>().ReverseMap();
             CreateMap<Maintenance, MaintenanceDTO>()
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
 
