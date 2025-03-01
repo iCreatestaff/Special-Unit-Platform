@@ -2,12 +2,13 @@ using WeatherApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WeatherApi.DTOs;
+using sp_backend.DTO;
 
 namespace WeatherApi.Interfaces
 {
     public interface IEquipmentService
     {
-        Task<IEnumerable<Equipment>> GetAllEquipmentsAsync();
+        Task<List<EquipmentResponseDTO>> GetAllEquipmentsAsync();
         Task<Equipment?> GetEquipmentByIdAsync(int id);
         Task<Equipment> CreateEquipmentAsync(Equipment equipment);
         Task<List<Equipment>> CreateEquipmentWithQuantityAsync(Equipment equipment, int quantity);

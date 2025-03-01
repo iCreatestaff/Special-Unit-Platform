@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using sp_backend.DTO;
 using sp_backend.Models;
 
 namespace WeatherApi.DTOs
@@ -10,6 +12,6 @@ namespace WeatherApi.DTOs
         public string? Status { get; set; }
         public DateTime CreationDate { get; set; }
         public int? EquipmentId { get; set; } // The foreign key
-        public List<Maintenance> Maintenances { get; set; } = new();
+        public List<MaintenanceDTO> Maintenances { get; set; } = new();
     }
 }

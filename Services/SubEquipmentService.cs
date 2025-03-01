@@ -1,6 +1,8 @@
 using WeatherApi.Interfaces;
 using WeatherApi.Models;
 using Microsoft.EntityFrameworkCore;
+using WeatherApi.DTOs;
+using sp_backend.DTO;
 
 namespace WeatherApi.Services
 {
@@ -13,16 +15,55 @@ namespace WeatherApi.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<SubEquipment>> GetAllSubEquipmentsAsync()
+        public async Task<IEnumerable<SubEquipmentDto>> GetAllSubEquipmentsAsync()
         {
-            return await _context.SubEquipments.Include(s => s.Equipment).ToListAsync();
+            var subEquipments = await _context.SubEquipments
+                .Include(s => s.Equipment)
+                .Include(s => s.Maintenances)
+                .ToListAsync();
+
+            return subEquipments.Select(s => new SubEquipmentDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Cycle = s.Cycle,
+                Status = s.Status,
+                CreationDate = s.CreationDate,
+                EquipmentId = s.Equipment?.Id,
+                Maintenances = s.Maintenances.Select(m => new MaintenanceDTO
+                {
+                    Id = m.Id,
+                    Description = m.Description,
+                }).ToList()
+            }).ToList();
         }
 
-        public async Task<SubEquipment?> GetSubEquipmentByIdAsync(int id)
+        public async Task<SubEquipmentDto?> GetSubEquipmentByIdAsync(int id)
         {
-            return await _context.SubEquipments.Include(s => s.Equipment)
+            var subEquipment = await _context.SubEquipments
+                .Include(s => s.Equipment)
+                .Include(s => s.Maintenances)
                 .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (subEquipment == null) return null;
+
+            return new SubEquipmentDto
+            {
+                Id = subEquipment.Id,
+                Name = subEquipment.Name,
+                Cycle = subEquipment.Cycle,
+                Status = subEquipment.Status,
+                CreationDate = subEquipment.CreationDate,
+                EquipmentId = subEquipment.Equipment?.Id,
+                Maintenances = subEquipment.Maintenances.Select(m => new MaintenanceDTO
+                {
+                    Id = m.Id,
+                    Description = m.Description
+                }).ToList()
+            };
         }
+
+
 
         public async Task<SubEquipment> CreateSubEquipmentAsync(SubEquipment subEquipment)
         {

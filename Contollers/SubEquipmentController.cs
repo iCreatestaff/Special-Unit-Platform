@@ -18,13 +18,11 @@ namespace WeatherApi.Controllers
             _subEquipmentService = subEquipmentService;
             _mapper = mapper;
         }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubEquipmentDto>>> GetSubEquipments()
         {
             var subEquipments = await _subEquipmentService.GetAllSubEquipmentsAsync();
-            var subEquipmentDtos = _mapper.Map<IEnumerable<SubEquipmentDto>>(subEquipments);
-            return Ok(subEquipmentDtos);
+            return Ok(subEquipments);
         }
 
         [HttpGet("{id}")]
@@ -35,8 +33,7 @@ namespace WeatherApi.Controllers
             {
                 return NotFound();
             }
-            var subEquipmentDto = _mapper.Map<SubEquipmentDto>(subEquipment);
-            return Ok(subEquipmentDto);
+            return Ok(subEquipment);
         }
 
         [HttpPost]

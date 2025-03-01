@@ -19,13 +19,11 @@ namespace WeatherApi.Controllers
             _equipmentService = equipmentService;
             _mapper = mapper;
         }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentDto>>> GetEquipments()
+        public async Task<ActionResult<List<EquipmentResponseDTO>>> GetAllEquipments()
         {
             var equipments = await _equipmentService.GetAllEquipmentsAsync();
-            var equipmentDtos = _mapper.Map<IEnumerable<EquipmentDto>>(equipments);
-            return Ok(equipmentDtos);
+            return Ok(equipments);
         }
 
         [HttpGet("available")]

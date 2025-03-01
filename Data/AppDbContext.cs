@@ -99,7 +99,7 @@ namespace WeatherApi
                 .HasMany(se => se.Maintenances)
                 .WithOne(m => m.SubEquipment)
                 .HasForeignKey(m => m.SubEquipmentId)
-                .OnDelete(DeleteBehavior.SetNull); // Set SubEquipmentId to NULL if subequipment is deleted
+                .OnDelete(DeleteBehavior.Cascade); // Set SubEquipmentId to NULL if subequipment is deleted
 
             // Ensure AssignedDate in AccountMission has default value (optional)
             modelBuilder.Entity<AccountMission>()

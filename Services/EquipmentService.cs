@@ -2,21 +2,29 @@ using WeatherApi.Interfaces;
 using WeatherApi.Models;
 using Microsoft.EntityFrameworkCore;
 using WeatherApi.DTOs;
+using sp_backend.DTO;
+using AutoMapper;
 
 namespace WeatherApi.Services
 {
     public class EquipmentService : IEquipmentService
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public EquipmentService(AppDbContext context)
+        public EquipmentService(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Equipment>> GetAllEquipmentsAsync()
+        public async Task<List<EquipmentResponseDTO>> GetAllEquipmentsAsync()
         {
-            return await _context.Equipments.Include(e => e.SubEquipments).ToListAsync();
+            var equipments = await _context.Equipments
+                .Include(e => e.SubEquipments)
+                .ToListAsync();
+
+            return _mapper.Map<List<EquipmentResponseDTO>>(equipments);
         }
 
         public async Task<Equipment?> GetEquipmentByIdAsync(int id)
