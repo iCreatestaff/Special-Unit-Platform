@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WeatherApi.DTOs;
 using sp_backend.DTO;
 using AutoMapper;
+using sp_backend.Models;
 
 namespace WeatherApi.Services
 {
@@ -46,7 +47,6 @@ namespace WeatherApi.Services
 
 
 
-
         public async Task<Equipment> CreateEquipmentAsync(Equipment equipment)
         {
             // Find the corresponding EquipmentStock by EquipmentName
@@ -60,21 +60,46 @@ namespace WeatherApi.Services
 
                 // Assign the EquipmentStockId to the new Equipment
                 equipment.EquipmentStockId = equipmentStock.Id;
-
-                // Add the equipment to the list of equipments
-                equipmentStock.Equipments.Add(equipment);
             }
             else
             {
-                // Optionally, throw an error or create a new EquipmentStock
                 throw new Exception("No matching EquipmentStock found for this equipment.");
             }
 
             _context.Equipments.Add(equipment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save Equipment first to get an ID
+
+            var maintenancesToAdd = new List<Maintenance>();
+
+            foreach (var subEquipment in equipment.SubEquipments)
+            {
+                subEquipment.EquipmentId = equipment.Id; // Link it to the Equipment
+                subEquipment.Id = 0; // Ensure Id is NOT explicitly set (EF will generate it)
+                _context.SubEquipments.Add(subEquipment);
+                await _context.SaveChangesAsync(); // Save each SubEquipment to get an ID
+
+                // Compute Maintenance Date
+                DateTime scheduledDate = ComputeMaintenanceDate(subEquipment.Cycle);
+
+                // Create Maintenance for the SubEquipment
+                var maintenance = new Maintenance
+                {
+                    Description = $"Initial for {subEquipment.Name}",
+                    MaintenanceDate = scheduledDate,
+                    SubEquipmentId = subEquipment.Id
+                };
+
+                maintenancesToAdd.Add(maintenance);
+            }
+
+            // Add all maintenances in one go for better efficiency
+            await _context.Maintenances.AddRangeAsync(maintenancesToAdd);
+            await _context.SaveChangesAsync(); // Save all Maintenances
 
             return equipment;
         }
+
+
 
         public async Task<List<Equipment>> CreateEquipmentWithQuantityAsync(Equipment equipment, int quantity)
         {
@@ -172,6 +197,38 @@ namespace WeatherApi.Services
             _context.Equipments.Remove(equipment);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        private DateTime ComputeMaintenanceDate(string? cycle)
+        {
+            if (string.IsNullOrWhiteSpace(cycle))
+            {
+                return DateTime.UtcNow; // Default to today if cycle is invalid
+            }
+
+            var parts = cycle.Split('-');
+            if (parts.Length != 2 || !int.TryParse(parts[0], out int number))
+            {
+                return DateTime.UtcNow; // Default to today if format is incorrect
+            }
+
+            string unit = parts[1].ToLower();
+            DateTime scheduledDate = DateTime.UtcNow;
+
+            if (unit.Contains("month"))
+            {
+                scheduledDate = scheduledDate.AddMonths(number);
+            }
+            else if (unit.Contains("year"))
+            {
+                scheduledDate = scheduledDate.AddYears(number);
+            }
+            else if (unit.Contains("day"))
+            {
+                scheduledDate = scheduledDate.AddDays(number);
+            }
+
+            return scheduledDate;
         }
 
     }

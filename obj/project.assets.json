@@ -5100,11 +5100,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/youssefkessentini/Desktop/backend/sp_backend/sp_back.csproj",
+      "projectUniqueName": "/Users/youssefkessentini/Desktop/backend/sp_backend_March4/sp_back.csproj",
       "projectName": "sp_back",
-      "projectPath": "/Users/youssefkessentini/Desktop/backend/sp_backend/sp_back.csproj",
+      "projectPath": "/Users/youssefkessentini/Desktop/backend/sp_backend_March4/sp_back.csproj",
       "packagesPath": "/Users/youssefkessentini/.nuget/packages/",
-      "outputPath": "/Users/youssefkessentini/Desktop/backend/sp_backend/obj/",
+      "outputPath": "/Users/youssefkessentini/Desktop/backend/sp_backend_March4/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/youssefkessentini/.nuget/NuGet/NuGet.Config"

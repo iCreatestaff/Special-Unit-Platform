@@ -1,20 +1,17 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Globalization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using AutoMapper;
-using WeatherApi; // Ensure correct namespace
-using WeatherApi.Interfaces; // For service interfaces
-using WeatherApi.Services;
+using sp_backend.DTO;
 using sp_backend.Interfaces;
-using sp_backend.Services; // For service implementations
+using sp_backend.Services;
+using System.Text;
+using WeatherApi; // Ensure correct namespace
+using WeatherApi.Interfaces;
+using WeatherApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-/*TimeZoneInfo localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris"); // Change to your timezone
-TimeZoneInfo.Local = localTimeZone; */
+builder.WebHost.UseUrls("http://0.0.0.0:5038");
 
 // 🔹 Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -27,22 +24,55 @@ builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<ISubEquipmentService, SubEquipmentService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<INonavailabilityService, NonavailabilityService>(); // Register NonAvailability service
-builder.Services.AddScoped<IMissionService, MissionService>(); // ✅ Register Mission Service
+builder.Services.AddScoped<INonavailabilityService, NonavailabilityService>();
+builder.Services.AddScoped<IMissionService, MissionService>();
 builder.Services.AddScoped<IEquipmentStockService, EquipmentStockService>();
 builder.Services.AddHostedService<MissionStatusUpdater>();
 builder.Services.AddHostedService<EquipmentStatusUpdater>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
+builder.Services.AddScoped<AuthService>(); // Register AuthService
 
+// 🔹 Configure JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
 
-// 🔹 Register Password Hasher
-builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
+// Validate JWT key length (to prevent HS256 key size error)
+if (string.IsNullOrEmpty(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
+{
+    throw new InvalidOperationException("JWT Key must be at least 32 bytes (256 bits) for HS256.");
+}
 
-// 🔹 Add Controllers
-builder.Services.AddControllers();  // Ensure controllers are added
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("Token validated: " + context.Principal?.Identity?.Name);
+                return Task.CompletedTask;
+            }
+        };
+    });
 
-// 🔹 Enable CORS (for frontend communication)
+// 🔹 Enable CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -51,17 +81,44 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader());
 });
 
-// 🔹 Add Swagger
+// 🔹 Add Controllers
+builder.Services.AddControllers();
+
+// 🔹 Add Swagger with JWT Support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Special Units Platform API", Version = "v1" });
+
+    // Add JWT Authentication support
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
-// Build and run the app
 var app = builder.Build();
 
-// 🔹 Enable Swagger Middleware
+// 🔹 Enable Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -71,12 +128,34 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// 🔹 Enable Middleware
 app.UseRouting();
 app.UseCors("AllowAll");
-
-app.UseAuthorization(); // 
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
+
+// 🔹 Seed SuperAdmin
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var authService = scope.ServiceProvider.GetRequiredService<AuthService>();
+
+    dbContext.Database.EnsureCreated();
+
+    if (!dbContext.Accounts.Any(a => a.Role == "SuperAdmin"))
+    {
+        var superAdminDto = new AccountDTO
+        {
+            Username = "superadmin",
+            Name = "Super Admin",
+            Type = "Admin",
+            Badge = "SA001",
+            Password = "SuperPass123!",
+            Role = "SuperAdmin"
+        };
+        dbContext.Accounts.Add(superAdminDto.ToEntity(authService.HashPassword(superAdminDto.Password)));
+        await dbContext.SaveChangesAsync();
+    }
+}
 
 app.Run();

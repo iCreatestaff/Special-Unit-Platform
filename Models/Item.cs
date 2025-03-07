@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace sp_backend.Models
@@ -18,6 +19,7 @@ namespace sp_backend.Models
         public int Packing_unit { get; set; }
         public DateTime End_of_repair { get; set; }
         public int MaintenanceId { get; set; }
+        [JsonIgnore]
         public Maintenance? Maintenance { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using WeatherApi.Models;
 using Microsoft.EntityFrameworkCore;
 using WeatherApi.DTOs;
 using sp_backend.DTO;
+using sp_backend.Models;
 
 namespace WeatherApi.Services
 {
@@ -34,6 +35,10 @@ namespace WeatherApi.Services
                 {
                     Id = m.Id,
                     Description = m.Description,
+                    Type = m.Type,
+                    Name = m.Name,
+                    SubEquipmentId = m.SubEquipmentId,
+                    Items = m.Items
                 }).ToList()
             }).ToList();
         }
@@ -58,7 +63,10 @@ namespace WeatherApi.Services
                 Maintenances = subEquipment.Maintenances.Select(m => new MaintenanceDTO
                 {
                     Id = m.Id,
-                    Description = m.Description
+                    Description = m.Description,
+                    Type = m.Type,
+                    Name = m.Name,
+                    SubEquipmentId = m.SubEquipmentId
                 }).ToList()
             };
         }
@@ -70,17 +78,32 @@ namespace WeatherApi.Services
             _context.SubEquipments.Add(subEquipment);
             await _context.SaveChangesAsync(); // Save first to get a valid ID
 
+            // Compute Maintenance Date
+            DateTime scheduledDate = ComputeMaintenanceDate(subEquipment.Cycle);
+
+            // Create Maintenance
+            var maintenance = new Maintenance
+            {
+                Description = $"Initial maintenance for {subEquipment.Name}",
+                MaintenanceDate = scheduledDate,
+                SubEquipmentId = subEquipment.Id
+            };
+
+            _context.Maintenances.Add(maintenance); // Attach maintenance to subEquipment
+
             // Find the related Equipment
             var equipment = await _context.Equipments.FindAsync(subEquipment.EquipmentId);
             if (equipment != null && subEquipment.Status != "bon_etat")
             {
-                // If the new SubEquipment is not "Normal", mark Equipment as unavailable
+                // If the new SubEquipment is not in "bon_etat", mark Equipment as unavailable
                 equipment.Availability = false;
-                await _context.SaveChangesAsync(); // Save Equipment changes
             }
+
+            await _context.SaveChangesAsync(); // Save all changes
 
             return subEquipment;
         }
+
 
 
         public async Task<SubEquipment?> UpdateSubEquipmentAsync(int id, SubEquipment subEquipment)
@@ -147,6 +170,38 @@ namespace WeatherApi.Services
             _context.SubEquipments.Remove(subEquipment);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        private DateTime ComputeMaintenanceDate(string? cycle)
+        {
+            if (string.IsNullOrWhiteSpace(cycle))
+            {
+                return DateTime.UtcNow; // Default to today if cycle is invalid
+            }
+
+            var parts = cycle.Split('-');
+            if (parts.Length != 2 || !int.TryParse(parts[0], out int number))
+            {
+                return DateTime.UtcNow; // Default to today if format is incorrect
+            }
+
+            string unit = parts[1].ToLower();
+            DateTime scheduledDate = DateTime.UtcNow;
+
+            if (unit.Contains("month"))
+            {
+                scheduledDate = scheduledDate.AddMonths(number);
+            }
+            else if (unit.Contains("year"))
+            {
+                scheduledDate = scheduledDate.AddYears(number);
+            }
+            else if (unit.Contains("day"))
+            {
+                scheduledDate = scheduledDate.AddDays(number);
+            }
+
+            return scheduledDate;
         }
     }
 }

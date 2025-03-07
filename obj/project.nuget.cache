@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aCsBqeHrl+g=",
+  "dgSpecHash": "8v9yTCoDzL0=",
   "success": true,
-  "projectFilePath": "/Users/youssefkessentini/Desktop/backend/sp_backend/sp_back.csproj",
+  "projectFilePath": "/Users/youssefkessentini/Desktop/backend/sp_backend_March4/sp_back.csproj",
   "expectedPackageFiles": [
     "/Users/youssefkessentini/.nuget/packages/automapper/12.0.1/automapper.12.0.1.nupkg.sha512",
     "/Users/youssefkessentini/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

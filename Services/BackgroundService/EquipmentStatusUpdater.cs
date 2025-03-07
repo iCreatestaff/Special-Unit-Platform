@@ -38,18 +38,24 @@ namespace sp_backend.Services
                         var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _localTimeZone);
                         _logger.LogInformation($"Current Local Time: {now}");
 
-                        // Get all equipment
-                        var allEquipment = await dbContext.Equipments.ToListAsync(stoppingToken);
+                        // Get all equipment with sub-equipment included
+                        var allEquipment = await dbContext.Equipments
+                            .Include(e => e.SubEquipments) // Load sub-equipment
+                            .ToListAsync(stoppingToken);
 
                         foreach (var equipment in allEquipment)
                         {
                             _logger.LogInformation($"Checking Equipment ID {equipment.Id}");
 
-                            // Check if the equipment is currently in a nonavailability period
-                            bool isUnavailable = await dbContext.Nonavailabilities
+                            // Check if the equipment is in a nonavailability period
+                            bool isUnavailableDueToNonavailability = await dbContext.Nonavailabilities
                                 .AnyAsync(n => n.EquipmentId == equipment.Id && n.Date1 <= now && n.Date2 >= now, stoppingToken);
 
-                            bool newAvailability = !isUnavailable;
+                            // Check if any sub-equipment is 'en_panne'
+                            bool isUnavailableDueToSubEquipment = equipment.SubEquipments
+                                .Any(sub => sub.Status.ToLower() == "en_panne");
+
+                            bool newAvailability = !(isUnavailableDueToNonavailability || isUnavailableDueToSubEquipment);
 
                             if (equipment.Availability != newAvailability) // Update only if it changes
                             {

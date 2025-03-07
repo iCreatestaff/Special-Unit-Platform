@@ -1,3 +1,5 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using sp_backend.DTO;
 using sp_backend.Models;
@@ -9,23 +11,20 @@ namespace sp_backend.Services
     public class EquipmentStockService : IEquipmentStockService
     {
         private readonly WeatherApi.AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public EquipmentStockService(AppDbContext context)
+        public EquipmentStockService(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<EquipmentStockDTO>> GetAllAsync()
         {
             return await _context.EquipmentStocks
-                .Select(es => new EquipmentStockDTO
-                {
-                    Id = es.Id,
-                    EquipmentName = es.EquipmentName,
-                    Quantity = es.Quantity,
-                    Photo = es.Photo,
-                    Equipments = es.Equipments
-                })
+                .Include(es => es.Equipments)
+                    .ThenInclude(e => e.SubEquipments)
+                .ProjectTo<EquipmentStockDTO>(_mapper.ConfigurationProvider) // Use AutoMapper
                 .ToListAsync();
         }
 
@@ -38,7 +37,24 @@ namespace sp_backend.Services
                     Id = es.Id,
                     EquipmentName = es.EquipmentName,
                     Quantity = es.Quantity,
-                    Photo = es.Photo
+                    Photo = es.Photo,
+                    Equipments = es.Equipments.Select(e => new Equipment
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        Type = e.Type,
+                        Availability = e.Availability,
+                        Photo = e.Photo,
+                        SubEquipments = e.SubEquipments != null ? e.SubEquipments.Select(se => new SubEquipment
+                        {
+                            Id = se.Id,
+                            Name = se.Name,
+                            Cycle = se.Cycle,
+                            Status = se.Status,
+                            CreationDate = se.CreationDate,
+                            EquipmentId = se.EquipmentId,
+                        }).ToList() : new List<SubEquipment>()
+                    }).ToList()
 
                 })
                 .FirstOrDefaultAsync();
@@ -60,24 +76,25 @@ namespace sp_backend.Services
 
         public async Task<bool> UpdateAsync(int id, EquipmentStockDTO equipmentStockDto)
         {
-            var existing = await _context.EquipmentStocks
-                .Where(es => es.Id == id)
-                .Include(es => es.Equipments) // Include Equipments in one query
-                .FirstOrDefaultAsync();
+            var existing = await _context.EquipmentStocks.FindAsync(id);
+            // Don't include Equipments to ensure no modification
 
             if (existing == null) return false;
 
-            existing.EquipmentName = equipmentStockDto.EquipmentName;
-            existing.Quantity = equipmentStockDto.Quantity;
-            existing.Photo = equipmentStockDto.Photo;
-
-            // ✅ Only update Equipments' Name if EquipmentName is modified
+            // Update only if a value is provided
             if (!string.IsNullOrEmpty(equipmentStockDto.EquipmentName))
             {
-                foreach (var equipment in existing.Equipments)
-                {
-                    equipment.Name = equipmentStockDto.EquipmentName;
-                }
+                existing.EquipmentName = equipmentStockDto.EquipmentName;
+            }
+
+            if (equipmentStockDto.Quantity != default) // Ensure Quantity isn't unintentionally set to 0
+            {
+                existing.Quantity = equipmentStockDto.Quantity;
+            }
+
+            if (!string.IsNullOrEmpty(equipmentStockDto.Photo))
+            {
+                existing.Photo = equipmentStockDto.Photo;
             }
 
             return await _context.SaveChangesAsync() > 0;

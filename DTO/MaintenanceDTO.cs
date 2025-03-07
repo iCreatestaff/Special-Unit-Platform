@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using sp_backend.Models;
 
 namespace sp_backend.DTO
 {
@@ -12,7 +13,8 @@ namespace sp_backend.DTO
         public string? Type { get; set; } = string.Empty;
         public string? Description { get; set; } = string.Empty;
         public int? SubEquipmentId { get; set; }
-        public List<ItemDTO>? Items { get; set; } = new();
+        public DateTime MaintenanceDate { get; set; } = DateTime.UtcNow;
+        public ICollection<Item>? Items { get; set; }
     }
 
 }
