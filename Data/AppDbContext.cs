@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using sp_backend.Models;
+using sp_backend_March4.Models;
 using WeatherApi.Models;
 
 namespace WeatherApi
@@ -18,10 +19,25 @@ namespace WeatherApi
         public DbSet<EquipmentStock> EquipmentStocks { get; set; }
         public DbSet<Maintenance> Maintenances { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Training> Trainings { get; set; }
+        public DbSet<AccountTraining> AccountTrainings { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<AccountTraining>()
+    .HasKey(at => new { at.AccountId, at.TrainingId });
+
+            modelBuilder.Entity<AccountTraining>()
+                .HasOne(at => at.Account)
+                .WithMany(a => a.AccountTrainings)
+                .HasForeignKey(at => at.AccountId);
+
+            modelBuilder.Entity<AccountTraining>()
+                .HasOne(at => at.Training)
+                .WithMany(t => t.AccountTrainings)
+                .HasForeignKey(at => at.TrainingId);
             // Configure Equipment-SubEquipment relationship
             modelBuilder.Entity<Equipment>()
                 .HasMany(e => e.SubEquipments)

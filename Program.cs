@@ -4,7 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using sp_backend.DTO;
 using sp_backend.Interfaces;
+using sp_backend.Models;
 using sp_backend.Services;
+using sp_backend_March4.Interfaces;
+using sp_backend_March4.Services;
 using System.Text;
 using WeatherApi; // Ensure correct namespace
 using WeatherApi.Interfaces;
@@ -31,6 +34,8 @@ builder.Services.AddHostedService<MissionStatusUpdater>();
 builder.Services.AddHostedService<EquipmentStatusUpdater>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
+builder.Services.AddScoped<ITrainingService, TrainingService>();
+builder.Services.AddScoped<IAccountTrainingService, AccountTrainingService>();
 builder.Services.AddScoped<AuthService>(); // Register AuthService
 
 // 🔹 Configure JWT Authentication

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using sp_backend.Models;
+using sp_backend_March4.Models;
 
 namespace sp_backend.DTO
 {
@@ -16,6 +17,7 @@ namespace sp_backend.DTO
         public string? MedicalFile { get; set; }
         public string? CareerFile { get; set; }
         public string? Photo { get; set; }
+        public List<AccountTraining> AccountTrainings { get; set; } = new();
 
         public Account ToEntity(string passwordHash)
         {
@@ -31,7 +33,8 @@ namespace sp_backend.DTO
                 SocialFile = SocialFile,
                 MedicalFile = MedicalFile,
                 CareerFile = CareerFile,
-                Photo = Photo
+                Photo = Photo,
+                AccountTrainings = AccountTrainings
             };
         }
     }

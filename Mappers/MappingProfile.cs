@@ -3,6 +3,7 @@ using WeatherApi.Models;
 using WeatherApi.DTOs;
 using sp_backend.DTO;
 using sp_backend.Models;
+using sp_backend_March4.DTO;
 
 namespace WeatherApi
 {
@@ -37,6 +38,8 @@ namespace WeatherApi
             CreateMap<Maintenance, MaintenanceDTO>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
                 .ReverseMap();
+
+            CreateMap<Training, TrainingDTO>().ReverseMap();
         }
     }
 }

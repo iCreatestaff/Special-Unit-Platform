@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using sp_backend.Models;
+using sp_backend_March4.Models;
 
 namespace sp_backend.DTO
 {
@@ -18,6 +19,7 @@ namespace sp_backend.DTO
         public string? SocialFile { get; set; }
         public string? MedicalFile { get; set; }
         public string? CareerFile { get; set; }
+        public List<AccountTraining> AccountTrainings { get; set; } = new();
 
         public Account ToEntity(string passwordHash)
         {
@@ -32,7 +34,8 @@ namespace sp_backend.DTO
                 Role = Role,
                 SocialFile = SocialFile,
                 MedicalFile = MedicalFile,
-                CareerFile = CareerFile
+                CareerFile = CareerFile,
+                AccountTrainings = AccountTrainings
             };
         }
     }

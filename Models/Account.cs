@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using sp_backend.Models;
+using sp_backend_March4.Models;
 
 public class Account
 {
@@ -35,4 +36,5 @@ public class Account
     // Many-to-many relationship with Mission
 
     public List<AccountMission> AccountMissions { get; set; } = new();
+    public List<AccountTraining> AccountTrainings { get; set; }
 }
