@@ -29,6 +29,13 @@ namespace WeatherApi.Controllers
             return Ok(_mapper.Map<List<MaintenanceDTO>>(maintenances));
         }
 
+        [HttpGet("grouped")]
+        public async Task<IActionResult> GetGroupedMaintenances()
+        {
+            var result = await _maintenanceService.GetGroupedMaintenancesAsync();
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMaintenanceById(int id)
         {

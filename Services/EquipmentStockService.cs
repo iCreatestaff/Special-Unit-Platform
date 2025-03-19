@@ -24,9 +24,11 @@ namespace sp_backend.Services
             return await _context.EquipmentStocks
                 .Include(es => es.Equipments)
                     .ThenInclude(e => e.SubEquipments)
-                .ProjectTo<EquipmentStockDTO>(_mapper.ConfigurationProvider) // Use AutoMapper
+                .AsSplitQuery() // Enables query splitting
+                .ProjectTo<EquipmentStockDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
+
 
         public async Task<EquipmentStockDTO?> GetByIdAsync(int id)
         {
@@ -99,17 +101,14 @@ namespace sp_backend.Services
 
             return await _context.SaveChangesAsync() > 0;
         }
-
-
         public async Task<List<Equipment>> UpdateEquipmentsByEquipmentStockIdAsync(int equipmentStockId, Equipment updatedEquipment)
         {
             // Find the EquipmentStock by its ID
             var equipmentStock = await _context.EquipmentStocks
-     .Include(es => es.Equipments)
-         .ThenInclude(e => e.SubEquipments)
-     .AsSplitQuery() // 👈 This tells EF Core to split queries instead of using a single large query
-     .FirstOrDefaultAsync(es => es.Id == equipmentStockId);
-
+                .Include(es => es.Equipments)
+                    .ThenInclude(e => e.SubEquipments)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(es => es.Id == equipmentStockId);
 
             if (equipmentStock == null)
             {
@@ -124,45 +123,84 @@ namespace sp_backend.Services
                     equipment.Type = updatedEquipment.Type;
                 }
 
-                if (updatedEquipment.Availability.HasValue) // Check for nullable boolean
+                if (updatedEquipment.Availability.HasValue)
                 {
                     equipment.Availability = updatedEquipment.Availability;
                 }
 
-                if (!string.IsNullOrEmpty(updatedEquipment.Name)) // Check if Name is provided
+                if (!string.IsNullOrEmpty(updatedEquipment.Name))
                 {
                     equipment.Name = updatedEquipment.Name;
-                    equipmentStock.EquipmentName = updatedEquipment.Name; // Also update EquipmentStock name
+                    equipmentStock.EquipmentName = updatedEquipment.Name;
                 }
 
-                if (!string.IsNullOrEmpty(updatedEquipment.Photo)) // Check if Photo is provided
+                if (!string.IsNullOrEmpty(updatedEquipment.Photo))
                 {
                     equipment.Photo = updatedEquipment.Photo;
                 }
 
-                // **Replace all SubEquipments with the new ones**
+                // Handle SubEquipments update (by name matching, but NOT updating Status)
                 if (updatedEquipment.SubEquipments != null)
                 {
-                    // **Step 1: Remove all existing SubEquipments**
-                    _context.SubEquipments.RemoveRange(equipment.SubEquipments);
+                    var existingSubEquipments = equipment.SubEquipments.ToDictionary(se => se.Name, StringComparer.OrdinalIgnoreCase);
 
-                    // **Step 2: Assign the new SubEquipments**
-                    equipment.SubEquipments = updatedEquipment.SubEquipments.Select(se => new SubEquipment
+                    foreach (var subEquipment in updatedEquipment.SubEquipments)
                     {
-                        Name = se.Name,
-                        Cycle = se.Cycle,
-                        Status = se.Status,
-                        CreationDate = DateTime.UtcNow,
-                        EquipmentId = equipment.Id // Maintain the relationship
-                    }).ToList();
+                        if (existingSubEquipments.TryGetValue(subEquipment.Name, out var existingSubEquipment))
+                        {
+                            // ✅ Check if cycle has changed
+                            if (existingSubEquipment.Cycle != subEquipment.Cycle)
+                            {
+                                existingSubEquipment.Cycle = subEquipment.Cycle;
+
+                                // 🔹 Update Maintenance Date
+                                var maintenance = await _context.Maintenances
+                                    .FirstOrDefaultAsync(m => m.SubEquipmentId == existingSubEquipment.Id);
+
+                                if (maintenance != null)
+                                {
+                                    maintenance.MaintenanceDate = ComputeMaintenanceDate(existingSubEquipment.Cycle);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Add new subequipment if name does not exist
+                            var newSubEquipment = new SubEquipment
+                            {
+                                Name = subEquipment.Name,
+                                Cycle = subEquipment.Cycle,
+                                Status = subEquipment.Status, // Keep provided status for new subequipments
+                                CreationDate = DateTime.UtcNow,
+                                EquipmentId = equipment.Id
+                            };
+
+                            _context.SubEquipments.Add(newSubEquipment);
+                            await _context.SaveChangesAsync(); // Save to get ID
+
+                            // Create maintenance record for new subequipment
+                            var maintenance = new Maintenance
+                            {
+                                Name = subEquipment.Name,
+                                Description = $"Initial maintenance for {newSubEquipment.Name}",
+                                MaintenanceDate = ComputeMaintenanceDate(newSubEquipment.Cycle),
+                                SubEquipmentId = newSubEquipment.Id
+                            };
+
+                            _context.Maintenances.Add(maintenance);
+                        }
+                    }
                 }
             }
 
-            // Save changes
+            // Save all changes
             await _context.SaveChangesAsync();
 
             return equipmentStock.Equipments;
         }
+
+
+
 
 
         public async Task<bool> UpdateSubEquipmentByNameAsync(int equipmentStockId, string subEquipmentName, SubEquipment updatedSubEquipment)
@@ -206,6 +244,42 @@ namespace sp_backend.Services
             return isUpdated;
         }
 
+        public async Task<bool> AddSubEquipmentToAllEquipmentsAsync(int equipmentStockId, SubEquipment newSubEquipment)
+        {
+            // Fetch the EquipmentStock with related Equipments
+            var equipmentStock = await _context.EquipmentStocks
+                .Where(es => es.Id == equipmentStockId)
+                .Include(es => es.Equipments)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync();
+
+            if (equipmentStock == null || !equipmentStock.Equipments.Any())
+            {
+                return false; // No matching EquipmentStock or Equipments found
+            }
+
+            // Add the new SubEquipment to each Equipment under the EquipmentStock
+            foreach (var equipment in equipmentStock.Equipments)
+            {
+                var subEquipment = new SubEquipment
+                {
+                    Name = newSubEquipment.Name,
+                    Cycle = newSubEquipment.Cycle,
+                    Status = newSubEquipment.Status, // Preserve provided status
+                    CreationDate = DateTime.UtcNow,
+                    EquipmentId = equipment.Id
+                };
+
+                _context.SubEquipments.Add(subEquipment);
+            }
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+
 
 
         public async Task<bool> DeleteAsync(int id)
@@ -215,6 +289,40 @@ namespace sp_backend.Services
 
             _context.EquipmentStocks.Remove(equipmentStock);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+
+
+        private DateTime ComputeMaintenanceDate(string? cycle)
+        {
+            if (string.IsNullOrWhiteSpace(cycle))
+            {
+                return DateTime.UtcNow; // Default to today if cycle is invalid
+            }
+
+            var parts = cycle.Split(' ');
+            if (parts.Length != 2 || !int.TryParse(parts[0], out int number))
+            {
+                return DateTime.UtcNow; // Default to today if format is incorrect
+            }
+
+            string unit = parts[1].ToLower();
+            DateTime scheduledDate = DateTime.UtcNow;
+
+            if (unit.Contains("month"))
+            {
+                scheduledDate = scheduledDate.AddMonths(number);
+            }
+            else if (unit.Contains("year"))
+            {
+                scheduledDate = scheduledDate.AddYears(number);
+            }
+            else if (unit.Contains("day"))
+            {
+                scheduledDate = scheduledDate.AddDays(number);
+            }
+
+            return scheduledDate;
         }
     }
 }

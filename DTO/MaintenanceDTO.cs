@@ -17,4 +17,10 @@ namespace sp_backend.DTO
         public ICollection<Item>? Items { get; set; }
     }
 
+    public class GroupedMaintenanceDto
+    {
+        public string Name { get; set; } // Maintenance Description
+        public List<MaintenanceDTO> Maintenances { get; set; }
+    }
+
 }

@@ -101,6 +101,8 @@ namespace WeatherApi.Services
 
 
 
+
+
         public async Task<List<Equipment>> CreateEquipmentWithQuantityAsync(Equipment equipment, int quantity)
         {
             if (quantity <= 0)
@@ -117,6 +119,7 @@ namespace WeatherApi.Services
             }
 
             var createdEquipments = new List<Equipment>();
+            var allMaintenances = new List<Maintenance>();
 
             for (int i = 0; i < quantity; i++)
             {
@@ -126,29 +129,58 @@ namespace WeatherApi.Services
                     Type = equipment.Type,
                     Availability = equipment.Availability,
                     EquipmentStockId = equipmentStock.Id,
-                    Photo = equipment.Photo,
-                    SubEquipments = equipment.SubEquipments
-                        .Select(se => new SubEquipment
-                        {
-                            Name = se.Name,
-                            Cycle = se.Cycle,
-                            Status = se.Status,
-                            CreationDate = DateTime.UtcNow
-                        })
-                        .ToList() // Ensure a new list is created
+                    Photo = equipment.Photo
                 };
 
                 _context.Equipments.Add(newEquipment);
+                await _context.SaveChangesAsync(); // Ensure Equipment ID is generated
+
+                var newSubEquipments = new List<SubEquipment>();
+
+                foreach (var subEquipment in equipment.SubEquipments)
+                {
+                    var newSubEquipment = new SubEquipment
+                    {
+                        Name = subEquipment.Name,
+                        Cycle = subEquipment.Cycle,
+                        Status = subEquipment.Status,
+                        CreationDate = DateTime.UtcNow,
+                        EquipmentId = newEquipment.Id // Assign Equipment ID
+                    };
+
+                    newSubEquipments.Add(newSubEquipment);
+                }
+
+                // Add all subequipments in bulk
+                await _context.SubEquipments.AddRangeAsync(newSubEquipments);
+                await _context.SaveChangesAsync(); // Ensure SubEquipment IDs are generated
+
+                // Create Maintenance records for each SubEquipment
+                foreach (var subEquipment in newSubEquipments)
+                {
+                    var maintenance = new Maintenance
+                    {
+                        Description = $"Initial maintenance for {subEquipment.Name}",
+                        MaintenanceDate = ComputeMaintenanceDate(subEquipment.Cycle),
+                        SubEquipmentId = subEquipment.Id
+                    };
+                    allMaintenances.Add(maintenance);
+                }
+
                 createdEquipments.Add(newEquipment);
             }
 
+            // Add all maintenances in one batch
+            await _context.Maintenances.AddRangeAsync(allMaintenances);
+            await _context.SaveChangesAsync();
+
             // Update stock quantity once after all insertions
             equipmentStock.Quantity += quantity;
-
             await _context.SaveChangesAsync();
 
             return createdEquipments;
         }
+
 
 
 

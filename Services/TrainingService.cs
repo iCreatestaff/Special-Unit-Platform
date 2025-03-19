@@ -87,6 +87,34 @@ namespace sp_backend_March4.Services
             _context.AccountTrainings.Add(accountTraining);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<List<TrainingDTO>> GetTrainingsByAgentIdAsync(int agentId)
+        {
+            var trainings = await _context.Trainings
+                .Where(t => t.AccountTrainings.Any(at => at.AccountId == agentId))  // Check if agent is linked
+                .Include(t => t.AccountTrainings)  // Include related AccountTrainings
+                .ToListAsync();
+
+            var trainingDTOs = trainings.Select(t => new TrainingDTO
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                StartTime = t.StartTime,
+                EndTime = t.EndTime,
+                Location = t.Location,
+                Status = t.Status,
+                // Map AccountTrainings to AccountTrainingDTO
+                AccountTrainings = t.AccountTrainings.Select(at => new AccountTraining
+                {
+                    AccountId = at.AccountId,
+                    TrainingId = at.TrainingId
+                }).ToList()
+            }).ToList();
+
+            return trainingDTOs;
+        }
+
     }
 
 }

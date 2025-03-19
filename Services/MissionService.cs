@@ -117,6 +117,34 @@ public class MissionService : IMissionService
         }
     }
 
+    public async Task<List<MissionDTO>> GetMissionsByAgentIdAsync(int agentId)
+    {
+        var missions = await _context.Missions
+            .Where(m => m.AccountMissions.Any(am => am.AccountId == agentId))
+            .Include(m => m.AccountMissions)
+            .Include(m => m.EquipmentMissions)
+            .AsSplitQuery()  // This tells EF to execute separate queries for the related collections
+            .ToListAsync();
+
+        var missionDTOs = missions.Select(m => new MissionDTO
+        {
+            Id = m.Id,
+            Type = m.Type,
+            Description = m.Description,
+            StartTime = m.StartTime,
+            EndTime = m.EndTime,
+            Location = m.Location,
+            Status = m.Status,
+            AssignedAccounts = m.AccountMissions.Select(am => am.AccountId).ToList(),
+            AssignedEquipments = m.EquipmentMissions.Select(em => em.EquipmentId).ToList(),
+            AdminId = m.AdminId
+        }).ToList();
+
+        return missionDTOs;
+    }
+
+
+
 
 
 

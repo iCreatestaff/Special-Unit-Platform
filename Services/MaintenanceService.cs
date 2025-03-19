@@ -1,6 +1,7 @@
 using WeatherApi.Interfaces;
 using sp_backend.Models;
 using Microsoft.EntityFrameworkCore;
+using sp_backend.DTO;
 
 namespace WeatherApi.Services
 {
@@ -19,6 +20,31 @@ namespace WeatherApi.Services
                 .Include(m => m.SubEquipment) // Include SubEquipment
                 .Include(m => m.Items) // Include Items
                 .ToListAsync();
+        }
+
+        public async Task<List<GroupedMaintenanceDto>> GetGroupedMaintenancesAsync()
+        {
+            var groupedMaintenances = await _context.Maintenances
+    .Include(m => m.SubEquipment)  // Example Include
+    .AsSplitQuery() // ✅ Split into multiple queries for better performance
+    .GroupBy(m => m.Description)
+    .Select(group => new GroupedMaintenanceDto
+    {
+        Name = group.Key, // Group by Maintenance.Description
+        Maintenances = group.Select(m => new MaintenanceDTO
+        {
+            Name = m.Name,
+            Type = m.Type,
+            Description = m.Description,
+            SubEquipmentId = m.SubEquipmentId,
+            Items = m.Items,
+            Id = m.Id,
+            MaintenanceDate = m.MaintenanceDate
+        }).ToList()
+    })
+                .ToListAsync();
+
+            return groupedMaintenances;
         }
 
         public async Task<Maintenance?> GetMaintenanceByIdAsync(int id)

@@ -399,6 +399,39 @@ namespace sp_back.Migrations
                     b.ToTable("AccountTrainings");
                 });
 
+            modelBuilder.Entity("sp_backend_March4.Models.MessageAgent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("MessageAgents");
+                });
+
             modelBuilder.Entity("Nonavailability", b =>
                 {
                     b.HasOne("Account", "Account")
@@ -525,6 +558,25 @@ namespace sp_back.Migrations
                     b.Navigation("Training");
                 });
 
+            modelBuilder.Entity("sp_backend_March4.Models.MessageAgent", b =>
+                {
+                    b.HasOne("Account", "Receiver")
+                        .WithMany("ReceivedMessages")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Account", "Sender")
+                        .WithMany("SentMessages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("Account", b =>
                 {
                     b.Navigation("AccountMissions");
@@ -532,6 +584,10 @@ namespace sp_back.Migrations
                     b.Navigation("AccountTrainings");
 
                     b.Navigation("Nonavailabilities");
+
+                    b.Navigation("ReceivedMessages");
+
+                    b.Navigation("SentMessages");
                 });
 
             modelBuilder.Entity("WeatherApi.Models.Equipment", b =>

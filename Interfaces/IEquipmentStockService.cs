@@ -11,6 +11,8 @@ namespace sp_backend.Services
         Task<EquipmentStockDTO?> GetByIdAsync(int id);
         Task<bool> AddAsync(EquipmentStockDTO equipmentStockDto);
         Task<List<Equipment>> UpdateEquipmentsByEquipmentStockIdAsync(int equipmentStockId, Equipment updatedEquipment);
+        Task<bool> AddSubEquipmentToAllEquipmentsAsync(int equipmentStockId, SubEquipment newSubEquipment);
+
         Task<bool> UpdateSubEquipmentByNameAsync(int equipmentStockId, string subEquipmentName, SubEquipment updatedSubEquipment);
 
         Task<bool> UpdateAsync(int id, EquipmentStockDTO equipmentStockDto);

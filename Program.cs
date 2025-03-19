@@ -32,10 +32,12 @@ builder.Services.AddScoped<IMissionService, MissionService>();
 builder.Services.AddScoped<IEquipmentStockService, EquipmentStockService>();
 builder.Services.AddHostedService<MissionStatusUpdater>();
 builder.Services.AddHostedService<EquipmentStatusUpdater>();
+builder.Services.AddHostedService<TrainingStatusUpdater>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<ITrainingService, TrainingService>();
 builder.Services.AddScoped<IAccountTrainingService, AccountTrainingService>();
+builder.Services.AddScoped<IMessageAgentService, MessageAgentService>();
 builder.Services.AddScoped<AuthService>(); // Register AuthService
 
 // 🔹 Configure JWT Authentication

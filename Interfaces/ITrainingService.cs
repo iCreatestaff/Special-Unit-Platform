@@ -11,6 +11,7 @@ namespace sp_backend_March4.Interfaces
         Task<IEnumerable<TrainingDTO>> GetAllAsync();
         Task<TrainingDTO?> GetByIdAsync(int id);
         Task<bool> CreateAsync(TrainingDTO trainingDto);
+        Task<List<TrainingDTO>> GetTrainingsByAgentIdAsync(int agentId);
         Task<bool> UpdateAsync(int id, TrainingDTO trainingDto);
         Task<bool> DeleteAsync(int id);
         Task<bool> AssignAccountToTraining(int trainingId, int accountId);

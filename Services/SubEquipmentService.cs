@@ -38,7 +38,8 @@ namespace WeatherApi.Services
                     Type = m.Type,
                     Name = m.Name,
                     SubEquipmentId = m.SubEquipmentId,
-                    Items = m.Items
+                    Items = m.Items,
+                    MaintenanceDate = m.MaintenanceDate
                 }).ToList()
             }).ToList();
         }
@@ -66,7 +67,8 @@ namespace WeatherApi.Services
                     Description = m.Description,
                     Type = m.Type,
                     Name = m.Name,
-                    SubEquipmentId = m.SubEquipmentId
+                    SubEquipmentId = m.SubEquipmentId,
+                    MaintenanceDate = m.MaintenanceDate
                 }).ToList()
             };
         }

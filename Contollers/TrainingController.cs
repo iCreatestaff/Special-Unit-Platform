@@ -67,6 +67,18 @@ namespace WeatherApi.Controllers
             if (!assigned) return BadRequest("Failed to assign account to training.");
             return Ok("Account assigned successfully.");
         }
+        [HttpGet("agent/{agentId}")]
+        public async Task<ActionResult<List<TrainingDTO>>> GetTrainingsByAgentIdAsync(int agentId)
+        {
+            var trainings = await _trainingService.GetTrainingsByAgentIdAsync(agentId);
+
+            if (trainings == null || !trainings.Any())
+            {
+                return NotFound("No trainings found for this agent.");
+            }
+
+            return Ok(trainings);
+        }
     }
 
 }

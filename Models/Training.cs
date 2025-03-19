@@ -12,7 +12,7 @@ namespace sp_backend.Models
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Location { get; set; } = string.Empty;
-        public string Status { get; set; } = "Scheduled";
+        public string Status { get; set; } = "Pending";
 
         public List<AccountTraining> AccountTrainings { get; set; } = new();
     }

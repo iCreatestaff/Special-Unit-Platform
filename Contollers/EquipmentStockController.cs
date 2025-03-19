@@ -83,7 +83,23 @@ namespace sp_backend.Controllers
             return Ok("SubEquipments updated successfully.");
         }
 
+        [HttpPost("{equipmentStockId}/subequipment")]
+        public async Task<IActionResult> AddSubEquipment(int equipmentStockId, [FromBody] SubEquipment newSubEquipment)
+        {
+            if (newSubEquipment == null)
+            {
+                return BadRequest("Invalid sub-equipment data.");
+            }
 
+            var result = await _equipmentStockService.AddSubEquipmentToAllEquipmentsAsync(equipmentStockId, newSubEquipment);
+
+            if (result)
+            {
+                return Ok("SubEquipment added to all Equipments under EquipmentStock.");
+            }
+
+            return NotFound("EquipmentStock not found or has no Equipments.");
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

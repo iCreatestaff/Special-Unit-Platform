@@ -20,6 +20,7 @@ namespace WeatherApi
         public DbSet<Maintenance> Maintenances { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Training> Trainings { get; set; }
+        public DbSet<MessageAgent> MessageAgents { get; set; }
         public DbSet<AccountTraining> AccountTrainings { get; set; }
 
 
@@ -122,7 +123,17 @@ namespace WeatherApi
                 .Property(am => am.AssignedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+            modelBuilder.Entity<MessageAgent>()
+                .HasOne(m => m.Sender)
+                .WithMany(a => a.SentMessages) // Add navigation property in Account
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict); // Prevents cascade delete
 
+            modelBuilder.Entity<MessageAgent>()
+                .HasOne(m => m.Receiver)
+                .WithMany(a => a.ReceivedMessages) // Add navigation property in Account
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

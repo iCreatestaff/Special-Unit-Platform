@@ -37,4 +37,6 @@ public class Account
 
     public List<AccountMission> AccountMissions { get; set; } = new();
     public List<AccountTraining> AccountTrainings { get; set; }
+    public ICollection<MessageAgent> SentMessages { get; set; } = new List<MessageAgent>();
+    public ICollection<MessageAgent> ReceivedMessages { get; set; } = new List<MessageAgent>();
 }

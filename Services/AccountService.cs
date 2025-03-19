@@ -107,9 +107,16 @@ public class AccountService : IAccountService
 
     public async Task<List<AccountResponseDTO>> GetAllAccountsAsync()
     {
-        var accounts = await _context.Accounts.ToListAsync();
+        var accounts = await _context.Accounts
+            .Include(a => a.SentMessages)
+            .Include(a => a.ReceivedMessages)
+            .AsSplitQuery()  // ✅ Enables query splitting for better performance
+            .ToListAsync();
+
         return _mapper.Map<List<AccountResponseDTO>>(accounts);
     }
+
+
 
 
     public async Task<bool> UpdateAccountAsync(int id, Account account)

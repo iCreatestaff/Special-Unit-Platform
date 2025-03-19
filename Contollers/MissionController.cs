@@ -75,6 +75,19 @@ namespace sp_backend.Controllers
             return Ok(missions);
         }
 
+        [HttpGet("agent/{agentId}")]
+        public async Task<IActionResult> GetMissionsByAgent(int agentId)
+        {
+            var missions = await _missionService.GetMissionsByAgentIdAsync(agentId);
+
+            if (missions == null || missions.Count == 0)
+            {
+                return NotFound(new { message = "No missions found for this agent." });
+            }
+
+            return Ok(missions);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<MissionDTO>>> GetAllMissions()
         {
