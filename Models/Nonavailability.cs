@@ -16,6 +16,7 @@ public class Nonavailability
     public DateTime Date2 { get; set; }
 
     public string? Type { get; set; }  // Values: "Account" or "SubEquipment"
+    public string? Reason { get; set; }
 
     public int? MissionID { get; set; }
 

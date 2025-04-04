@@ -15,6 +15,7 @@ namespace sp_backend_March4.DTO
         public DateTime EndTime { get; set; }
         public string Location { get; set; } = string.Empty;
         public string Status { get; set; } = "Pending"; // Example: Scheduled, Completed, Cancelled
+        public List<int> AssignedAccounts { get; set; } = new();
         public List<AccountTraining> AccountTrainings { get; set; } = new();
     }
 

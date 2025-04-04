@@ -65,7 +65,8 @@ public class MissionService : IMissionService
                     Date2 = mission.EndTime,
                     Type = "Account",
                     AccountId = accountId,
-                    MissionID = mission.Id
+                    MissionID = mission.Id,
+                    Reason = "Mission"
                 }));
             }
 
@@ -90,7 +91,8 @@ public class MissionService : IMissionService
                     Date2 = mission.EndTime,
                     Type = "Equipment",
                     EquipmentId = equipmentId,
-                    MissionID = mission.Id
+                    MissionID = mission.Id,
+                    Reason = "Mission"
 
                 }));
             }

@@ -12,6 +12,7 @@ namespace sp_backend.DTO
         // Foreign key references (only one should be set)
         public int? AccountId { get; set; }
         public int? EquipmentId { get; set; }
+        public string? Reason { get; set; }
 
         public DateTime Date1 { get; set; }
         public DateTime Date2 { get; set; }

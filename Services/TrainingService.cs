@@ -44,10 +44,49 @@ namespace sp_backend_March4.Services
 
         public async Task<bool> CreateAsync(TrainingDTO trainingDto)
         {
+            if (trainingDto == null)
+            {
+                throw new ArgumentNullException(nameof(trainingDto));
+            }
+
             var training = _mapper.Map<Training>(trainingDto);
+
+            // Add the training first
             _context.Trainings.Add(training);
+            await _context.SaveChangesAsync(); // Save to get ID
+
+            // Ensure AccountTrainings is initialized
+            training.AccountTrainings = new List<AccountTraining>();
+
+            // Process each assigned account
+            foreach (var accountId in trainingDto.AssignedAccounts.Distinct()) // Avoid duplicates
+            {
+                var accountTraining = new AccountTraining
+                {
+                    AccountId = accountId,
+                    TrainingId = training.Id,
+                    RegistrationDate = DateTime.UtcNow
+                };
+
+                training.AccountTrainings.Add(accountTraining);
+
+                // Create NonAvailability for the account
+                var nonAvailability = new Nonavailability
+                {
+                    AccountId = accountId,
+                    Date1 = training.StartTime,
+                    Date2 = training.EndTime,
+                    Reason = $"Training: {training.Title}"
+                };
+
+                _context.Nonavailabilities.Add(nonAvailability);
+            }
+
+            // Save changes in a single transaction
             return await _context.SaveChangesAsync() > 0;
         }
+
+
 
         public async Task<bool> UpdateAsync(int id, TrainingDTO trainingDto)
         {

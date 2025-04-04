@@ -17,9 +17,9 @@ namespace sp_backend.DTO
         public string? MedicalFile { get; set; }
         public string? CareerFile { get; set; }
         public string? Photo { get; set; }
-        public List<AccountTraining> AccountTrainings { get; set; } = new();
-        public ICollection<MessageAgent> SentMessages { get; set; }
-        public ICollection<MessageAgent> ReceivedMessages { get; set; }
+        public List<AccountTraining>? AccountTrainings { get; set; } = new();
+        public ICollection<MessageAgent>? SentMessages { get; set; }
+        public ICollection<MessageAgent>? ReceivedMessages { get; set; }
 
         public Account ToEntity(string passwordHash)
         {

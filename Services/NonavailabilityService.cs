@@ -26,7 +26,8 @@ namespace sp_backend.Services
                 Type = "Account",
                 AccountId = na.AccountId,
                 Date1 = na.Date1,
-                Date2 = na.Date2
+                Date2 = na.Date2,
+                Reason = na.Reason
             }).ToList();
         }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApi;
 
@@ -11,9 +12,11 @@ using WeatherApi;
 namespace sp_back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250325060000_delete_migrations")]
+    partial class delete_migrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,6 +298,9 @@ namespace sp_back.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("RequestMaintenanceId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SubEquipmentId")
                         .HasColumnType("int");
 
@@ -302,6 +308,8 @@ namespace sp_back.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RequestMaintenanceId");
 
                     b.HasIndex("SubEquipmentId");
 
@@ -453,9 +461,6 @@ namespace sp_back.Migrations
                     b.Property<int?>("EquipmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MaintenanceId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
@@ -464,9 +469,6 @@ namespace sp_back.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MaintenanceId")
-                        .IsUnique();
 
                     b.ToTable("RequestMaintenances");
                 });
@@ -570,10 +572,16 @@ namespace sp_back.Migrations
 
             modelBuilder.Entity("sp_backend.Models.Maintenance", b =>
                 {
+                    b.HasOne("sp_backend_March4.Models.RequestMaintenance", "RequestMaintenance")
+                        .WithMany()
+                        .HasForeignKey("RequestMaintenanceId");
+
                     b.HasOne("WeatherApi.Models.SubEquipment", "SubEquipment")
                         .WithMany("Maintenances")
                         .HasForeignKey("SubEquipmentId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("RequestMaintenance");
 
                     b.Navigation("SubEquipment");
                 });
@@ -616,17 +624,6 @@ namespace sp_back.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("sp_backend_March4.Models.RequestMaintenance", b =>
-                {
-                    b.HasOne("sp_backend.Models.Maintenance", "Maintenance")
-                        .WithOne("RequestMaintenance")
-                        .HasForeignKey("sp_backend_March4.Models.RequestMaintenance", "MaintenanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Maintenance");
-                });
-
             modelBuilder.Entity("Account", b =>
                 {
                     b.Navigation("AccountMissions");
@@ -664,8 +661,6 @@ namespace sp_back.Migrations
             modelBuilder.Entity("sp_backend.Models.Maintenance", b =>
                 {
                     b.Navigation("Items");
-
-                    b.Navigation("RequestMaintenance");
                 });
 
             modelBuilder.Entity("sp_backend.Models.Mission", b =>

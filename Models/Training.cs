@@ -14,6 +14,8 @@ namespace sp_backend.Models
         public string Location { get; set; } = string.Empty;
         public string Status { get; set; } = "Pending";
 
+        public List<int> AssignedAccounts { get; set; } = new();
+
         public List<AccountTraining> AccountTrainings { get; set; } = new();
     }
 

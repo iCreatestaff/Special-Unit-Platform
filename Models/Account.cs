@@ -35,8 +35,8 @@ public class Account
 
     // Many-to-many relationship with Mission
 
-    public List<AccountMission> AccountMissions { get; set; } = new();
-    public List<AccountTraining> AccountTrainings { get; set; }
-    public ICollection<MessageAgent> SentMessages { get; set; } = new List<MessageAgent>();
-    public ICollection<MessageAgent> ReceivedMessages { get; set; } = new List<MessageAgent>();
+    public List<AccountMission>? AccountMissions { get; set; } = new();
+    public List<AccountTraining>? AccountTrainings { get; set; }
+    public ICollection<MessageAgent>? SentMessages { get; set; } = new List<MessageAgent>();
+    public ICollection<MessageAgent>? ReceivedMessages { get; set; } = new List<MessageAgent>();
 }

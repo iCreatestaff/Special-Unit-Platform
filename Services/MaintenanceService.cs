@@ -2,6 +2,7 @@ using WeatherApi.Interfaces;
 using sp_backend.Models;
 using Microsoft.EntityFrameworkCore;
 using sp_backend.DTO;
+using sp_backend_March4.Models;
 
 namespace WeatherApi.Services
 {
@@ -70,9 +71,21 @@ namespace WeatherApi.Services
             }
 
             _context.Maintenances.Add(maintenance);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save first to generate Maintenance ID
+
+            // Create RequestMaintenance entry
+            var requestMaintenance = new RequestMaintenance
+            {
+                MaintenanceId = maintenance.Id,
+                Status = "Pending"
+            };
+
+            _context.RequestMaintenances.Add(requestMaintenance);
+            await _context.SaveChangesAsync(); // Save the request maintenance
+
             return maintenance;
         }
+
 
 
 

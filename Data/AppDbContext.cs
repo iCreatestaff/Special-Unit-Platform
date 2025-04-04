@@ -23,6 +23,7 @@ namespace WeatherApi
         public DbSet<MessageAgent> MessageAgents { get; set; }
         public DbSet<AccountTraining> AccountTrainings { get; set; }
 
+        public DbSet<RequestMaintenance> RequestMaintenances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -135,7 +136,13 @@ namespace WeatherApi
                 .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<RequestMaintenance>()
+            .HasOne(rm => rm.Maintenance)
+            .WithOne(m => m.RequestMaintenance)
+            .HasForeignKey<RequestMaintenance>(rm => rm.MaintenanceId)
+            .OnDelete(DeleteBehavior.Cascade);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

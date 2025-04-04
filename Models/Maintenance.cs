@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using sp_backend_March4.Models;
 using WeatherApi.Models;
 
 namespace sp_backend.Models
@@ -21,8 +22,10 @@ namespace sp_backend.Models
 
         public ICollection<Item>? Items { get; set; }
         public DateTime MaintenanceDate { get; set; } = DateTime.UtcNow;
+        public DateTime MaintenanceEndDate { get; set; }
 
         public int? SubEquipmentId { get; set; }
+        public RequestMaintenance? RequestMaintenance { get; set; }
 
         [ForeignKey("SubEquipmentId")]
         public SubEquipment? SubEquipment { get; set; }
