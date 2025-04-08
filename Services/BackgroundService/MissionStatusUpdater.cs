@@ -18,7 +18,8 @@ public class MissionStatusUpdater : BackgroundService
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
-        _localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"); // UTC+1
+        _localTimeZone = TimeZoneInfo.CreateCustomTimeZone("UTC+1", TimeSpan.FromHours(1), "UTC+1", "UTC+1");
+
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

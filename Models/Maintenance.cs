@@ -19,6 +19,7 @@ namespace sp_backend.Models
         public string? Type { get; set; } = string.Empty;
 
         public string? Description { get; set; } = string.Empty;
+        public string? Cycle { get; set; }
 
         public ICollection<Item>? Items { get; set; }
         public DateTime MaintenanceDate { get; set; } = DateTime.UtcNow;

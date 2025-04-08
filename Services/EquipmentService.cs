@@ -30,8 +30,24 @@ namespace WeatherApi.Services
 
         public async Task<Equipment?> GetEquipmentByIdAsync(int id)
         {
-            return await _context.Equipments.Include(e => e.SubEquipments)
+            var equipment = await _context.Equipments
+                .Include(e => e.SubEquipments)
                 .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (equipment != null && equipment.SubEquipments != null)
+            {
+                foreach (var sub in equipment.SubEquipments)
+                {
+                    if (string.IsNullOrEmpty(sub.Status))
+                    {
+                        sub.Status = "bon_etat";
+                    }
+                }
+
+                await _context.SaveChangesAsync(); // Persist changes to DB
+            }
+
+            return equipment;
         }
 
         public async Task<List<Equipment>> GetAvailableEquipmentAsync(DateTime d1, DateTime d2)

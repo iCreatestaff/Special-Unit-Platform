@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using sp_backend.DTO;
 using sp_backend.Models;
+using sp_backend_March4.Models;
 using WeatherApi;
 using WeatherApi.Models;
 
@@ -170,7 +171,7 @@ namespace sp_backend.Services
                             {
                                 Name = subEquipment.Name,
                                 Cycle = subEquipment.Cycle,
-                                Status = subEquipment.Status, // Keep provided status for new subequipments
+                                Status = "bon_etat", // Keep provided status for new subequipments
                                 CreationDate = DateTime.UtcNow,
                                 EquipmentId = equipment.Id
                             };
@@ -184,10 +185,22 @@ namespace sp_backend.Services
                                 Name = subEquipment.Name,
                                 Description = $"Initial maintenance for {newSubEquipment.Name}",
                                 MaintenanceDate = ComputeMaintenanceDate(newSubEquipment.Cycle),
-                                SubEquipmentId = newSubEquipment.Id
+                                MaintenanceEndDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(1),
+                                SubEquipmentId = newSubEquipment.Id,
+                                Cycle = subEquipment.Cycle
                             };
 
                             _context.Maintenances.Add(maintenance);
+
+                            var requestmaintenance = new RequestMaintenance
+                            {
+                                Status = "Pending",
+                                Details = $"Initial Request for {newSubEquipment.Name}",
+                                Cycle = newSubEquipment.Cycle,
+                                EquipmentId = newSubEquipment.EquipmentId,
+                                Maintenance = maintenance
+                            };
+                            _context.RequestMaintenances.Add(requestmaintenance);
                         }
                     }
                 }

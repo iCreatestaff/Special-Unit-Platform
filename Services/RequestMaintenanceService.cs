@@ -27,9 +27,34 @@ namespace sp_backend_March4.Services
 
         public async Task<RequestMaintenance?> GetRequestMaintenanceByIdAsync(int id)
         {
-            return await _context.RequestMaintenances
+            var requestMaintenance = await _context.RequestMaintenances
+                .Include(rm => rm.Maintenance)
+                    .ThenInclude(m => m.SubEquipment)
+                        .ThenInclude(se => se.Equipment)
                 .FirstOrDefaultAsync(rm => rm.Id == id);
+
+            if (requestMaintenance?.Maintenance?.SubEquipment?.EquipmentId is int equipmentId)
+            {
+                var maintenanceStart = requestMaintenance.Maintenance.MaintenanceDate;
+                var maintenanceEnd = requestMaintenance.Maintenance.MaintenanceEndDate;
+
+                var hasOverlap = await _context.Nonavailabilities
+                    .AnyAsync(na =>
+                        na.EquipmentId == equipmentId &&
+                        na.Date1 <= maintenanceEnd &&
+                        na.Date2 >= maintenanceStart
+                    );
+
+                if (hasOverlap)
+                {
+                    requestMaintenance.Details = "This equipment is not available during the maintenance period.";
+                }
+            }
+
+            return requestMaintenance;
         }
+
+
 
         public async Task<IEnumerable<RequestMaintenance>> GetAllRequestMaintenancesAsync()
         {

@@ -13,7 +13,9 @@ namespace sp_backend.DTO
         public string? Type { get; set; } = string.Empty;
         public string? Description { get; set; } = string.Empty;
         public int? SubEquipmentId { get; set; }
+        public string? Cycle { get; set; }
         public DateTime MaintenanceDate { get; set; } = DateTime.UtcNow;
+        public DateTime MaintenanceEndDate { get; set; }
         public ICollection<Item>? Items { get; set; }
     }
 

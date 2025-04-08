@@ -119,6 +119,29 @@ public class MissionService : IMissionService
         }
     }
 
+    public async Task<List<MissionDTO>> GetMissionsByTypeAsync(string type)
+    {
+        if (string.IsNullOrEmpty(type))
+        {
+            throw new ArgumentException("Mission type is required.", nameof(type));
+        }
+
+        var missions = await _context.Missions
+            .Where(m => m.Type == type)
+            .Select(m => new MissionDTO
+            {
+                Id = m.Id,
+                Type = m.Type,
+                Description = m.Description,
+                StartTime = m.StartTime,
+                EndTime = m.EndTime,
+                Status = m.Status
+            })
+            .ToListAsync();
+
+        return missions;
+    }
+
     public async Task<List<MissionDTO>> GetMissionsByAgentIdAsync(int agentId)
     {
         var missions = await _context.Missions

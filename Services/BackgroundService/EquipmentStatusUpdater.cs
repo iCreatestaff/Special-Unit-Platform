@@ -20,7 +20,7 @@ namespace sp_backend.Services
         {
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
-            _localTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+            _localTimeZone = TimeZoneInfo.CreateCustomTimeZone("UTC+1", TimeSpan.FromHours(1), "UTC+1", "UTC+1");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

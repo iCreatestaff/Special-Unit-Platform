@@ -48,8 +48,9 @@ public class AccountController : ControllerBase
         if (dto == null || string.IsNullOrWhiteSpace(dto.Password))
             return BadRequest("Invalid account data.");
 
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password); // Fixed: Hash the password
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password); // Fixed: Hash the password                                                                
         var account = dto.ToEntity(passwordHash);
+
         account.Role = "Agent"; // Enforce role
 
         var result = await _accountService.CreateAccountAsync(account);

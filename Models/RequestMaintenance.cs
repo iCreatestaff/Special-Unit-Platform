@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using sp_backend.Models;
 using WeatherApi.Models;
@@ -19,10 +20,14 @@ namespace sp_backend_March4.Models
 
         [Required]
         public string Status { get; set; } = "Pending"; // Possible values: "Pending", "Accepted", "Rejected"
+        public string? Details { get; set; }
+        public string? Cycle { get; set; }
 
         public DateTime RequestDate { get; set; } = DateTime.UtcNow;
+        [JsonIgnore]
         public int? EquipmentId { get; internal set; }
 
+        [JsonIgnore]
         [ForeignKey("MaintenanceId")]
         public Maintenance Maintenance { get; set; }
     }

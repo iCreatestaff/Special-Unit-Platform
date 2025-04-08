@@ -28,7 +28,7 @@ namespace WeatherApi.Services
             var groupedMaintenances = await _context.Maintenances
     .Include(m => m.SubEquipment)  // Example Include
     .AsSplitQuery() // ✅ Split into multiple queries for better performance
-    .GroupBy(m => m.Description)
+    .GroupBy(m => m.Name)
     .Select(group => new GroupedMaintenanceDto
     {
         Name = group.Key, // Group by Maintenance.Description
@@ -38,6 +38,7 @@ namespace WeatherApi.Services
             Type = m.Type,
             Description = m.Description,
             SubEquipmentId = m.SubEquipmentId,
+            Cycle = m.Cycle,
             Items = m.Items,
             Id = m.Id,
             MaintenanceDate = m.MaintenanceDate
@@ -77,7 +78,9 @@ namespace WeatherApi.Services
             var requestMaintenance = new RequestMaintenance
             {
                 MaintenanceId = maintenance.Id,
-                Status = "Pending"
+                Status = "Pending",
+                Cycle = maintenance.Cycle,
+                EquipmentId = maintenance.SubEquipment.EquipmentId
             };
 
             _context.RequestMaintenances.Add(requestMaintenance);

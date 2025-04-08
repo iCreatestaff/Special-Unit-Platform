@@ -54,6 +54,24 @@ namespace sp_backend.Controllers
 
             return Ok("Mission created successfully.");
         }
+        [HttpGet("type/{type}")]
+        public async Task<ActionResult<List<MissionDTO>>> GetMissionsByType(string type)
+        {
+            try
+            {
+                var missions = await _missionService.GetMissionsByTypeAsync(type);
+                if (missions == null || missions.Count == 0)
+                {
+                    return NotFound(new { message = "No missions found for the specified type." });
+                }
+
+                return Ok(missions);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<MissionDTO>> GetMission(int id)
