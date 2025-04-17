@@ -119,6 +119,26 @@ namespace sp_backend.Controllers
             return NoContent();
         }
 
+        [HttpGet("{missionId}/equipment/{equipmentId}/assigned")]
+        public async Task<IActionResult> IsEquipmentAssigned(int missionId, int equipmentId)
+        {
+            var isAssigned = await _missionService.IsEquipmentAssignedToMissionAsync(missionId, equipmentId);
+            return Ok(new { assigned = isAssigned });
+        }
+
+        [HttpDelete("{missionId}/equipment/{equipmentId}")]
+        public async Task<IActionResult> RemoveEquipmentFromMission(int missionId, int equipmentId)
+        {
+            var result = await _missionService.RemoveEquipmentFromMissionAsync(missionId, equipmentId);
+
+            if (result)
+            {
+                return NoContent(); // Successfully removed equipment
+            }
+
+            return NotFound(); // Mission or equipment not found
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMission(int id, [FromBody] MissionDTO missionDTO)
         {

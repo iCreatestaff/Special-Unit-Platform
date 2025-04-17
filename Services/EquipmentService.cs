@@ -53,6 +53,7 @@ namespace WeatherApi.Services
         public async Task<List<Equipment>> GetAvailableEquipmentAsync(DateTime d1, DateTime d2)
         {
             return await _context.Equipments
+                .Where(e => (bool)e.Availability) // Only consider equipment marked as available
                 .Where(e => !e.Nonavailabilities.Any(n =>
                     (d1 >= n.Date1 && d1 <= n.Date2) ||  // d1 falls within a non-availability range
                     (d2 >= n.Date1 && d2 <= n.Date2) ||  // d2 falls within a non-availability range
@@ -60,6 +61,7 @@ namespace WeatherApi.Services
                 ))
                 .ToListAsync();
         }
+
 
 
 

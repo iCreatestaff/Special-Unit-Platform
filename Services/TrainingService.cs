@@ -57,6 +57,7 @@ namespace sp_backend_March4.Services
 
             // Ensure AccountTrainings is initialized
             training.AccountTrainings = new List<AccountTraining>();
+            training.Status = "Pending";
 
             // Process each assigned account
             foreach (var accountId in trainingDto.AssignedAccounts.Distinct()) // Avoid duplicates
@@ -82,6 +83,7 @@ namespace sp_backend_March4.Services
                 _context.Nonavailabilities.Add(nonAvailability);
             }
 
+
             // Save changes in a single transaction
             return await _context.SaveChangesAsync() > 0;
         }
@@ -93,7 +95,12 @@ namespace sp_backend_March4.Services
             var existingTraining = await _context.Trainings.FindAsync(id);
             if (existingTraining == null) return false;
 
+            var currentStatus = existingTraining.Status;
+
             _mapper.Map(trainingDto, existingTraining);
+
+            existingTraining.Status = currentStatus; // Restore status
+
             return await _context.SaveChangesAsync() > 0;
         }
 

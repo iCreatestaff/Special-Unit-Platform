@@ -11,6 +11,8 @@ namespace sp_backend_March4.Interfaces
         Task<RequestMaintenance> CreateRequestMaintenanceAsync(RequestMaintenance request);
         Task<RequestMaintenance?> GetRequestMaintenanceByIdAsync(int id);
         Task<IEnumerable<RequestMaintenance>> GetAllRequestMaintenancesAsync();
+        Task<object> GetRequestMaintenancesByEquipmentIdAsync(int equipmentId);
+
         Task<RequestMaintenance> UpdateRequestMaintenanceStatusAsync(int id, string status);
     }
 

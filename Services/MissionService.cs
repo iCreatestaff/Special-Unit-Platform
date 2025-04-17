@@ -92,7 +92,7 @@ public class MissionService : IMissionService
                     Type = "Equipment",
                     EquipmentId = equipmentId,
                     MissionID = mission.Id,
-                    Reason = "Mission"
+                    Reason = $"Mission {mission.Id}"
 
                 }));
             }
@@ -201,6 +201,16 @@ public class MissionService : IMissionService
             // Extract related Equipment IDs
             AssignedEquipments = mission.EquipmentMissions.Select(em => em.EquipmentId).ToList()
         };
+    }
+
+    public async Task<bool> IsEquipmentAssignedToMissionAsync(int missionId, int equipmentId)
+    {
+        var mission = await _context.Missions.FindAsync(missionId);
+
+        if (mission == null || mission.AssignedEquipments == null)
+            return false;
+
+        return mission.AssignedEquipments.Contains(equipmentId);
     }
 
 
@@ -351,6 +361,50 @@ public class MissionService : IMissionService
         _context.Missions.Remove(mission);
 
         // Save changes
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+
+    public async Task<bool> RemoveEquipmentFromMissionAsync(int missionId, int equipmentId)
+    {
+        var mission = await _context.Missions
+    .FirstOrDefaultAsync(m => m.Id == missionId);
+
+        if (mission == null)
+            throw new KeyNotFoundException($"Mission with ID {missionId} not found.");
+
+        // Load the list of assigned equipment IDs manually if needed
+        mission.AssignedEquipments = await _context.EquipmentMissions
+            .Where(em => em.MissionId == missionId)
+            .Select(em => em.EquipmentId)
+            .ToListAsync();
+
+
+        if (mission == null)
+        {
+            return false; // Mission not found
+        }
+
+        if (!mission.AssignedEquipments.Contains(equipmentId))
+        {
+            return false; // Equipment not assigned to this mission
+        }
+
+        // Remove the equipment from the AssignedEquipments list
+        mission.AssignedEquipments.Remove(equipmentId);
+
+        // Optional: If you have a table for EquipmentMission, remove the entry as well
+        var equipmentMission = await _context.EquipmentMissions
+            .FirstOrDefaultAsync(em => em.MissionId == missionId && em.EquipmentId == equipmentId);
+
+        if (equipmentMission != null)
+        {
+            _context.EquipmentMissions.Remove(equipmentMission);
+        }
+
+        _context.Missions.Update(mission); // Update the mission
+
+        // Save changes to the database
         return await _context.SaveChangesAsync() > 0;
     }
 

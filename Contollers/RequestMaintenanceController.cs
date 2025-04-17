@@ -72,6 +72,13 @@ namespace sp_backend_March4.Controllers
             }
         }
 
+        [HttpGet("equipment/{equipmentId}")]
+        public async Task<IActionResult> GetByEquipmentId(int equipmentId)
+        {
+            var result = await _service.GetRequestMaintenancesByEquipmentIdAsync(equipmentId);
+            return Ok(result);
+        }
+
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateRequestMaintenanceStatus(int id, [FromBody] string status)
         {
