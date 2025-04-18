@@ -39,7 +39,8 @@ namespace WeatherApi.Services
                     Name = m.Name,
                     SubEquipmentId = m.SubEquipmentId,
                     Items = m.Items,
-                    MaintenanceDate = m.MaintenanceDate
+                    MaintenanceDate = m.MaintenanceDate,
+                    MaintenanceEndDate = m.MaintenanceEndDate
                 }).ToList()
             }).ToList();
         }
@@ -68,7 +69,8 @@ namespace WeatherApi.Services
                     Type = m.Type,
                     Name = m.Name,
                     SubEquipmentId = m.SubEquipmentId,
-                    MaintenanceDate = m.MaintenanceDate
+                    MaintenanceDate = m.MaintenanceDate,
+                    MaintenanceEndDate = m.MaintenanceEndDate
                 }).ToList()
             };
         }
@@ -119,45 +121,53 @@ namespace WeatherApi.Services
             // Check if the status is changing
             bool wasBroken = existingSubEquipment.Status == "en_panne";
             bool isNowNormal = subEquipment.Status == "bon_etat";
-            bool wasWorking = existingSubEquipment.Status != "En panne";
+            bool wasWorking = existingSubEquipment.Status != "en_panne";
             bool isNowBroken = subEquipment.Status == "en_panne";
 
             existingSubEquipment.Name = subEquipment.Name ?? existingSubEquipment.Name;
             existingSubEquipment.Cycle = subEquipment.Cycle ?? existingSubEquipment.Cycle;
             existingSubEquipment.Status = subEquipment.Status ?? existingSubEquipment.Status;
 
-            // Save changes immediately to reflect the updated status in the database
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save updated subEquipment status
 
-            // Find the related Equipment
             var equipment = await _context.Equipments.FindAsync(existingSubEquipment.EquipmentId);
             if (equipment != null)
             {
                 if (wasWorking && isNowBroken)
                 {
-                    // If a SubEquipment breaks down, mark the Equipment as unavailable
                     equipment.Availability = false;
+
+                    // 🔧 Create Maintenance object for broken sub-equipment
+                    var maintenance = new Maintenance
+                    {
+                        Name = existingSubEquipment.Name,
+                        Description = $"Auto-generated maintenance due to breakdown",
+                        MaintenanceDate = DateTime.UtcNow,
+                        MaintenanceEndDate = DateTime.UtcNow.AddHours(1), // or custom logic
+                        SubEquipmentId = existingSubEquipment.Id,
+                        Cycle = existingSubEquipment.Cycle
+                    };
+
+                    _context.Maintenances.Add(maintenance);
+
                 }
                 else if (wasBroken && isNowNormal)
                 {
-                    // Check if all other SubEquipments are "Normal" AND include this one as "Normal"
                     bool allNormal = await _context.SubEquipments
                         .Where(se => se.EquipmentId == existingSubEquipment.EquipmentId && se.Id != existingSubEquipment.Id)
                         .AllAsync(se => se.Status == "bon_etat");
 
-                    if (allNormal && isNowNormal) // Ensure the current one is also "Normal"
+                    if (allNormal && isNowNormal)
                     {
                         equipment.Availability = true;
                     }
                 }
 
-                await _context.SaveChangesAsync(); // Save Equipment changes
+                await _context.SaveChangesAsync(); // Save equipment and maintenance/request changes
             }
 
             return existingSubEquipment;
         }
-
-
 
 
 

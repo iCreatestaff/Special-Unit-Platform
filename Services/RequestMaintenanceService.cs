@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using sp_backend.Interfaces;
+using sp_backend.Models;
 using sp_backend_March4.Interfaces;
 using sp_backend_March4.Models;
 using WeatherApi;
@@ -76,12 +77,11 @@ namespace sp_backend_March4.Services
         {
             var request = await _context.RequestMaintenances
                 .Include(rm => rm.Maintenance)
+                .ThenInclude(m => m.SubEquipment)
                 .FirstOrDefaultAsync(rm => rm.Id == id);
 
             if (request == null)
-            {
                 throw new KeyNotFoundException($"RequestMaintenance with ID {id} not found.");
-            }
 
             request.Status = status;
 
@@ -91,61 +91,44 @@ namespace sp_backend_March4.Services
                 var maintenanceStart = request.Maintenance.MaintenanceDate;
                 var maintenanceEnd = request.Maintenance.MaintenanceEndDate;
 
-                // Debug log the values
+                // Log overlapping mission check
                 Console.WriteLine($"Looking for overlapping missions for equipment {equipmentId}, from {maintenanceStart} to {maintenanceEnd}");
 
-                // Get overlapping missions
                 var overlappingMissions = await _context.EquipmentMissions
-    .Where(em => em.EquipmentId == equipmentId)
-    .Join(
-        _context.Missions,
-        em => em.MissionId,
-        m => m.Id,
-        (em, m) => m
-    )
-    .Where(m =>
-        (m.StartTime < maintenanceEnd && m.StartTime >= maintenanceStart) ||
-        (m.EndTime <= maintenanceEnd && m.EndTime >= maintenanceStart) ||
-        (m.StartTime <= maintenanceStart && m.EndTime >= maintenanceEnd) ||
-        (m.StartTime >= maintenanceStart && m.EndTime <= maintenanceEnd)
-    )
-    .ToListAsync();
+                    .Where(em => em.EquipmentId == equipmentId)
+                    .Join(
+                        _context.Missions,
+                        em => em.MissionId,
+                        m => m.Id,
+                        (em, m) => m
+                    )
+                    .Where(m =>
+                        (m.StartTime < maintenanceEnd && m.EndTime > maintenanceStart)
+                    )
+                    .ToListAsync();
 
-
-                // Debugging step: Log the number of overlapping missions
                 Console.WriteLine($"Found {overlappingMissions.Count} overlapping missions.");
 
-                if (overlappingMissions.Count > 0)
+                foreach (var mission in overlappingMissions)
                 {
-                    foreach (var mission in overlappingMissions)
+                    Console.WriteLine($"Mission {mission.Id} overlaps with maintenance period for Equipment {equipmentId}");
+
+                    var equipmentMission = await _context.EquipmentMissions
+                        .FirstOrDefaultAsync(em => em.MissionId == mission.Id && em.EquipmentId == equipmentId);
+
+                    if (equipmentMission != null)
                     {
-                        // Debugging step: Log each mission found
-                        Console.WriteLine($"Mission {mission.Id} overlaps with maintenance period for Equipment {equipmentId}");
-
-                        var equipmentMission = await _context.EquipmentMissions
-                            .FirstOrDefaultAsync(em => em.MissionId == mission.Id && em.EquipmentId == equipmentId);
-
-                        if (equipmentMission != null)
-                        {
-                            _context.EquipmentMissions.Remove(equipmentMission);  // Remove the relationship
-                            Console.WriteLine($"Removed EquipmentMission between Mission {mission.Id} and Equipment {equipmentId}");
-                        }
+                        _context.EquipmentMissions.Remove(equipmentMission);
+                        Console.WriteLine($"Removed EquipmentMission between Mission {mission.Id} and Equipment {equipmentId}");
                     }
                 }
-                else
-                {
-                    Console.WriteLine("No overlapping missions found.");
-                }
 
-                // Handle nonavailability
+                // Handle overlapping nonavailabilities
                 var overlappingNonavailabilities = await _context.Nonavailabilities
                     .Where(na =>
                         na.EquipmentId == equipmentId &&
                         (
-                            (na.Date1 <= maintenanceEnd && na.Date1 >= maintenanceStart) ||
-                            (na.Date2 <= maintenanceEnd && na.Date2 >= maintenanceStart) ||
-                            (na.Date1 <= maintenanceStart && na.Date2 >= maintenanceEnd) ||
-                            (na.Date1 >= maintenanceStart && na.Date2 <= maintenanceEnd)
+                            (na.Date1 < maintenanceEnd && na.Date2 > maintenanceStart)
                         )
                     )
                     .ToListAsync();
@@ -160,11 +143,91 @@ namespace sp_backend_March4.Services
                 };
 
                 _context.Nonavailabilities.Add(newNonavailability);
+
+                // Create next cycle Maintenance and RequestMaintenance
+                var subEquipment = request.Maintenance.SubEquipment;
+                var nextMaintenanceDate = ComputeMaintenanceDate(request.Cycle, request.Maintenance.MaintenanceDate);
+
+
+                var nextMaintenance = new Maintenance
+                {
+                    Name = $"Scheduled maintenance for {subEquipment.Name}",
+                    Description = $"Next maintenance cycle for {subEquipment.Name}",
+                    MaintenanceDate = nextMaintenanceDate,
+                    MaintenanceEndDate = nextMaintenanceDate + TimeSpan.FromHours(1),
+                    SubEquipmentId = subEquipment.Id,
+                    Cycle = subEquipment.Cycle
+                };
+
+                _context.Maintenances.Add(nextMaintenance);
+
+                var nextRequest = new RequestMaintenance
+                {
+                    Status = "Pending",
+                    Details = $"Automatically generated request for next maintenance of {subEquipment.Name}",
+                    Cycle = subEquipment.Cycle,
+                    EquipmentId = subEquipment.EquipmentId,
+                    Maintenance = nextMaintenance
+                };
+
+                _context.RequestMaintenances.Add(nextRequest);
             }
+
+            else if (status == "Rejected" && request.Maintenance != null)
+            {
+                int equipmentId = (int)request.EquipmentId;
+
+                // Find the latest mission using this equipment
+                var lastMission = await _context.EquipmentMissions
+                    .Where(em => em.EquipmentId == equipmentId)
+                    .Join(
+                        _context.Missions,
+                        em => em.MissionId,
+                        m => m.Id,
+                        (em, m) => m
+                    )
+                    .Where(m => m.EndTime > DateTime.UtcNow)
+                    .OrderByDescending(m => m.EndTime)
+                    .FirstOrDefaultAsync();
+
+                if (lastMission != null)
+                {
+                    DateTime nextMaintenanceStart = lastMission.EndTime;
+
+
+                    // Create a new Maintenance
+                    var newMaintenance = new Maintenance
+                    {
+                        Name = request.Maintenance.SubEquipment?.Name ?? "Unnamed",
+                        Description = $"Delayed maintenance for {request.Maintenance.SubEquipment?.Name ?? "equipment"}",
+                        MaintenanceDate = nextMaintenanceStart,
+                        MaintenanceEndDate = nextMaintenanceStart + TimeSpan.FromHours(1),
+                        SubEquipmentId = request.Maintenance.SubEquipmentId,
+                        Cycle = request.Cycle
+                    };
+                    _context.Maintenances.Add(newMaintenance);
+
+                    // Create a new RequestMaintenance
+                    var newRequest = new RequestMaintenance
+                    {
+                        Status = "Pending",
+                        Details = $"Rescheduled maintenance for {request.Maintenance.SubEquipment?.Name ?? "equipment"} after rejection",
+                        Cycle = request.Cycle,
+                        EquipmentId = equipmentId,
+                        Maintenance = newMaintenance
+                    };
+                    _context.RequestMaintenances.Add(newRequest);
+                }
+
+                // Remove the old rejected maintenance
+                _context.Maintenances.Remove(request.Maintenance);
+            }
+
 
             await _context.SaveChangesAsync();
             return request;
         }
+
 
 
 
@@ -178,16 +241,20 @@ namespace sp_backend_March4.Services
             var responseList = new List<object>();
             bool isEquipmentInUse = false;
 
+            // Fetch the equipment name using the equipmentId
+            var equipment = await _context.Equipments.FindAsync(equipmentId);
+            string? equipmentName = equipment?.Name;
+
             foreach (var request in requests)
             {
                 var result = new Dictionary<string, object>
-            {
-                { "id", request.Id },
-                { "status", request.Status },
-                { "details", request.Details },
-                { "cycle", request.Cycle },
-                { "equipmentId", request.EquipmentId },
-            };
+        {
+            { "id", request.Id },
+            { "status", request.Status },
+            { "details", request.Details },
+            { "cycle", request.Cycle },
+            { "equipmentId", request.EquipmentId },
+        };
 
                 if (!string.IsNullOrEmpty(request.Details) &&
                     request.Details.ToLower().Contains("equipment in use"))
@@ -201,10 +268,59 @@ namespace sp_backend_March4.Services
 
             return new
             {
+                equipmentName = equipmentName,
                 requests = responseList,
                 message = isEquipmentInUse ? "equipment in use" : null
             };
         }
+
+
+
+
+        private DateTime ComputeMaintenanceDate(string? cycle, DateTime? baseDate = null)
+        {
+            if (string.IsNullOrWhiteSpace(cycle))
+            {
+                return DateTime.UtcNow; // Default to today if cycle is invalid
+            }
+
+            var parts = cycle.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length != 2 || !int.TryParse(parts[0], out int number))
+            {
+                return DateTime.UtcNow; // Default if format is incorrect
+            }
+
+            string unit = parts[1].ToLower();
+            DateTime scheduledDate = baseDate ?? DateTime.UtcNow;
+
+            if (unit.StartsWith("month"))
+            {
+                scheduledDate = scheduledDate.AddMonths(number);
+            }
+            else if (unit.StartsWith("year"))
+            {
+                scheduledDate = scheduledDate.AddYears(number);
+            }
+            else if (unit.StartsWith("day"))
+            {
+                scheduledDate = scheduledDate.AddDays(number);
+            }
+            else if (unit.StartsWith("hour"))
+            {
+                scheduledDate = scheduledDate.AddHours(number);
+            }
+            else if (unit.StartsWith("minute"))
+            {
+                scheduledDate = scheduledDate.AddMinutes(number);
+            }
+            else if (unit.StartsWith("second"))
+            {
+                scheduledDate = scheduledDate.AddSeconds(number);
+            }
+
+            return scheduledDate;
+        }
+
 
     }
 }
