@@ -22,6 +22,7 @@ namespace WeatherApi
         public DbSet<Training> Trainings { get; set; }
         public DbSet<MessageAgent> MessageAgents { get; set; }
         public DbSet<AccountTraining> AccountTrainings { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         public DbSet<RequestMaintenance> RequestMaintenances { get; set; }
 

@@ -236,6 +236,9 @@ namespace sp_backend_March4.Services
         {
             var requests = await _context.RequestMaintenances
                 .Where(r => r.EquipmentId == equipmentId)
+                .Include(rm => rm.Maintenance)
+                    .ThenInclude(m => m.SubEquipment)
+                        .ThenInclude(se => se.Equipment)
                 .ToListAsync();
 
             var responseList = new List<object>();
@@ -247,6 +250,33 @@ namespace sp_backend_March4.Services
 
             foreach (var request in requests)
             {
+                bool equipmentInUseInMission = false;
+
+                if (request?.Maintenance?.SubEquipment?.EquipmentId is int eqId)
+                {
+                    var maintenanceStart = request.Maintenance.MaintenanceDate;
+                    var maintenanceEnd = request.Maintenance.MaintenanceEndDate;
+
+                    var hasOverlap = await _context.Nonavailabilities
+                        .AnyAsync(na =>
+                            na.EquipmentId == eqId &&
+                            na.Date1 <= maintenanceEnd &&
+                            na.Date2 >= maintenanceStart
+                        );
+
+                    if (hasOverlap)
+                    {
+                        equipmentInUseInMission = true;
+                        request.Details = "equipment in use";
+                    }
+                    else
+                    {
+                        request.Details = "null";
+                    }
+
+                    await _context.SaveChangesAsync(); // Update request details
+                }
+
                 var result = new Dictionary<string, object>
         {
             { "id", request.Id },
@@ -254,12 +284,11 @@ namespace sp_backend_March4.Services
             { "details", request.Details },
             { "cycle", request.Cycle },
             { "equipmentId", request.EquipmentId },
+            { "equipmentInUseInMission", equipmentInUseInMission }
         };
 
-                if (!string.IsNullOrEmpty(request.Details) &&
-                    request.Details.ToLower().Contains("equipment in use"))
+                if (equipmentInUseInMission)
                 {
-                    result.Add("equipmentInUseInMission", true);
                     isEquipmentInUse = true;
                 }
 
@@ -273,6 +302,7 @@ namespace sp_backend_March4.Services
                 message = isEquipmentInUse ? "equipment in use" : null
             };
         }
+
 
 
 
