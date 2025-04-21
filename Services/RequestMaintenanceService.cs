@@ -161,7 +161,7 @@ namespace sp_backend_March4.Services
                 // Create next cycle Maintenance and RequestMaintenance
                 var subEquipment = request.Maintenance.SubEquipment;
                 var nextMaintenanceDate = ComputeMaintenanceDate(request.Cycle, request.Maintenance.MaintenanceDate);
-
+                request.Maintenance.Status = "Scheduled";
 
                 var nextMaintenance = new Maintenance
                 {

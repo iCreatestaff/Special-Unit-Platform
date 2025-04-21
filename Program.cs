@@ -8,6 +8,7 @@ using sp_backend.Models;
 using sp_backend.Services;
 using sp_backend_March4.Interfaces;
 using sp_backend_March4.Services;
+using sp_backend_March4.Services.NotificationCreator;
 using System.Text;
 using WeatherApi; // Ensure correct namespace
 using WeatherApi.Interfaces;
@@ -39,6 +40,8 @@ builder.Services.AddScoped<ITrainingService, TrainingService>();
 builder.Services.AddScoped<IAccountTrainingService, AccountTrainingService>();
 builder.Services.AddScoped<IMessageAgentService, MessageAgentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddHostedService<NotificationCreator>();
+
 builder.Services.AddScoped<IRequestMaintenanceService, RequestMaintenanceService>();
 builder.Services.AddScoped<AuthService>(); // Register AuthService
 

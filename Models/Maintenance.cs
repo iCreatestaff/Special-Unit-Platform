@@ -20,7 +20,7 @@ namespace sp_backend.Models
 
         public string? Description { get; set; } = string.Empty;
         public string? Cycle { get; set; }
-
+        public string? Status { get; set; } // Pending : request not yet accepted / Scheduled : request accepted / Done 
         public ICollection<Item>? Items { get; set; }
         public DateTime MaintenanceDate { get; set; } = DateTime.UtcNow;
         public DateTime MaintenanceEndDate { get; set; }

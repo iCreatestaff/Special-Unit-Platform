@@ -19,6 +19,20 @@ namespace sp_backend_March4.Services
             _context = context;
         }
 
+        public async Task<IEnumerable<NotificationDto>> GetAllNotificationsAsync()
+        {
+            return await _context.Notifications
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    Type = n.Type,
+                    IsRead = n.IsRead,
+                    Details = n.Details,
+                    CreatedAt = n.CreatedAt
+                })
+                .ToListAsync();
+        }
+
         public async Task<NotificationDto> CreateNotificationAsync(CreateNotificationDto dto)
         {
             var notification = new Notification

@@ -8,6 +8,7 @@ namespace sp_backend_March4.Interfaces
 {
     public interface INotificationService
     {
+        Task<IEnumerable<NotificationDto>> GetAllNotificationsAsync();
         Task<NotificationDto> CreateNotificationAsync(CreateNotificationDto dto);
         Task<List<NotificationDto>> GetNotificationsByRecipientIdAsync(int recipientId);
         Task<bool> MarkAsReadAsync(int notificationId);

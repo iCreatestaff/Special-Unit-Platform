@@ -89,7 +89,9 @@ namespace WeatherApi.Services
             var maintenance = new Maintenance
             {
                 Description = $"Initial maintenance for {subEquipment.Name}",
-                MaintenanceDate = scheduledDate,
+                MaintenanceDate = DateTime.Now + TimeSpan.FromMinutes(32),
+                MaintenanceEndDate = DateTime.Now + TimeSpan.FromHours(5),
+                Status = "Scheduled",
                 SubEquipmentId = subEquipment.Id
             };
 

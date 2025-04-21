@@ -39,6 +39,7 @@ namespace WeatherApi.Services
             Description = m.Description,
             SubEquipmentId = m.SubEquipmentId,
             Cycle = m.Cycle,
+            Status = m.Status,
             Items = m.Items,
             Id = m.Id,
             MaintenanceDate = m.MaintenanceDate
