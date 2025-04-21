@@ -38,6 +38,7 @@ builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<ITrainingService, TrainingService>();
 builder.Services.AddScoped<IAccountTrainingService, AccountTrainingService>();
 builder.Services.AddScoped<IMessageAgentService, MessageAgentService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IRequestMaintenanceService, RequestMaintenanceService>();
 builder.Services.AddScoped<AuthService>(); // Register AuthService
 

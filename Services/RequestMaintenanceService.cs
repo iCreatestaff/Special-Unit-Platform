@@ -67,10 +67,24 @@ namespace sp_backend_March4.Services
 
 
 
-        public async Task<IEnumerable<RequestMaintenance>> GetAllRequestMaintenancesAsync()
+        public async Task<IEnumerable<object>> GetAllRequestMaintenancesAsync()
         {
-            return await _context.RequestMaintenances.ToListAsync();
+            var result = await _context.RequestMaintenances
+                .Select(r => r.EquipmentId)
+                .Distinct()
+                .Join(_context.Equipments,
+                      equipmentId => equipmentId,
+                      equipment => equipment.Id,
+                      (equipmentId, equipment) => new
+                      {
+                          equipmentId = equipment.Id,
+                          equipmentName = equipment.Name
+                      })
+                .ToListAsync();
+
+            return result;
         }
+
 
 
         public async Task<RequestMaintenance> UpdateRequestMaintenanceStatusAsync(int id, string status)
