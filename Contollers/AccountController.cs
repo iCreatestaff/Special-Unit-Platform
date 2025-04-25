@@ -8,6 +8,7 @@ using BCrypt.Net;
 using sp_backend.Interfaces;
 using sp_backend.Mappers;
 using WeatherApi.Models;
+using sp_backend_March4.DTO;
 
 [ApiController]
 [Route("api/accounts")]
@@ -155,6 +156,17 @@ public class AccountController : ControllerBase
 
         var result = await _accountService.UpdateAccountAsync(id, existingAccount);
         return result ? Ok("Account updated successfully.") : BadRequest("Failed to update account.");
+    }
+
+    [HttpPut("{id}/location")]
+    public async Task<IActionResult> UpdateLocation(int id, [FromBody] UpdateLocationDto locationDto)
+    {
+        var success = await _accountService.UpdateLocationAsync(id, locationDto.Latitude, locationDto.Longitude);
+
+        if (!success)
+            return NotFound("Account not found");
+
+        return Ok("Location updated successfully");
     }
 
     [HttpDelete("{id}")]

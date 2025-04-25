@@ -146,6 +146,19 @@ public class AccountService : IAccountService
         return true; // Successful update
     }
 
+    public async Task<bool> UpdateLocationAsync(int accountId, double latitude, double longitude)
+    {
+        var account = await _context.Accounts.FindAsync(accountId);
+        if (account == null)
+            return false;
+
+        account.Latitude = latitude;
+        account.Longitude = longitude;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> DeleteAccountAsync(int id)
     {
         var account = await _context.Accounts.FindAsync(id);

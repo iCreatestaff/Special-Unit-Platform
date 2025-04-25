@@ -28,7 +28,8 @@ namespace sp_backend_March4.Services
                     Type = n.Type,
                     IsRead = n.IsRead,
                     Details = n.Details,
-                    CreatedAt = n.CreatedAt
+                    CreatedAt = n.CreatedAt,
+                    RecipientId = n.RecipientId
                 })
                 .ToListAsync();
         }

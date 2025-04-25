@@ -1,0 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace sp_backend_March4.DTO
+{
+    public class UpdateLocationDto
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+
+}

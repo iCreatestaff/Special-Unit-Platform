@@ -30,6 +30,7 @@ namespace sp_backend_March4.Services.NotificationCreator
                 var tunisiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("W. Central Africa Standard Time");
                 var currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tunisiaTimeZone);
                 var thresholdTime = currentTime.AddMinutes(30);
+                _logger.LogInformation("[NotificationCreator] Current Tunisia Time: {Time}", currentTime);
 
 
                 var maintenances = await dbContext.Maintenances

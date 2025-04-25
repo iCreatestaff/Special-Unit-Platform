@@ -16,6 +16,8 @@ namespace sp_backend.DTO
         public string? SocialFile { get; set; }
         public string? MedicalFile { get; set; }
         public string? CareerFile { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public string? Photo { get; set; }
         public List<AccountTraining>? AccountTrainings { get; set; } = new();
         public ICollection<MessageAgent>? SentMessages { get; set; }
@@ -30,11 +32,13 @@ namespace sp_backend.DTO
                 Name = Name,
                 Type = Type,
                 Badge = Badge,
-                PasswordHash = passwordHash, // Corrected this
+                PasswordHash = passwordHash,
                 Role = Role,
                 SocialFile = SocialFile,
                 MedicalFile = MedicalFile,
                 CareerFile = CareerFile,
+                Latitude = Latitude,
+                Longitude = Longitude,
                 Photo = Photo,
                 AccountTrainings = AccountTrainings,
                 ReceivedMessages = ReceivedMessages,

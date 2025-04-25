@@ -13,6 +13,7 @@ namespace sp_backend.Interfaces
         Task<List<AccountDTO>> GetAccountsByTypeAsync(string type);
         Task<List<AccountDTO>> GetAccountsByRoleAsync(string role);
         Task<bool> UpdateAccountAsync(int id, Account account);
+        Task<bool> UpdateLocationAsync(int accountId, double latitude, double longitude);
         Task<bool> DeleteAccountAsync(int id); // Added DeleteAccountAsync
         Task<List<Account>> GetAvailableAccountsAsync(DateTime startDate, DateTime endDate);
         Task<List<AccountDTO>> GetAvailableAccountsByTypeAsync(DateTime d1, DateTime d2, string type);

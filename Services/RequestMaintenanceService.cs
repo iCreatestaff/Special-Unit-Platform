@@ -152,6 +152,7 @@ namespace sp_backend_March4.Services
                 var newNonavailability = new Nonavailability
                 {
                     EquipmentId = equipmentId,
+                    Reason = "Maintenance",
                     Date1 = maintenanceStart,
                     Date2 = maintenanceEnd
                 };
@@ -165,7 +166,7 @@ namespace sp_backend_March4.Services
 
                 var nextMaintenance = new Maintenance
                 {
-                    Name = $"Scheduled maintenance for {subEquipment.Name}",
+                    Name = $"{subEquipment.Name}",
                     Description = $"Next maintenance cycle for {subEquipment.Name}",
                     MaintenanceDate = nextMaintenanceDate,
                     MaintenanceEndDate = nextMaintenanceDate + TimeSpan.FromHours(1),
@@ -265,23 +266,26 @@ namespace sp_backend_March4.Services
             foreach (var request in requests)
             {
                 bool equipmentInUseInMission = false;
+                string? usedInMissionDescription = null;
 
                 if (request?.Maintenance?.SubEquipment?.EquipmentId is int eqId)
                 {
                     var maintenanceStart = request.Maintenance.MaintenanceDate;
                     var maintenanceEnd = request.Maintenance.MaintenanceEndDate;
 
-                    var hasOverlap = await _context.Nonavailabilities
-                        .AnyAsync(na =>
+                    var overlappingNonAvailability = await _context.Nonavailabilities
+                        .Include(na => na.Mission)
+                        .FirstOrDefaultAsync(na =>
                             na.EquipmentId == eqId &&
                             na.Date1 <= maintenanceEnd &&
                             na.Date2 >= maintenanceStart
                         );
 
-                    if (hasOverlap)
+                    if (overlappingNonAvailability != null)
                     {
                         equipmentInUseInMission = true;
-                        request.Details = "equipment in use";
+                        request.Details = $"equipment in use by {overlappingNonAvailability.MissionID}";
+                        usedInMissionDescription = overlappingNonAvailability.Mission?.Description ?? "Mission info not available";
                     }
                     else
                     {
@@ -298,7 +302,8 @@ namespace sp_backend_March4.Services
             { "details", request.Details },
             { "cycle", request.Cycle },
             { "equipmentId", request.EquipmentId },
-            { "equipmentInUseInMission", equipmentInUseInMission }
+            { "equipmentInUseInMission", equipmentInUseInMission },
+            { "missionDescription", usedInMissionDescription }
         };
 
                 if (equipmentInUseInMission)

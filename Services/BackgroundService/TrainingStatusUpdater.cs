@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using WeatherApi;
+using sp_backend_March4.Models;
 
 public class TrainingStatusUpdater : BackgroundService
 {
@@ -19,7 +20,6 @@ public class TrainingStatusUpdater : BackgroundService
         _serviceProvider = serviceProvider;
         _logger = logger;
         _localTimeZone = TimeZoneInfo.CreateCustomTimeZone("UTC+1", TimeSpan.FromHours(1), "UTC+1", "UTC+1");
-
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,25 +34,50 @@ public class TrainingStatusUpdater : BackgroundService
                 {
                     var _context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                    // Convert UTC to local time (UTC+1)
                     var nowUtc = DateTime.UtcNow;
                     var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, _localTimeZone);
+                    var thresholdTime = nowLocal.AddMinutes(30);
 
-                    // Find trainings that need to be updated
+                    // 1. Notify about upcoming trainings (starting within next 30 minutes)
+                    var upcomingTrainings = await _context.Trainings
+                        .Where(t => t.StartTime > nowLocal && t.StartTime <= thresholdTime)
+                        .ToListAsync(stoppingToken);
+
+                    foreach (var training in upcomingTrainings)
+                    {
+                        bool alreadyNotified = await _context.Notifications
+                            .AnyAsync(n => n.Type == "training" &&
+                                           n.Details!.Contains($"Training ID: {training.Id}"),
+                                           stoppingToken);
+
+                        if (!alreadyNotified)
+                        {
+                            var notification = new Notification
+                            {
+                                Type = "Training",
+                                Details = $"Training ID: {training.Id} scheduled at {training.StartTime} is due in 30 minutes."
+
+                            };
+
+                            _context.Notifications.Add(notification);
+                        }
+                    }
+
+                    // 2. Update status to "Ongoing"
                     var trainingsToStart = await _context.Trainings
                         .Where(t => t.StartTime <= nowLocal && t.Status != "Ongoing" && t.Status != "Completed")
-                        .ToListAsync();
+                        .ToListAsync(stoppingToken);
 
-                    var trainingsToFinish = await _context.Trainings
-                        .Where(t => t.EndTime <= nowLocal && t.Status == "Ongoing")
-                        .ToListAsync();
-
-                    // Update training statuses
                     foreach (var training in trainingsToStart)
                     {
                         training.Status = "Ongoing";
                         _logger.LogInformation($"Training {training.Id} started at {nowLocal}.");
                     }
+
+                    // 3. Update status to "Completed"
+                    var trainingsToFinish = await _context.Trainings
+                        .Where(t => t.EndTime <= nowLocal && t.Status == "Ongoing")
+                        .ToListAsync(stoppingToken);
 
                     foreach (var training in trainingsToFinish)
                     {
@@ -60,9 +85,9 @@ public class TrainingStatusUpdater : BackgroundService
                         _logger.LogInformation($"Training {training.Id} completed at {nowLocal}.");
                     }
 
-                    if (trainingsToStart.Any() || trainingsToFinish.Any())
+                    if (trainingsToStart.Any() || trainingsToFinish.Any() || upcomingTrainings.Any())
                     {
-                        await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync(stoppingToken);
                     }
                 }
             }
@@ -71,7 +96,6 @@ public class TrainingStatusUpdater : BackgroundService
                 _logger.LogError(ex, "Error updating training statuses.");
             }
 
-            // Wait for a minute before checking again
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
     }

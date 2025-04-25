@@ -161,6 +161,8 @@ namespace sp_backend.Services
                                 if (maintenance != null)
                                 {
                                     maintenance.MaintenanceDate = ComputeMaintenanceDate(existingSubEquipment.Cycle);
+                                    maintenance.MaintenanceEndDate = ComputeMaintenanceDate(existingSubEquipment.Cycle) + TimeSpan.FromHours(1);
+                                    maintenance.RequestMaintenance.Cycle = existingSubEquipment.Cycle;
                                 }
                             }
                         }
@@ -184,8 +186,8 @@ namespace sp_backend.Services
                             {
                                 Name = subEquipment.Name,
                                 Description = $"Initial maintenance for {newSubEquipment.Name}",
-                                MaintenanceDate = ComputeMaintenanceDate(newSubEquipment.Cycle),
-                                MaintenanceEndDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(1),
+                                MaintenanceDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(1.5) + TimeSpan.FromMinutes(2),
+                                MaintenanceEndDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(2),
                                 SubEquipmentId = newSubEquipment.Id,
                                 Cycle = subEquipment.Cycle
                             };

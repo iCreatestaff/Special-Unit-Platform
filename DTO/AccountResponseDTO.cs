@@ -20,6 +20,8 @@ namespace sp_backend.DTO
         public string? SocialFile { get; set; }
         public string? MedicalFile { get; set; }
         public string? CareerFile { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public List<AccountTraining> AccountTrainings { get; set; } = new();
         public List<MessageDto> SentMessages { get; set; } = new();
         public List<MessageDto> ReceivedMessages { get; set; } = new();
@@ -36,6 +38,8 @@ namespace sp_backend.DTO
                 PasswordHash = passwordHash, // Corrected this
                 Role = Role,
                 SocialFile = SocialFile,
+                Latitude = Latitude,
+                Longitude = Longitude,
                 MedicalFile = MedicalFile,
                 CareerFile = CareerFile,
                 AccountTrainings = AccountTrainings,
