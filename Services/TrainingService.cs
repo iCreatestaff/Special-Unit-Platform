@@ -110,21 +110,21 @@ namespace sp_backend_March4.Services
             var training = await _context.Trainings.FindAsync(id);
             if (training == null) return false;
 
-            // 1. Delete related nonavailabilities (treating MissionId as TrainingId)
+            // 1. Delete related nonavailabilities (matching Reason with training title)
             var relatedNonavailabilities = await _context.Nonavailabilities
-                .Where(n => n.MissionID == id)
+                .Where(n => n.Reason == $"Training: {training.Title}")
                 .ToListAsync();
 
             _context.Nonavailabilities.RemoveRange(relatedNonavailabilities);
 
-            // 2. Delete related notifications
+            // 2. Delete related notifications (matching by ReferenceId and Type)
             var relatedNotifications = await _context.Notifications
-                .Where(n => n.ReferenceId == training.Id && n.Type == "Training")
+                .Where(n => n.ReferenceId == training.Id && n.Type == "training")
                 .ToListAsync();
 
             _context.Notifications.RemoveRange(relatedNotifications);
 
-            // 3. Delete training
+            // 3. Delete the training itself
             _context.Trainings.Remove(training);
 
             return await _context.SaveChangesAsync() > 0;
