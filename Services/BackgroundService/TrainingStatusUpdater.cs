@@ -55,7 +55,8 @@ public class TrainingStatusUpdater : BackgroundService
                             var notification = new Notification
                             {
                                 Type = "Training",
-                                Details = $"Training ID: {training.Id} scheduled at {training.StartTime} is due in 30 minutes."
+                                Details = $"Training ID: {training.Id} scheduled at {training.StartTime} is due in 30 minutes.",
+                                ReferenceId = training.Id
 
                             };
 

@@ -77,7 +77,8 @@ namespace sp_backend_March4.Services
                     AccountId = accountId,
                     Date1 = training.StartTime,
                     Date2 = training.EndTime,
-                    Reason = $"Training: {training.Title}"
+                    Reason = $"Training: {training.Title}",
+                    MissionID = training.Id
                 };
 
                 _context.Nonavailabilities.Add(nonAvailability);
@@ -109,9 +110,26 @@ namespace sp_backend_March4.Services
             var training = await _context.Trainings.FindAsync(id);
             if (training == null) return false;
 
+            // 1. Delete related nonavailabilities (treating MissionId as TrainingId)
+            var relatedNonavailabilities = await _context.Nonavailabilities
+                .Where(n => n.MissionID == id)
+                .ToListAsync();
+
+            _context.Nonavailabilities.RemoveRange(relatedNonavailabilities);
+
+            // 2. Delete related notifications
+            var relatedNotifications = await _context.Notifications
+                .Where(n => n.ReferenceId == training.Id && n.Type == "Training")
+                .ToListAsync();
+
+            _context.Notifications.RemoveRange(relatedNotifications);
+
+            // 3. Delete training
             _context.Trainings.Remove(training);
+
             return await _context.SaveChangesAsync() > 0;
         }
+
 
         public async Task<bool> AssignAccountToTraining(int trainingId, int accountId)
         {
