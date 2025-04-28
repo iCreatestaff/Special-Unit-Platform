@@ -167,7 +167,7 @@ namespace sp_backend_March4.Services
                 var nextMaintenance = new Maintenance
                 {
                     Name = $"{subEquipment.Name}",
-                    Description = $"Next maintenance cycle for {subEquipment.Name}",
+                    Description = $"Next maintenance cycle for {subEquipment.Name} of equipment {subEquipment.EquipmentId}",
                     MaintenanceDate = nextMaintenanceDate,
                     MaintenanceEndDate = nextMaintenanceDate + TimeSpan.FromHours(1),
                     SubEquipmentId = subEquipment.Id,
@@ -214,9 +214,33 @@ namespace sp_backend_March4.Services
                     var newMaintenance = new Maintenance
                     {
                         Name = request.Maintenance.SubEquipment?.Name ?? "Unnamed",
-                        Description = $"Delayed maintenance for {request.Maintenance.SubEquipment?.Name ?? "equipment"}",
+                        Description = $"Delayed maintenance for {request.Maintenance.SubEquipment?.Name ?? "equipment"} of Equipment {request.EquipmentId}",
                         MaintenanceDate = nextMaintenanceStart,
                         MaintenanceEndDate = nextMaintenanceStart + TimeSpan.FromHours(1),
+                        SubEquipmentId = request.Maintenance.SubEquipmentId,
+                        Cycle = request.Cycle
+                    };
+                    _context.Maintenances.Add(newMaintenance);
+
+                    // Create a new RequestMaintenance
+                    var newRequest = new RequestMaintenance
+                    {
+                        Status = "Pending",
+                        Details = $"Rescheduled maintenance for {request.Maintenance.SubEquipment?.Name ?? "equipment"} after rejection",
+                        Cycle = request.Cycle,
+                        EquipmentId = equipmentId,
+                        Maintenance = newMaintenance
+                    };
+                    _context.RequestMaintenances.Add(newRequest);
+                }
+                if (lastMission == null)
+                {
+                    var newMaintenance = new Maintenance
+                    {
+                        Name = request.Maintenance.SubEquipment?.Name ?? "Unnamed",
+                        Description = $"Delayed maintenance for {request.Maintenance.SubEquipment?.Name ?? "equipment"} of Equipment {request.EquipmentId}",
+                        MaintenanceDate = request.Maintenance.MaintenanceDate + TimeSpan.FromDays(1),
+                        MaintenanceEndDate = request.Maintenance.MaintenanceDate + TimeSpan.FromDays(1) + TimeSpan.FromHours(1),
                         SubEquipmentId = request.Maintenance.SubEquipmentId,
                         Cycle = request.Cycle
                     };
@@ -250,16 +274,16 @@ namespace sp_backend_March4.Services
         public async Task<object> GetRequestMaintenancesByEquipmentIdAsync(int equipmentId)
         {
             var requests = await _context.RequestMaintenances
-                .Where(r => r.EquipmentId == equipmentId)
+                .Where(r => r.EquipmentId == equipmentId && r.Status == "Pending") // Only Pending
                 .Include(rm => rm.Maintenance)
                     .ThenInclude(m => m.SubEquipment)
                         .ThenInclude(se => se.Equipment)
+                .OrderBy(r => r.Maintenance.MaintenanceDate) // Sort by maintenance start date
                 .ToListAsync();
 
             var responseList = new List<object>();
             bool isEquipmentInUse = false;
 
-            // Fetch the equipment name using the equipmentId
             var equipment = await _context.Equipments.FindAsync(equipmentId);
             string? equipmentName = equipment?.Name;
 

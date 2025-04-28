@@ -25,7 +25,7 @@ namespace sp_backend_March4.Models
         public int? ReferenceId { get; set; }
 
         // Timestamp to sort notifications
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(1);
     }
 
 }

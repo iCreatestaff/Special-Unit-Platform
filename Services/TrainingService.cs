@@ -77,8 +77,7 @@ namespace sp_backend_March4.Services
                     AccountId = accountId,
                     Date1 = training.StartTime,
                     Date2 = training.EndTime,
-                    Reason = $"Training: {training.Title}",
-                    MissionID = training.Id
+                    Reason = $"Training: {training.Title}"
                 };
 
                 _context.Nonavailabilities.Add(nonAvailability);

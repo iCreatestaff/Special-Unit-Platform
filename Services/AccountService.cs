@@ -36,6 +36,7 @@ public class AccountService : IAccountService
         return await _context.Accounts.FindAsync(id);
     }
 
+
     public async Task<List<Account>> GetAvailableAccountsAsync(DateTime d1, DateTime d2)
     {
         return await _context.Accounts

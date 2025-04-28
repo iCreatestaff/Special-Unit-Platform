@@ -185,7 +185,7 @@ namespace sp_backend.Services
                             var maintenance = new Maintenance
                             {
                                 Name = subEquipment.Name,
-                                Description = $"Initial maintenance for {newSubEquipment.Name}",
+                                Description = $"Initial maintenance for {newSubEquipment.Name} of equipment {newSubEquipment.EquipmentId}",
                                 MaintenanceDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(1.5) + TimeSpan.FromMinutes(2),
                                 MaintenanceEndDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(2),
                                 SubEquipmentId = newSubEquipment.Id,
