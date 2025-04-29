@@ -100,7 +100,7 @@ public class MissionStatusUpdater : BackgroundService
                             }
 
                             var locationParts = mission.Location.Split(',');
-
+                            _logger.LogInformation($"parts {locationParts[0]}, {locationParts[1]}");
                             if (locationParts.Length != 2 ||
                                 !double.TryParse(locationParts[0], out var latitude) ||
                                 !double.TryParse(locationParts[1], out var longitude))
