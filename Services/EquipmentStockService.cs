@@ -189,7 +189,8 @@ namespace sp_backend.Services
                                 MaintenanceDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(1.5) + TimeSpan.FromMinutes(2),
                                 MaintenanceEndDate = ComputeMaintenanceDate(newSubEquipment.Cycle) + TimeSpan.FromHours(2),
                                 SubEquipmentId = newSubEquipment.Id,
-                                Cycle = subEquipment.Cycle
+                                Cycle = subEquipment.Cycle,
+                                Status = "Pending"
                             };
 
                             _context.Maintenances.Add(maintenance);

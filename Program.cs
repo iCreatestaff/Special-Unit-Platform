@@ -14,8 +14,10 @@ using WeatherApi; // Ensure correct namespace
 using WeatherApi.Interfaces;
 using WeatherApi.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5038");
+//builder.WebHost.UseUrls("http://0.0.0.0:8000");
 
 // 🔹 Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>

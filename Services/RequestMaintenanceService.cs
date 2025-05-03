@@ -218,7 +218,8 @@ namespace sp_backend_March4.Services
                         MaintenanceDate = nextMaintenanceStart,
                         MaintenanceEndDate = nextMaintenanceStart + TimeSpan.FromHours(1),
                         SubEquipmentId = request.Maintenance.SubEquipmentId,
-                        Cycle = request.Cycle
+                        Cycle = request.Cycle,
+                        Status = "Pending"
                     };
                     _context.Maintenances.Add(newMaintenance);
 
@@ -259,7 +260,7 @@ namespace sp_backend_March4.Services
                 }
 
                 // Remove the old rejected maintenance
-                _context.Maintenances.Remove(request.Maintenance);
+                request.Maintenance.Status = "Rejected";
             }
 
 
@@ -308,7 +309,7 @@ namespace sp_backend_March4.Services
                     if (overlappingNonAvailability != null)
                     {
                         equipmentInUseInMission = true;
-                        request.Details = $"equipment in use by {overlappingNonAvailability.MissionID}";
+                        request.Details = $"equipment in use by {overlappingNonAvailability.Mission?.Description}";
                         usedInMissionDescription = overlappingNonAvailability.Mission?.Description ?? "Mission info not available";
                     }
                     else
@@ -326,6 +327,7 @@ namespace sp_backend_March4.Services
             { "details", request.Details },
             { "cycle", request.Cycle },
             { "equipmentId", request.EquipmentId },
+            {"subequipmentName",request.Maintenance.SubEquipment.Name},
             { "equipmentInUseInMission", equipmentInUseInMission },
             { "missionDescription", usedInMissionDescription }
         };

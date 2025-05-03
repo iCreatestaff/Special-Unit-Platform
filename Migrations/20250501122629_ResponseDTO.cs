@@ -5,7 +5,7 @@
 namespace sp_back.Migrations
 {
     /// <inheritdoc />
-    public partial class MissionHere : Migration
+    public partial class ResponseDTO : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

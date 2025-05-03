@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using sp_backend_March4.Models;
 using WeatherApi;
+using System.Globalization;
 
 public class MissionStatusUpdater : BackgroundService
 {
@@ -98,18 +99,21 @@ public class MissionStatusUpdater : BackgroundService
                                 _logger.LogWarning($"Mission {mission.Id} has no location specified.");
                                 continue;
                             }
+                            _logger.LogInformation($"Mission Location Format {mission.Location}");
 
                             var locationParts = mission.Location.Split(',');
-                            _logger.LogInformation($"parts {locationParts[0]}, {locationParts[1]}");
+
+
                             if (locationParts.Length != 2 ||
-                                !double.TryParse(locationParts[0], out var latitude) ||
-                                !double.TryParse(locationParts[1], out var longitude))
+                                !double.TryParse(locationParts[0].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude) ||
+                                !double.TryParse(locationParts[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
                             {
                                 _logger.LogWarning($"Invalid location format for mission {mission.Id}: {mission.Location}");
                                 continue;
                             }
 
                             var missionLocation = new double[] { latitude, longitude };
+
 
                             var data = new
                             {

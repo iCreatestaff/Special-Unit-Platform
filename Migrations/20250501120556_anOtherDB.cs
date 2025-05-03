@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace sp_back.Migrations
 {
     /// <inheritdoc />
-    public partial class delete_migrations : Migration
+    public partial class anOtherDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,8 @@ namespace sp_back.Migrations
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Badge = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     SocialFile = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -70,18 +72,21 @@ namespace sp_back.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RequestMaintenances",
+                name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EquipmentId = table.Column<int>(type: "int", nullable: true)
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecipientId = table.Column<int>(type: "int", nullable: true),
+                    ReferenceId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RequestMaintenances", x => x.Id);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -261,19 +266,15 @@ namespace sp_back.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cycle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MaintenanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MaintenanceEndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SubEquipmentId = table.Column<int>(type: "int", nullable: true),
-                    RequestMaintenanceId = table.Column<int>(type: "int", nullable: true)
+                    SubEquipmentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Maintenances", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Maintenances_RequestMaintenances_RequestMaintenanceId",
-                        column: x => x.RequestMaintenanceId,
-                        principalTable: "RequestMaintenances",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Maintenances_SubEquipments_SubEquipmentId",
                         column: x => x.SubEquipmentId,
@@ -349,6 +350,30 @@ namespace sp_back.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RequestMaintenances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaintenanceId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cycle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EquipmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RequestMaintenances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RequestMaintenances_Maintenances_MaintenanceId",
+                        column: x => x.MaintenanceId,
+                        principalTable: "Maintenances",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AccountMissions_MissionId",
                 table: "AccountMissions",
@@ -379,11 +404,6 @@ namespace sp_back.Migrations
                 name: "IX_Items_MaintenanceId",
                 table: "Items",
                 column: "MaintenanceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Maintenances_RequestMaintenanceId",
-                table: "Maintenances",
-                column: "RequestMaintenanceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Maintenances_SubEquipmentId",
@@ -421,6 +441,12 @@ namespace sp_back.Migrations
                 column: "SubEquipmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RequestMaintenances_MaintenanceId",
+                table: "RequestMaintenances",
+                column: "MaintenanceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubEquipments_EquipmentId",
                 table: "SubEquipments",
                 column: "EquipmentId");
@@ -448,10 +474,13 @@ namespace sp_back.Migrations
                 name: "Nonavailabilities");
 
             migrationBuilder.DropTable(
-                name: "Trainings");
+                name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "Maintenances");
+                name: "RequestMaintenances");
+
+            migrationBuilder.DropTable(
+                name: "Trainings");
 
             migrationBuilder.DropTable(
                 name: "Accounts");
@@ -460,7 +489,7 @@ namespace sp_back.Migrations
                 name: "Missions");
 
             migrationBuilder.DropTable(
-                name: "RequestMaintenances");
+                name: "Maintenances");
 
             migrationBuilder.DropTable(
                 name: "SubEquipments");
