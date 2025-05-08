@@ -156,13 +156,18 @@ namespace sp_backend.Services
 
                                 // 🔹 Update Maintenance Date
                                 var maintenance = await _context.Maintenances
-                                    .FirstOrDefaultAsync(m => m.SubEquipmentId == existingSubEquipment.Id);
+                                    .FirstOrDefaultAsync(m => m.SubEquipmentId == existingSubEquipment.Id && m.MaintenanceDate > DateTime.Now);
 
                                 if (maintenance != null)
                                 {
-                                    maintenance.MaintenanceDate = ComputeMaintenanceDate(existingSubEquipment.Cycle);
-                                    maintenance.MaintenanceEndDate = ComputeMaintenanceDate(existingSubEquipment.Cycle) + TimeSpan.FromHours(1);
-                                    maintenance.RequestMaintenance.Cycle = existingSubEquipment.Cycle;
+                                    maintenance.Cycle = existingSubEquipment.Cycle;
+                                    // maintenance.MaintenanceDate = ComputeMaintenanceDate(existingSubEquipment.Cycle);
+                                    // maintenance.MaintenanceEndDate = ComputeMaintenanceDate(existingSubEquipment.Cycle) + TimeSpan.FromHours(1);
+
+                                    if (maintenance.RequestMaintenance != null)
+                                    {
+                                        maintenance.RequestMaintenance.Cycle = existingSubEquipment.Cycle;
+                                    }
                                 }
                             }
                         }

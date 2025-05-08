@@ -34,6 +34,21 @@ namespace sp_backend_March4.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<NotificationDto>> GetByTypeAsync(string type)
+        {
+            return await _context.Notifications
+                .Where(n => n.Type == type)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    Type = n.Type,
+                    Details = n.Details,
+                    RecipientId = n.RecipientId,
+                    ReferenceId = n.ReferenceId
+                })
+                .ToListAsync();
+        }
+
         public async Task<NotificationDto> CreateNotificationAsync(CreateNotificationDto dto)
         {
             var notification = new Notification

@@ -105,6 +105,7 @@ namespace WeatherApi.Services
             existingMaintenance.Type = maintenance.Type ?? existingMaintenance.Type;
             existingMaintenance.Description = maintenance.Description ?? existingMaintenance.Description;
             existingMaintenance.MaintenanceDate = maintenance.MaintenanceDate;
+            existingMaintenance.Status = maintenance.Status;
             existingMaintenance.SubEquipmentId = maintenance.SubEquipmentId ?? existingMaintenance.SubEquipmentId;
 
             await _context.SaveChangesAsync();

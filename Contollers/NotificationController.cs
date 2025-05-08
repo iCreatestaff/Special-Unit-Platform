@@ -27,6 +27,12 @@ namespace sp_backend_March4.Contollers
             var notifications = await _notificationService.GetAllNotificationsAsync();
             return Ok(notifications);
         }
+        [HttpGet("type/{type}")]
+        public async Task<ActionResult<IEnumerable<NotificationDto>>> GetByType(string type)
+        {
+            var notifications = await _notificationService.GetByTypeAsync(type);
+            return Ok(notifications);
+        }
 
         [HttpPost]
         public async Task<ActionResult<NotificationDto>> CreateNotification(CreateNotificationDto dto)

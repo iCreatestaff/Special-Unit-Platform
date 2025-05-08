@@ -11,6 +11,7 @@ namespace sp_backend_March4.Interfaces
         Task<IEnumerable<NotificationDto>> GetAllNotificationsAsync();
         Task<NotificationDto> CreateNotificationAsync(CreateNotificationDto dto);
         Task<List<NotificationDto>> GetNotificationsByRecipientIdAsync(int recipientId);
+        Task<IEnumerable<NotificationDto>> GetByTypeAsync(string type);
         Task<bool> MarkAsReadAsync(int notificationId);
         Task<bool> DeleteNotificationAsync(int notificationId);
     }

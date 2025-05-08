@@ -162,6 +162,7 @@ namespace sp_backend_March4.Services
                 // Create next cycle Maintenance and RequestMaintenance
                 var subEquipment = request.Maintenance.SubEquipment;
                 var nextMaintenanceDate = ComputeMaintenanceDate(request.Cycle, request.Maintenance.MaintenanceDate);
+
                 request.Maintenance.Status = "Scheduled";
 
                 var nextMaintenance = new Maintenance
@@ -259,7 +260,6 @@ namespace sp_backend_March4.Services
                     _context.RequestMaintenances.Add(newRequest);
                 }
 
-                // Remove the old rejected maintenance
                 request.Maintenance.Status = "Rejected";
             }
 
@@ -314,7 +314,7 @@ namespace sp_backend_March4.Services
                     }
                     else
                     {
-                        request.Details = "null";
+                        request.Details = "-";
                     }
 
                     await _context.SaveChangesAsync(); // Update request details

@@ -43,6 +43,13 @@ namespace sp_backend.Controllers
             return Ok(nonAvailabilityList);
         }
 
+        [HttpGet("type/{type}")]
+        public async Task<ActionResult<IEnumerable<NotificationDto>>> GetByType(string type)
+        {
+            var notifications = await _notificationService.GetByTypeAsync(type);
+            return Ok(notifications);
+        }
+
         [HttpGet("Equipment/{EquipmentId}")]
         public async Task<ActionResult<List<NonAvailabilityDTO>>> GetNonAvailabilityBySubEquipmentId(int EquipmentId)
         {
