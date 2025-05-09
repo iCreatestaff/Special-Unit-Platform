@@ -101,6 +101,19 @@ namespace sp_backend.Controllers
             return NotFound("EquipmentStock not found or has no Equipments.");
         }
 
+        [HttpDelete("subequipment")]
+        public async Task<IActionResult> DeleteSubEquipmentFromAllEquipments(
+       [FromQuery] int equipmentStockId,
+       [FromQuery] string subEquipmentName)
+        {
+            var result = await _equipmentStockService.DeleteSubEquipmentFromAllEquipmentsAsync(equipmentStockId, subEquipmentName);
+
+            if (!result)
+                return NotFound("No matching sub-equipment found to delete.");
+
+            return Ok("Sub-equipment deleted from all equipments.");
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -10,6 +10,8 @@ namespace sp_backend_March4.Interfaces
     public interface IMessageAgentService
     {
         Task<MessageAgent> SendMessageAsync(int senderId, int receiverId, string content);
+        Task<IEnumerable<MessageAgent>> GetMessagesBetweenUsersAsync(int user1Id, int user2Id);
+
         Task<IEnumerable<MessageAgent>> GetMessagesForAgentAsync(int agentId);
         Task MarkAllMessagesAsReadAsync(int agentId);
         Task<MessageAgent> GetMessageByIdAsync(int messageId);

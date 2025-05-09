@@ -38,6 +38,27 @@ namespace sp_backend_March4.Services
             return message;
         }
 
+        public async Task<IEnumerable<MessageAgent>> GetMessagesBetweenUsersAsync(int user1Id, int user2Id)
+        {
+            var messages = await _context.MessageAgents
+                .Where(m =>
+                    (m.SenderId == user1Id && m.ReceiverId == user2Id) ||
+                    (m.SenderId == user2Id && m.ReceiverId == user1Id))
+                .OrderBy(m => m.Timestamp)
+                .Select(m => new MessageAgent
+                {
+                    Id = m.Id,
+                    SenderId = m.SenderId,
+                    ReceiverId = m.ReceiverId,
+                    Content = m.Content,
+                    Timestamp = m.Timestamp,
+                    IsRead = m.IsRead
+                })
+                .ToListAsync();
+
+            return messages;
+        }
+
         public async Task<IEnumerable<MessageAgent>> GetMessagesForAgentAsync(int agentId)
         {
             return await _context.MessageAgents

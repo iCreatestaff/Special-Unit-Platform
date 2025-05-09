@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using sp_backend_March4.Interfaces;
 using sp_backend_March4.DTO;
+using sp_backend_March4.Models;
 
 namespace sp_backend_March4.Contollers
 {
@@ -43,6 +44,17 @@ namespace sp_backend_March4.Contollers
                 return NotFound();
 
             return Ok(message);
+        }
+        [HttpGet("conversation")]
+        public async Task<ActionResult<IEnumerable<MessageAgent>>> GetConversation([FromQuery] int user1Id, [FromQuery] int user2Id)
+        {
+            if (user1Id == user2Id)
+            {
+                return BadRequest("Users must be different.");
+            }
+
+            var messages = await _messageService.GetMessagesBetweenUsersAsync(user1Id, user2Id);
+            return Ok(messages);
         }
 
         [HttpPut("read/{messageId}")]

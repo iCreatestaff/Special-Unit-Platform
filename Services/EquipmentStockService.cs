@@ -300,6 +300,36 @@ namespace sp_backend.Services
             return true;
         }
 
+        public async Task<bool> DeleteSubEquipmentFromAllEquipmentsAsync(int equipmentStockId, string subEquipmentName)
+        {
+            var equipmentStock = await _context.EquipmentStocks
+                .Where(es => es.Id == equipmentStockId)
+                .Include(es => es.Equipments)
+                    .ThenInclude(e => e.SubEquipments)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync();
+
+            if (equipmentStock == null || !equipmentStock.Equipments.Any())
+            {
+                return false;
+            }
+
+            var subEquipmentsToRemove = equipmentStock.Equipments
+                .SelectMany(e => e.SubEquipments)
+                .Where(se => se.Name == subEquipmentName)
+                .ToList();
+
+            if (!subEquipmentsToRemove.Any())
+            {
+                return false;
+            }
+
+            _context.SubEquipments.RemoveRange(subEquipmentsToRemove);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
 
 
 

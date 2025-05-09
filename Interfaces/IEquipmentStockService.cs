@@ -14,7 +14,7 @@ namespace sp_backend.Services
         Task<bool> AddSubEquipmentToAllEquipmentsAsync(int equipmentStockId, SubEquipment newSubEquipment);
 
         Task<bool> UpdateSubEquipmentByNameAsync(int equipmentStockId, string subEquipmentName, SubEquipment updatedSubEquipment);
-
+        Task<bool> DeleteSubEquipmentFromAllEquipmentsAsync(int equipmentStockId, string subEquipmentName);
         Task<bool> UpdateAsync(int id, EquipmentStockDTO equipmentStockDto);
         Task<bool> DeleteAsync(int id);
     }
