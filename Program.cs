@@ -162,8 +162,8 @@ using (var scope = app.Services.CreateScope())
         {
             Username = "superadmin",
             Name = "Super Admin",
-            Type = "Admin",
-            Badge = "SA001",
+            Type = "admin",
+            Badge = "",
             Password = "SuperPass123!",
             Role = "SuperAdmin"
         };

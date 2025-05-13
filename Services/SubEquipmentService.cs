@@ -144,7 +144,7 @@ namespace WeatherApi.Services
                     {
                         Name = existingSubEquipment.Name,
                         Description = $"Auto-generated maintenance due to breakdown",
-                        MaintenanceDate = DateTime.UtcNow,
+                        MaintenanceDate = DateTime.UtcNow + TimeSpan.FromHours(1),
                         MaintenanceEndDate = DateTime.UtcNow.AddHours(1), // or custom logic
                         SubEquipmentId = existingSubEquipment.Id,
                         Cycle = existingSubEquipment.Cycle

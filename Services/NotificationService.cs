@@ -43,6 +43,8 @@ namespace sp_backend_March4.Services
                     Id = n.Id,
                     Type = n.Type,
                     Details = n.Details,
+                    IsRead = n.IsRead,
+                    CreatedAt = n.CreatedAt,
                     RecipientId = n.RecipientId,
                     ReferenceId = n.ReferenceId
                 })

@@ -325,6 +325,7 @@ namespace sp_backend_March4.Services
             { "id", request.Id },
             { "status", request.Status },
             { "details", request.Details },
+            { "maintenanceDate", request.Maintenance.MaintenanceDate},
             { "cycle", request.Cycle },
             { "equipmentId", request.EquipmentId },
             {"subequipmentName",request.Maintenance.SubEquipment.Name},

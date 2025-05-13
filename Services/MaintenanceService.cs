@@ -106,6 +106,10 @@ namespace WeatherApi.Services
             existingMaintenance.Description = maintenance.Description ?? existingMaintenance.Description;
             existingMaintenance.MaintenanceDate = maintenance.MaintenanceDate;
             existingMaintenance.Status = maintenance.Status;
+            if (maintenance.SubEquipment.Status == "en_panne" && maintenance.Status == "Done")
+            {
+                maintenance.SubEquipment.Status = "bon_etat";
+            }
             existingMaintenance.SubEquipmentId = maintenance.SubEquipmentId ?? existingMaintenance.SubEquipmentId;
 
             await _context.SaveChangesAsync();

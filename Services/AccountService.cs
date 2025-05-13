@@ -90,6 +90,7 @@ public class AccountService : IAccountService
                 Id = a.Id,
                 Name = a.Name,
                 Role = a.Role,
+                Type = a.Type,
                 Photo = a.Photo // Assuming URL storage
             })
             .ToListAsync();
