@@ -137,10 +137,18 @@ public class MissionStatusUpdater : BackgroundService
 
                                 _logger.LogInformation($"Flask response for mission {mission.Id}: Closest agents {string.Join(", ", agentIds)}");
 
+                                // Get usernames for those agent IDs
+                                var usernames = await _context.Accounts
+                                    .Where(a => agentIds.Contains(a.Id))
+                                    .Select(a => a.Username)
+                                    .ToListAsync(stoppingToken);
+
+                                _logger.LogInformation($"Usernames for closest agents: {string.Join(", ", usernames)}");
+
                                 var notification = new Notification
                                 {
                                     Type = "mission",
-                                    Details = $"Mission ID: {mission.Id} scheduled at {mission.StartTime} is due in 30 minutes. Closest agents: {string.Join(", ", agentIds)}",
+                                    Details = $"Mission ID: {mission.Id} scheduled at {mission.StartTime} is due in 30 minutes. Closest agents: {string.Join(", ", usernames)}",
                                     RecipientId = mission.AdminId,
                                     ReferenceId = mission.Id
                                 };
@@ -152,6 +160,7 @@ public class MissionStatusUpdater : BackgroundService
                             {
                                 _logger.LogError(ex, "Error contacting Flask server for mission {MissionId}", mission.Id);
                             }
+
                         }
                         else
                         {
