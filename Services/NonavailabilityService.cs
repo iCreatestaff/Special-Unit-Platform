@@ -27,7 +27,9 @@ namespace sp_backend.Services
                 AccountId = na.AccountId,
                 Date1 = na.Date1,
                 Date2 = na.Date2,
-                Reason = na.Reason
+                Reason = na.Reason,
+                TrainingID = na.TrainingID,
+                MissionID = na.MissionID
             }).ToList();
         }
 
@@ -43,7 +45,9 @@ namespace sp_backend.Services
                 Type = "Equipment",
                 EquipmentId = na.EquipmentId,
                 Date1 = na.Date1,
-                Date2 = na.Date2
+                Date2 = na.Date2,
+                Reason = na.Reason,
+                MissionID = na.MissionID
             }).ToList();
         }
 

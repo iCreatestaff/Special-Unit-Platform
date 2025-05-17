@@ -77,7 +77,8 @@ namespace sp_backend_March4.Services
                     AccountId = accountId,
                     Date1 = training.StartTime,
                     Date2 = training.EndTime,
-                    Reason = $"Training: {training.Title}"
+                    TrainingID = training.Id,
+                    Reason = "Training"
                 };
 
                 _context.Nonavailabilities.Add(nonAvailability);
@@ -108,7 +109,7 @@ namespace sp_backend_March4.Services
         public async Task DeleteNonavailabilitiesByTrainingId(int trainingId)
         {
             var existingNonavailabilities = await _context.Nonavailabilities
-                .Where(n => n.MissionID == trainingId && n.Reason == $"Mission {trainingId}")
+                .Where(n => n.TrainingID == trainingId)
                 .ToListAsync();
 
             if (existingNonavailabilities.Any())

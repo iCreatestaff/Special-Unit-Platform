@@ -14,6 +14,9 @@ namespace sp_backend.DTO
         public int? EquipmentId { get; set; }
         public string? Reason { get; set; }
 
+        public int? MissionID { get; set; }
+        public int? TrainingID { get; set; }
+
         public DateTime Date1 { get; set; }
         public DateTime Date2 { get; set; }
     }

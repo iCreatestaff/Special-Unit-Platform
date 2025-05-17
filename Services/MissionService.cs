@@ -92,7 +92,7 @@ public class MissionService : IMissionService
                     Type = "Equipment",
                     EquipmentId = equipmentId,
                     MissionID = mission.Id,
-                    Reason = $"Mission {mission.Id}"
+                    Reason = "Mission"
 
                 }));
             }
@@ -246,7 +246,7 @@ public class MissionService : IMissionService
     public async Task DeleteNonavailabilitiesByMissionId(int missionId)
     {
         var existingNonavailabilities = await _context.Nonavailabilities
-            .Where(n => n.MissionID == missionId && n.Reason == $"Mission {missionId}")
+            .Where(n => n.MissionID == missionId)
             .ToListAsync();
 
         if (existingNonavailabilities.Any())

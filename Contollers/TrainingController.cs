@@ -52,7 +52,7 @@ namespace WeatherApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}/nonavailabilities")]
+        [HttpDelete("{trainingId}/nonavailabilities")]
         public async Task<IActionResult> DeleteNonavailabilities(int trainingId)
         {
             await _trainingService.DeleteNonavailabilitiesByTrainingId(trainingId);

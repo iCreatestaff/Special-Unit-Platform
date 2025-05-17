@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Storage;
 using sp_backend.Models;
 using WeatherApi.Models;
 
@@ -19,6 +20,8 @@ public class Nonavailability
     public string? Reason { get; set; }
 
     public int? MissionID { get; set; }
+
+    public int? TrainingID { get; set; }
 
     [ForeignKey(nameof(MissionID))]
     public Mission? Mission { get; set; }
