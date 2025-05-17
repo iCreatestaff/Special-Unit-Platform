@@ -104,6 +104,20 @@ namespace sp_backend_March4.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
+
+        public async Task DeleteNonavailabilitiesByTrainingId(int trainingId)
+        {
+            var existingNonavailabilities = await _context.Nonavailabilities
+                .Where(n => n.MissionID == trainingId && n.Reason == $"Mission {trainingId}")
+                .ToListAsync();
+
+            if (existingNonavailabilities.Any())
+            {
+                _context.Nonavailabilities.RemoveRange(existingNonavailabilities);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             var training = await _context.Trainings.FindAsync(id);

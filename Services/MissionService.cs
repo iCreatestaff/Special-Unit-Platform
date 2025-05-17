@@ -24,7 +24,7 @@ public class MissionService : IMissionService
         {
             // Validate AdminId
             var adminAccount = await _context.Accounts.FindAsync(missionDTO.AdminId);
-            if (adminAccount == null || adminAccount.Role != "Admin")
+            if (adminAccount == null || (adminAccount.Role != "Admin" && adminAccount.Role != "SuperAdmin"))
             {
                 return false; // Admin validation failed
             }
@@ -246,7 +246,7 @@ public class MissionService : IMissionService
     public async Task DeleteNonavailabilitiesByMissionId(int missionId)
     {
         var existingNonavailabilities = await _context.Nonavailabilities
-            .Where(n => n.MissionID == missionId)
+            .Where(n => n.MissionID == missionId && n.Reason == $"Mission {missionId}")
             .ToListAsync();
 
         if (existingNonavailabilities.Any())

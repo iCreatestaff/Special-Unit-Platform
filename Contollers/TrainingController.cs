@@ -52,6 +52,13 @@ namespace WeatherApi.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id}/nonavailabilities")]
+        public async Task<IActionResult> DeleteNonavailabilities(int trainingId)
+        {
+            await _trainingService.DeleteNonavailabilitiesByTrainingId(trainingId);
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -59,6 +66,8 @@ namespace WeatherApi.Controllers
             if (!deleted) return NotFound();
             return NoContent();
         }
+
+
 
         [HttpPost("{trainingId}/assign/{accountId}")]
         public async Task<IActionResult> AssignAccountToTraining(int trainingId, int accountId)
