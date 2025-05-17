@@ -39,7 +39,7 @@ namespace sp_backend.Controllers
             {
                 return BadRequest("Invalid AdminId: No Admin Found.");
             }
-            if (account.Role != "Admin" || account.Role != "SuperAdmin")
+            if (account.Role != "Admin" && account.Role != "SuperAdmin")
             {
                 return BadRequest("Invalid AdminId: The user must be an Admin.");
             }
