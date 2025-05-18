@@ -93,17 +93,50 @@ namespace sp_backend_March4.Services
 
         public async Task<bool> UpdateAsync(int id, TrainingDTO trainingDto)
         {
-            var existingTraining = await _context.Trainings.FindAsync(id);
+            var existingTraining = await _context.Trainings
+                .Include(t => t.AccountTrainings)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (existingTraining == null) return false;
 
             var currentStatus = existingTraining.Status;
 
+            // Update training fields
             _mapper.Map(trainingDto, existingTraining);
+            existingTraining.Status = currentStatus; // Preserve status
 
-            existingTraining.Status = currentStatus; // Restore status
+            // Remove old AccountTrainings and associated Nonavailabilities
+            var oldAccountIds = existingTraining.AccountTrainings.Select(at => at.AccountId).ToList();
+
+            // Re-add updated AccountTrainings and Nonavailabilities
+            existingTraining.AccountTrainings = new List<AccountTraining>();
+
+            foreach (var accountId in trainingDto.AssignedAccounts.Distinct())
+            {
+                var accountTraining = new AccountTraining
+                {
+                    AccountId = accountId,
+                    TrainingId = existingTraining.Id,
+                    RegistrationDate = DateTime.UtcNow
+                };
+
+                existingTraining.AccountTrainings.Add(accountTraining);
+
+                var nonAvailability = new Nonavailability
+                {
+                    AccountId = accountId,
+                    Date1 = existingTraining.StartTime,
+                    Date2 = existingTraining.EndTime,
+                    TrainingID = existingTraining.Id,
+                    Reason = "Training"
+                };
+
+                _context.Nonavailabilities.Add(nonAvailability);
+            }
 
             return await _context.SaveChangesAsync() > 0;
         }
+
 
 
         public async Task DeleteNonavailabilitiesByTrainingId(int trainingId)
