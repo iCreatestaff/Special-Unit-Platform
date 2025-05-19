@@ -22,16 +22,20 @@ namespace WeatherApi.Services
         public async Task<List<EquipmentResponseDTO>> GetAllEquipmentsAsync()
         {
             var equipments = await _context.Equipments
+                .AsNoTracking()
                 .Include(e => e.SubEquipments)
+                .AsSplitQuery()
                 .ToListAsync();
 
             return _mapper.Map<List<EquipmentResponseDTO>>(equipments);
         }
 
+
         public async Task<Equipment?> GetEquipmentByIdAsync(int id)
         {
             var equipment = await _context.Equipments
                 .Include(e => e.SubEquipments)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             if (equipment != null && equipment.SubEquipments != null)
@@ -49,6 +53,7 @@ namespace WeatherApi.Services
 
             return equipment;
         }
+
 
         public async Task<List<Equipment>> GetAvailableEquipmentAsync(DateTime d1, DateTime d2)
         {

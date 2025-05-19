@@ -33,35 +33,42 @@ namespace sp_backend.Services
 
         public async Task<EquipmentStockDTO?> GetByIdAsync(int id)
         {
-            return await _context.EquipmentStocks
+            var equipmentStock = await _context.EquipmentStocks
+                .AsNoTracking()
                 .Where(es => es.Id == id)
-                .Select(es => new EquipmentStockDTO
-                {
-                    Id = es.Id,
-                    EquipmentName = es.EquipmentName,
-                    Quantity = es.Quantity,
-                    Photo = es.Photo,
-                    Equipments = es.Equipments.Select(e => new Equipment
-                    {
-                        Id = e.Id,
-                        Name = e.Name,
-                        Type = e.Type,
-                        Availability = e.Availability,
-                        Photo = e.Photo,
-                        SubEquipments = e.SubEquipments != null ? e.SubEquipments.Select(se => new SubEquipment
-                        {
-                            Id = se.Id,
-                            Name = se.Name,
-                            Cycle = se.Cycle,
-                            Status = se.Status,
-                            CreationDate = se.CreationDate,
-                            EquipmentId = se.EquipmentId,
-                        }).ToList() : new List<SubEquipment>()
-                    }).ToList()
-
-                })
+                .Include(es => es.Equipments)
+                    .ThenInclude(e => e.SubEquipments)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync();
+
+            if (equipmentStock == null) return null;
+
+            return new EquipmentStockDTO
+            {
+                Id = equipmentStock.Id,
+                EquipmentName = equipmentStock.EquipmentName,
+                Quantity = equipmentStock.Quantity,
+                Photo = equipmentStock.Photo,
+                Equipments = equipmentStock.Equipments.Select(e => new Equipment
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Type = e.Type,
+                    Availability = e.Availability,
+                    Photo = e.Photo,
+                    SubEquipments = e.SubEquipments?.Select(se => new SubEquipment
+                    {
+                        Id = se.Id,
+                        Name = se.Name,
+                        Cycle = se.Cycle,
+                        Status = se.Status,
+                        CreationDate = se.CreationDate,
+                        EquipmentId = se.EquipmentId
+                    }).ToList() ?? new List<SubEquipment>()
+                }).ToList()
+            };
         }
+
 
         public async Task<bool> AddAsync(EquipmentStockDTO equipmentStockDto)
         {
