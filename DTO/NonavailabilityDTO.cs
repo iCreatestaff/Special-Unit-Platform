@@ -13,7 +13,7 @@ namespace sp_backend.DTO
         public int? AccountId { get; set; }
         public int? EquipmentId { get; set; }
         public string? Reason { get; set; }
-
+        public int? SubequipmentID { get; set; }
         public int? MissionID { get; set; }
         public int? TrainingID { get; set; }
 

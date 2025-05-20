@@ -19,6 +19,8 @@ public class Nonavailability
     public string? Type { get; set; }  // Values: "Account" or "SubEquipment"
     public string? Reason { get; set; }
 
+    public int? SubequipmentID { get; set; }
+
     public int? MissionID { get; set; }
 
     public int? TrainingID { get; set; }

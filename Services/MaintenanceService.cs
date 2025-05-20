@@ -42,7 +42,8 @@ namespace WeatherApi.Services
             Status = m.Status,
             Items = m.Items,
             Id = m.Id,
-            MaintenanceDate = m.MaintenanceDate
+            MaintenanceDate = m.MaintenanceDate,
+            MaintenanceEndDate = m.MaintenanceEndDate
         }).ToList()
     })
                 .ToListAsync();

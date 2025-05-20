@@ -24,9 +24,16 @@ namespace sp_backend_March4.Services
 
         public async Task<MessageAgent> SendMessageAsync(int senderId, int receiverId, string content)
         {
+            var sender = await _context.Accounts.FindAsync(senderId);
+            if (sender == null)
+            {
+                throw new Exception($"Sender with ID {senderId} not found.");
+            }
+
             var message = new MessageAgent
             {
                 SenderId = senderId,
+                SenderName = sender.Username, // get username from Account
                 ReceiverId = receiverId,
                 Content = content,
                 Timestamp = DateTime.UtcNow,
@@ -37,6 +44,7 @@ namespace sp_backend_March4.Services
             await _context.SaveChangesAsync();
             return message;
         }
+
 
         public async Task<IEnumerable<MessageAgent>> GetMessagesBetweenUsersAsync(int user1Id, int user2Id)
         {

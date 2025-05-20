@@ -331,11 +331,23 @@ namespace sp_backend.Services
                 return false;
             }
 
+            var subEquipmentIds = subEquipmentsToRemove.Select(se => se.Id).ToList();
+
+            // Remove related nonavailabilities
+            var relatedNonavailabilities = await _context.Nonavailabilities
+                .Where(n => n.SubequipmentID != null && subEquipmentIds.Contains(n.SubequipmentID.Value))
+                .ToListAsync();
+
+            _context.Nonavailabilities.RemoveRange(relatedNonavailabilities);
+
+            // Remove the subequipments
             _context.SubEquipments.RemoveRange(subEquipmentsToRemove);
+
             await _context.SaveChangesAsync();
 
             return true;
         }
+
 
 
 

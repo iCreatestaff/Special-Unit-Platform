@@ -125,11 +125,7 @@ namespace WeatherApi
                 .Property(am => am.AssignedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            modelBuilder.Entity<MessageAgent>()
-                .HasOne(m => m.Sender)
-                .WithMany(a => a.SentMessages) // Add navigation property in Account
-                .HasForeignKey(m => m.SenderId)
-                .OnDelete(DeleteBehavior.Restrict); // Prevents cascade delete
+            // Prevents cascade delete
 
             modelBuilder.Entity<MessageAgent>()
                 .HasOne(m => m.Receiver)
