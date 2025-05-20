@@ -90,9 +90,11 @@ namespace sp_backend_March4.Services
         public async Task<RequestMaintenance> UpdateRequestMaintenanceStatusAsync(int id, string status)
         {
             var request = await _context.RequestMaintenances
-                .Include(rm => rm.Maintenance)
-                .ThenInclude(m => m.SubEquipment)
-                .FirstOrDefaultAsync(rm => rm.Id == id);
+    .AsSplitQuery()
+    .Include(rm => rm.Maintenance)
+        .ThenInclude(m => m.SubEquipment)
+    .FirstOrDefaultAsync(rm => rm.Id == id);
+
 
             if (request == null)
                 throw new KeyNotFoundException($"RequestMaintenance with ID {id} not found.");

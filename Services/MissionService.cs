@@ -352,6 +352,14 @@ public class MissionService : IMissionService
         {
             _context.Nonavailabilities.RemoveRange(existingNonavailabilities);
         }
+        var existingNotifications = await _context.Notifications
+            .Where(n => n.ReferenceId == id && n.Type == "mission")
+            .ToListAsync();
+
+        if (existingNotifications.Any())
+        {
+            _context.Notifications.RemoveRange(existingNotifications);
+        }
 
         // Find the mission
         var mission = await _context.Missions.FindAsync(id);

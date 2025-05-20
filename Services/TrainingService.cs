@@ -159,7 +159,7 @@ namespace sp_backend_March4.Services
 
             // 1. Delete related nonavailabilities (matching Reason with training title)
             var relatedNonavailabilities = await _context.Nonavailabilities
-                .Where(n => n.Reason == $"Training: {training.Title}")
+                .Where(n => n.TrainingID == id)
                 .ToListAsync();
 
             _context.Nonavailabilities.RemoveRange(relatedNonavailabilities);
