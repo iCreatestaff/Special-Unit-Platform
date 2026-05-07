@@ -1,0 +1,132 @@
+ .login-container {
+    scroll-behavior: smooth;
+      background-image: url('../../../../assets/images/login_background.avif');
+      background-size: cover;
+      background-position: center;
+   
+  }
+
+  .login-overlay {
+    /* background: rgba(80, 48, 224, 0.11); */
+    backdrop-filter: blur(3px);
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .login-card {
+    background: rgba(8, 8, 8, 0.493);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    color: white;
+    width: 100%;
+    max-width: 550px;
+    height: 500px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .logo {
+    width: 180px;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .logo:hover {
+    transform: scale(1.05);
+  }
+
+  .form-field {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .mat-input-element {
+    color: white !important;
+    caret-color: white !important;
+  }
+
+  .mat-form-field-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .mat-form-field.mat-focused .mat-form-field-label {
+    color: white !important;
+  }
+
+  .mat-form-field.mat-focused .mat-form-field-outline-thick {
+    color: white !important;
+  }
+
+  .login-btn {
+    width: 70%;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+
+    padding: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-top: 1rem;
+   
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.5);
+    color: rgb(218, 218, 218);
+  }
+
+  .login-btn:disabled {
+    background: rgba(255, 255, 255, 0.2);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .error-message {
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+  }
+
+ 
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .login-card {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+    
+    .logo {
+      width: 140px;
+    }
+  }

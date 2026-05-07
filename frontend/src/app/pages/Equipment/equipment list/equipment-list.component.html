@@ -1,0 +1,127 @@
+<div class="container-fluid mt-4">
+  <mat-card class="cardWithShadow theme-card ">
+    <mat-card-header class="card-header d-flex justify-content-between ">
+      <mat-card-title>Liste des Équipements</mat-card-title>
+      <div class="button-container d-flex gap-3 mt-3">
+        
+        <!-- Button to open the modal for adding equipment with quantity -->
+        <button mat-raised-button (click)="openAddWithQuantityDialog()" style="color:black;border:1px solid #000000;background-color:transparent;" class="primary ml-3">
+          <mat-icon>add</mat-icon><span>Equipment</span> 
+        </button>
+
+        
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="b-t-1">
+      <div *ngIf="loading" class="equipment-loading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading equipment...</p>
+      </div>
+
+      <div *ngIf="!loading && errorMessage" class="equipment-error">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <div *ngIf="!loading && !errorMessage && pagedEquipments.length > 0" class="table-responsive">
+        <table  mat-table [dataSource]="pagedEquipments" class="w-100 tab">
+           
+           <!-- Column: Photo -->
+            <ng-container matColumnDef="photo">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-photo">Photo</th>
+              <td mat-cell *matCellDef="let equipment" class="mat-column-photo elm">
+                <img  [src]="equipment.photo || './assets/default-equipment.png'" style="border-radius: 10px;width:150px;" alt="Equipment Photo" />
+                
+              </td>
+            </ng-container>
+
+        
+
+          <!-- Column: Name -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-name">Nom</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-name elm">
+              {{ equipment.name }}
+            </td>
+          </ng-container>
+          
+          <!-- Column: Type -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-type">Type</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-type elm">
+              {{ equipment.type }}
+            </td>
+          </ng-container>
+          
+          <!-- Column: Availability -->
+          <ng-container matColumnDef="availability">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Disponibilité</th>
+            <td mat-cell *matCellDef="let equipment">
+              <span
+                [ngClass]="{
+                  'bg-light-success text-success': equipment.availability,
+                  'bg-light-error text-error': !equipment.availability
+                }"
+                class="rounded f-w-600 p-6 p-y-4 f-s-12"
+              >
+                {{ equipment.availability ? 'Available' : 'Unavailable' }}
+              </span>
+            </td>
+          </ng-container>
+          
+          <!-- Column: Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-actions">Actions</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-actions">
+              <div class="actions-container">
+                <button mat-icon-button (click)="openEquipmentDetails(equipment.id)" class="eye-icon">
+                  <mat-icon color="primary">visibility</mat-icon>
+                </button>
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" class="custom-menu">
+                  <button mat-menu-item (click)="openEquipmentModal(equipment)" class="menu-item">
+                    <mat-icon class="menu-icon" color="primary">edit</mat-icon>
+                    <span class="menu-text" style="color:#635bff;margin-top:10px;">Edit</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteEquipment(equipment.id)" class="menu-item">
+                    <mat-icon class="menu-icon" style="color:#ff6692">delete</mat-icon>
+                    <span class="menu-text" style="color:#ff6692;margin-top:10px;">Delete</span>
+                  </button>
+                </mat-menu>
+              </div>
+            </td>
+          </ng-container>
+    
+          <!-- Table Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row  *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    
+        <!-- No Data Template -->
+        <ng-template #noEquipmentsTemplate>
+          <div class="col-12 text-center mt-3">
+            <p>Aucun équipement trouvé.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div *ngIf="!loading && !errorMessage && pagedEquipments.length === 0" class="equipment-empty">
+        <mat-icon>inventory_2</mat-icon>
+        <p>No equipment found.</p>
+      </div>
+       <!-- Pagination Controls -->
+       <p-paginator *ngIf="!loading && !errorMessage && totalRecords > 0" class="mission-paginator" [first]="first" 
+       [rows]="rows" 
+       [totalRecords]="totalRecords" 
+       (onPageChange)="onPageChange($event)"
+       class="mission-paginator"
+       [showFirstLastIcon]="true">
+     </p-paginator>
+
+    
+    </mat-card-content>
+  </mat-card>
+</div>

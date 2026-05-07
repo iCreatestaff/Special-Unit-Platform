@@ -1,0 +1,148 @@
+<h2 class="dialog-header">
+  <span class="dialog-title">
+    {{ data ? 'Edit Training Session' : 'Create New Training Session' }}
+  </span>
+  <button mat-icon-button class="close-btn" (click)="dialogRef.close()" matTooltip="Close">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content [formGroup]="trainingForm" class="training-form">
+  <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="onStepChange($event)">
+
+    <!-- STEP 1: BASIC INFO -->
+    <mat-step [stepControl]="trainingForm.get('dateRange')!" label="Basic Info">
+      <div class="step-content">
+        <!-- Left Section: Details -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon class="section-icon">info</mat-icon>
+            <h3 class="section-title">Training Details</h3>
+          </div>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" placeholder="Advanced Navigation Training" />
+            <mat-icon matSuffix>title</mat-icon>
+            <mat-error *ngIf="trainingForm.get('title')?.hasError('required')">Title is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="3" placeholder="Brief training description"></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Right Section: Date and Time -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon class="section-icon">event</mat-icon>
+            <h3 class="section-title">Schedule</h3>
+          </div>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Date Range</mat-label>
+            <mat-date-range-input [rangePicker]="picker" formGroupName="dateRange">
+              <input matStartDate formControlName="start" placeholder="Start date" (dateChange)="onDateChange()"/>
+              <input matEndDate formControlName="end" placeholder="End date" (dateChange)="onDateChange()"/>
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+            <mat-error *ngIf="trainingForm.get('dateRange')?.invalid">Date range required</mat-error>
+          </mat-form-field>
+
+          <div class="time-fields">
+            <mat-form-field appearance="outline" class="time-field">
+              <mat-label>Start Time</mat-label>
+              <mat-select formControlName="startTimeOnly" (selectionChange)="onTimeChange()">
+                <mat-option *ngFor="let time of timeOptions" [value]="time">{{ time }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>schedule</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="time-field">
+              <mat-label>End Time</mat-label>
+              <mat-select formControlName="endTimeOnly" (selectionChange)="onTimeChange()">
+                <mat-option *ngFor="let time of timeOptions" [value]="time">{{ time }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>schedule</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button mat-stroked-button color="warn" (click)="dialogRef.close()">
+          <mat-icon>cancel</mat-icon>
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" matStepperNext>
+          Next
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </mat-step>
+
+    <!-- STEP 2: LOCATION & PARTICIPANTS -->
+    <mat-step label="Location & Participants">
+      <div class="step-content">
+        <!-- Left: Map -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon class="section-icon">location_on</mat-icon>
+            <h3 class="section-title">Location</h3>
+          </div>
+
+          <div class="map-header">
+            <span>Click on the map to select location</span>
+            <button mat-stroked-button (click)="centerMap()" class="center-map-btn">
+              <mat-icon>my_location</mat-icon>
+              Center Map
+            </button>
+          </div>
+
+          <div id="map" class="map"></div>
+
+          <mat-error *ngIf="trainingForm.get('location')?.invalid" class="map-error">
+            <mat-icon>warning</mat-icon>
+            Please select a location on the map
+          </mat-error>
+        </div>
+
+        <!-- Right: Participants -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon class="section-icon">group</mat-icon>
+            <h3 class="section-title">Participants</h3>
+          </div>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Select Agents</mat-label>
+            <mat-select formControlName="assignedAccounts" multiple>
+              <mat-option *ngFor="let account of accounts" [value]="account.id">
+                <div class="account-option">
+                  <span class="account-name">{{ account.username }}</span>
+                  <span class="account-email">({{ account.role }})</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+         
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button mat-stroked-button matStepperPrevious>
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
+        <button mat-raised-button color="primary" (click)="onSubmit()">
+          <mat-icon>check_circle</mat-icon>
+          {{ data ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-dialog-content>

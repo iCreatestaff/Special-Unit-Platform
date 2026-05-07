@@ -1,0 +1,173 @@
+.cardWithShadow {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  background: #ffffff;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.cardWithShadow:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.mat-card-header {
+  background-color: #f0f4f8;
+  border-bottom: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mat-card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #444;
+}
+
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.stepper-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.mat-dialog-content {
+  padding: 28px;
+  overflow-y: auto;
+  width: 100%;
+  max-height: 75vh;
+  border-bottom: 1px solid #ccc;
+}
+.location-field-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.location-field-wrapper .mat-form-field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.location-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.equipment-modal {
+  max-width: 1200px;
+  border-radius: 12px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.col-md-6 {
+  flex: 1 1 calc(50% - 20px);
+}
+
+.col-md-12 {
+  flex: 1 1 100%;
+}
+
+.close-btn {
+  width: 60px;
+  height: 60px;
+  
+  color: #333;
+  background-color: transparent;
+  border:none;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.close-btn:hover {
+  
+  transform: rotate(90deg);
+}
+
+
+
+/* custom-stepper.css */
+/* Customizing the stepper container */
+.custom-stepper {
+  /* Reduced width of the stepper */
+  margin: 0 auto; /* Centers the stepper horizontally */
+  padding: 20px; /* Add padding for spacing */
+  background-color: #fafafa; /* Light background for better contrast */
+  border-radius: 12px; /* Rounded corners */
+}
+
+/* Stepper header styles */
+.custom-stepper .mat-step-header {
+  font-size: 14px; /* Smaller font size */
+  padding: 10px 20px; /* Adjust padding for smaller header */
+  border-radius: 5px;
+  background-color: transparent;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Selected step styles */
+.custom-stepper .mat-step-header.mat-step-header-selected {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Step label style */
+.custom-stepper .mat-step-header .mat-step-label {
+  font-size: 14px; /* Smaller label size */
+  font-weight:500;
+  color: #444; /* Lighter color for labels */
+}
+
+/* Step content styles */
+.custom-stepper .mat-step-content {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+/* Navigation buttons for the stepper */
+.custom-stepper .stepper-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Disable button state */
+.custom-stepper .stepper-navigation button[disabled] {
+  background-color: #ccc;
+}
+
+.mat-dialog-actions {
+  padding: 16px;
+  border-top: 1px solid #ccc;
+  background-color: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+.option-container {
+  display: flex;
+  align-items: center;
+}
+
+.agent-photo {
+  width: 60px; /* Adjust the size of the image */
+  height: 60px;
+  padding: 3px; /* Make the image round */
+  border-radius: 8px;
+  margin-right: 10px; /* Space between the image and the name */
+}
+
+
+

@@ -1,0 +1,162 @@
+<div class="profile-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <mat-spinner diameter="60" color="accent"></mat-spinner>
+        <p>Loading your profile...</p>
+      </div>
+    </div>
+  
+    <!-- Error State -->
+    <div *ngIf="errorMessage" class="error-message">
+      <div class="error-content">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <div>
+          <h3>Something went wrong</h3>
+          <p>{{ errorMessage }}</p>
+          <button mat-stroked-button color="warn" (click)="loadAccountData()">
+            <mat-icon>refresh</mat-icon>
+            Try Again
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Profile Content -->
+    <div *ngIf="account" class="profile-card">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-background"></div>
+        
+        <div class="profile-content">
+          <div class="avatar-container">
+            <div class="avatar-wrapper">
+              <img [src]="account.photo || 'assets/default-avatar.png'" 
+                   alt="Profile Photo" 
+                   class="profile-avatar">
+              <div *ngIf="account.badge" class="badge-container">
+                <img [src]="account.badge" alt="Badge" class="badge-image" />
+              </div>
+            </div>
+            
+            <button mat-mini-fab color="primary" (click)="openUpdateAccountModal(account.id)" class="edit-button" aria-label="Edit profile">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+  
+          <div class="profile-info">
+            <h1>{{account.name}}</h1>
+            <p class="username">{{account.username}}</p>
+  
+            <div class="profile-meta">
+              <span class="role-badge">{{account.role}}</span>
+              <span class="type-badge">{{account.type}}</span>
+            </div>
+  
+            <div *ngIf="account.latitude && account.longitude" class="location">
+              <button mat-button color="primary" class="location-button">
+                <mat-icon>location_on</mat-icon>
+                <span>{{account.latitude}},{{account.longitude}}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Tabs -->
+      <mat-tab-group [(selectedIndex)]="activeTab" animationDuration="300ms" color="accent">
+        <!-- Profile Tab -->
+        <mat-tab label="Profile">
+          <div class="tab-content">
+            
+  
+            <mat-card class="detail-card">
+              <mat-card-header>
+                <mat-card-title>
+                  Personal Information
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <mat-icon>fingerprint</mat-icon>
+                    <div>
+                      <h3>Account ID</h3>
+                      <p>{{account.id}}</p>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <mat-icon>work_outline</mat-icon>
+                    <div>
+                      <h3>Role</h3>
+                      <p>{{account.role}}</p>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <mat-icon>category</mat-icon>
+                    <div>
+                      <h3>Account Type</h3>
+                      <p>{{account.type}}</p>
+                    </div>
+                  </div>
+                
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+  
+        <!-- Missions Tab -->
+        <mat-tab label="Missions">
+          <div class="tab-content">
+            <div class="missions-header">
+              <h2>Your Missions</h2>
+              
+            </div>
+  
+            <div *ngIf="missions.length === 0" class="empty-state">
+              <div class="empty-content">
+                <mat-icon class="empty-icon">explore</mat-icon>
+                <h3>No missions assigned yet</h3>
+                <p>When you get assigned missions, they'll appear here</p>
+              
+              </div>
+            </div>
+  
+            <div *ngIf="missions.length > 0" class="missions-grid">
+              <mat-card *ngFor="let mission of missions" 
+                       class="mission-card"
+                      >
+                <mat-card-header>
+                  <mat-card-title>{{mission.description || 'Untitled Mission'}}</mat-card-title>
+                  <mat-card-subtitle>
+                    <span class="status-badge {{getStatusColor(mission.status ?? 'unknown')}}">
+                      {{mission.status}}
+                    </span>
+                    
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="mission-description">{{mission.description || 'No description provided'}}</p>
+                  <div class="mission-meta">
+                    <div class="date-range">
+                      <mat-icon>schedule</mat-icon>
+                      <span>{{formatDate(mission.startTime)}} - {{formatDate(mission.endTime)}}</span>
+                    </div>
+                   
+                  </div>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                  <button mat-button color="primary" (click)="openMissionDetails(mission)">
+                    <mat-icon>visibility</mat-icon>
+                    Details
+                  </button>
+                  
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>

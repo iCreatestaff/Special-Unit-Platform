@@ -1,0 +1,133 @@
+<mat-toolbar class="topbar">
+  <!-- Mobile Menu -->
+  <button
+    *ngIf="!showToggle"
+    mat-mini-fab
+    color="inherit"
+    (click)="toggleMobileNav.emit()"
+    class="d-flex justify-content-center"
+  >
+    <i class="iconify icon-20 d-flex" data-icon="solar:hamburger-menu-line-duotone"></i>
+  </button>
+  
+  <span style="flex: 5000 1 auto;"></span>
+  <div class="Home">
+    <!-- Home Link -->
+    <a
+    mat-button
+    [routerLink]="['/dashboard']"
+    class="d-flex align-items-center "
+    style="text-decoration: none; color: inherit;"
+    >
+   
+    <span class="ms-2" style="color: rgb(138, 138, 138); font-size: 1rem;margin-left: 8px">Home</span>
+    </a>
+
+  </div>
+  <span style="flex: 200 1 auto;"></span>
+  <!-- Notification Dropdown -->
+  <div class="container-fluid notification-container" >
+    <button
+      mat-fab 
+      color="inherit"
+      aria-label="Notifications" style="background-color: rgb(241, 241, 241); box-shadow:none;color: #868bd3;border:none;" 
+      class="icon d-flex justify-content-center "
+      (click)="toggleNotificationPanel()"
+      [matBadge]="unreadCount > 0 ? unreadCount : null"
+      matBadgeOverlap="false"
+      matBadgeSize="small"
+      matBadgeColor="warn"
+    >
+      <i class="iconify icon-20 d-flex" data-icon="solar:bell-bold"></i>
+    </button>
+
+    <div #notificationPanel *ngIf="showNotificationPanel"  class="notification-dropdown mat-elevation-z8">
+      <div class="notification-header">
+        <h3>Notifications</h3>
+      </div>
+
+      <div *ngIf="loading" class="loading-spinner">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+      <div *ngIf="error" class="error-message">
+        <mat-icon color="warn">error</mat-icon>
+        {{ error }}
+      </div>
+      <div *ngIf="notifications.length === 0" class="empty-state">
+        <mat-icon>notifications_off</mat-icon>
+        <p>No notifications available</p>
+      </div>
+
+      <ng-scrollbar *ngIf="notifications.length > 0" class="notification-scroll">
+        <div class="notification-list">
+          <div *ngFor="let notification of notifications; trackBy: trackById" 
+            class="notification-item" 
+            [class.unread]="!notification.isRead" 
+            (click)="markAsRead(notification)">
+            <div class="notification-icon">
+              <mat-icon>
+                <ng-container [ngSwitch]="notification.type">
+                  <ng-container *ngSwitchCase="'alert'">warning</ng-container>
+                  <ng-container *ngSwitchCase="'mission'">assignment</ng-container>
+                  <ng-container *ngSwitchDefault>notifications</ng-container>
+                </ng-container>
+              </mat-icon>
+            </div>
+            <div class="notification-content">
+              <p class="notification-details" [matTooltip]="notification.details">{{ notification.details }}</p>
+              <div class="notification-meta">
+                <span class="notification-type">{{ notification.type }}</span>
+                <span class="notification-time">{{ notification.createdAt | date:"short" }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+
+  <span class="flex-1-auto"></span>
+
+  <!-- Profile Dropdown -->
+  <button
+    mat-fab 
+    extended  style="background-color: rgb(241, 241, 241); border:none;box-shadow:none;"
+    color="inherit" 
+    [matMenuTriggerFor]="profilemenu"
+    aria-label="Profile"
+    class="d-flex justify-content-center profile-btn-dd"
+  >
+    <img
+      src="/assets/images/profile/user-1.jpg"
+      class="rounded-circle object-cover icon-35 profile-dd"
+      width="35" height="35"
+    />
+  </button>
+  <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
+    <button mat-menu-item [routerLink]="['/profile']">
+      <mat-icon class="d-flex align-items-center">
+        <i data-icon="solar:shield-user-line-duotone" class="iconify icon-22"></i>
+      </mat-icon>
+      <span>My Profile</span>
+    </button>
+  
+    <button mat-menu-item>
+      <mat-icon class="d-flex align-items-center">
+        <i data-icon="solar:checklist-minimalistic-line-duotone" class="iconify icon-22"></i>
+      </mat-icon>
+      My Task
+    </button>
+
+    <div class="p-x-12 m-t-12">
+      <a
+        [routerLink]="['/authentication/login']"
+        mat-stroked-button
+        color="primary"
+        class="w-100"
+        (click)="logout()"
+      >
+        Logout
+      </a>
+    </div>
+  </mat-menu>
+</mat-toolbar>

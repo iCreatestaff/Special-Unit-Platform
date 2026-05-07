@@ -1,0 +1,485 @@
+/* Base Styles */
+/* mission-details.component.css */
+.mission-details-container {
+  width: 100%;
+  height: 100%;
+}
+/* In your styles.css or component CSS file */
+
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+  z-index: 0;
+}
+
+#mission-map {
+  width: 100%;
+  height: 90%;
+  border-radius: 10px;
+}
+
+/* Fix for dialog container */
+::ng-deep .custom-dialog-container .mat-dialog-container {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  max-height: 90vh;
+}
+
+/* Add loading indicator */
+.map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-overlay {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 450px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.mission-title {
+  margin: 0 0 8px 0;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.mission-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.row {
+  height: 100%;
+  margin: 0;
+}
+
+/* Map Section */
+.map-col {
+  padding: 0;
+  height: 100%;
+  position: relative;
+}
+.location {
+  display: flex;
+  align-items: center;
+  color: #5a6a7d;
+  font-size: 0.9rem;
+}
+
+.location mat-icon {
+  font-size: 1rem;
+  margin-right: 5px;
+}
+
+/* Floating Info Panel */
+.floating-info-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 350px;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.floating-info-panel.visible {
+  transform: translateX(0);
+  height: 100%;
+  padding-top: 1rem;
+}
+
+.info-card {
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+
+
+.card-body {
+  padding: 16px 20px;
+}
+
+.detail-item {
+  display: flex;
+  padding: 12px 0;
+  align-items: flex-start;
+}
+
+.detail-icon {
+  color: #3498db;
+  margin-right: 15px;
+  margin-top: 2px;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+/* Info Column */
+.info-col {
+  padding: 0;
+  height: auto;
+  background: white;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+}
+
+.info-section {
+  padding: 25px;
+  height: 90%;
+}
+
+.section-card {
+  margin-bottom: 25px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border-bottom: 1px solid #eaeff5;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.section-icon {
+  color: #3498db;
+  margin-right: 10px;
+}
+
+/* Personnel Cards */
+.personnel-tabs {
+  margin-top: -1px;
+}
+
+.person-card {
+  display: flex;
+  padding: 15px 20px;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.person-card:hover {
+  background: #f8fafc;
+}
+
+.person-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 2px solid #eaeff5;
+}
+
+.person-info {
+  flex: 1;
+}
+
+.person-name {
+  margin: 0 0 3px 0;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.person-role {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+/* Equipment Cards */
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  padding: 15px;
+}
+
+.equipment-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.equipment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.equipment-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.equipment-info {
+  padding: 12px;
+}
+
+.equipment-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+
+.equipment-status {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  background: #f5f7fa;
+  color: #7f8c8d;
+}
+
+.equipment-status.available {
+  background: #e3f9e5;
+  color: #27ae60;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+}
+
+.status-started {
+  background: #27ae60;
+}
+
+.status-accomplished {
+  background: #3498db;
+}
+
+.status-pending {
+  background: #e74c3c;
+}
+
+/* Empty States */
+.empty-state {
+  padding: 30px 20px;
+  text-align: center;
+  color: #95a5a6;
+}
+
+.empty-state mat-icon {
+  font-size: 2.5rem;
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  color: #bdc3c7;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.mission-details-container {
+  padding: 20px;
+}
+
+.info-col {
+  overflow-y: auto;
+  max-height: 100vh;
+  scrollbar-width: none;
+  overflow: visible !important; /* no internal scroll */
+}
+
+.info-col::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .map-col, .info-col {
+    width: 100%;
+  }
+  
+  .map-col {
+    height: 60vh;
+  }
+  
+  .info-col {
+    overflow-y: auto;
+    max-height: 100vh;
+    scrollbar-width: none;
+  }
+
+  .info-col::-webkit-scrollbar {
+    display: none;
+  }
+  .floating-info-panel {
+    width: 300px;
+  }
+  
+  .map-overlay {
+    max-width: 80%;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-overlay {
+    left: 15px;
+    bottom: 15px;
+    max-width: calc(100% - 30px);
+  }
+  
+  .floating-info-panel {
+    width: 280px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .info-section {
+    padding: 15px;
+  }
+}
+/* Info Icon Button */
+.info-toggle-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1010;
+}
+
+.info-toggle-btn mat-icon {
+  color: #3498db;
+}
+
+/* Floating Panel */
+.floating-info-panel {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 360px;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.floating-info-panel.visible {
+  transform: translateX(0);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+  .info-toggle-btn {
+    top: 10px;
+    right: 10px;
+  }
+
+  .floating-info-panel {
+    width: 90%;
+    top: 60px;
+    right: 5%;
+  }
+}
+.custom-dialog-container {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  max-height: 80vh;
+}
+
+/* Add to mission-details.component.css */
+.agent-popup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+}
+
+.popup-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+ 
+}
+
+.popup-content {
+  flex: 1;
+}
+
+.popup-content h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.popup-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.popup-content small {
+  font-size: 12px;
+  color: #888;
+}

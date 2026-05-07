@@ -1,0 +1,126 @@
+<div class="container-fluid mt-5">  
+  <mat-card class="cardWithShadow theme-card b-1">  
+    <mat-card-header class="card-header d-flex justify-content-between align-items-center">  
+      <mat-card-title class="g">Equipment Details</mat-card-title>  
+      <button mat-icon-button class="close-btn" (click)="closeDialog()" aria-label="Close">  
+        <mat-icon>close</mat-icon>  
+      </button>  
+    </mat-card-header>  
+
+    <mat-card-content class="b-t-1" style="max-height: 70vh; overflow-y: auto;">  
+      <div *ngIf="loading" class="details-loading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading equipment details...</p>
+      </div>
+
+      <div *ngIf="!loading && errorMessage" class="details-error">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+      </div>
+      
+      <!-- Equipment Photo Section -->  
+      <div *ngIf="!loading && !errorMessage && equipment" class="row">  
+        <div class="col-6">  
+          <div *ngIf="equipment?.photo" class="equipment-photo-container mb-4 text-center">  
+            <img [src]="equipment.photo || './assets/default-equipment.png'" style="border-radius: 10px;margin-top:10px" width="400px"  alt="Equipment Image" class="equipment-photo" />  
+          </div>  
+          <div class="table-responsive">  
+            <table mat-table [dataSource]="equipment ? [equipment] : []" class="w-100 tab">  
+              <!-- Column: Name -->  
+              <ng-container matColumnDef="name">  
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-name">Name</th>  
+                <td mat-cell *matCellDef="let item" class="mat-column-name elm">  
+                  {{ item?.name || 'N/A' }}  
+                </td>  
+              </ng-container>  
+              
+              <ng-container matColumnDef="type">  
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-type">Type</th>  
+                <td mat-cell *matCellDef="let item" class="mat-column-type elm">  
+                  {{ item?.type || 'N/A' }}  
+                </td>  
+              </ng-container>  
+              
+              <ng-container matColumnDef="availability">  
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Availability</th>  
+                <td mat-cell *matCellDef="let item">  
+                  <mat-chip [color]="item?.availability ? 'primary' : 'warn'" class="status-chip">  
+                    {{ item?.availability ? 'Available' : 'Unavailable' }}  
+                  </mat-chip>  
+                </td>  
+              </ng-container>  
+              
+              <!-- Table Rows -->  
+              <tr mat-header-row *matHeaderRowDef="['name', 'type', 'availability']"></tr>  
+              <tr mat-row *matRowDef="let row; columns: ['name', 'type', 'availability']"></tr>  
+            </table>  
+          </div>  
+
+        </div>  
+        
+        <div class="col-6">  
+          
+          <!-- Sub-Equipment Section -->  
+          <div class="sub-equipment-container mt-4">  
+            <h3 class="sub-header">Sub-Equipments</h3>  
+            <ng-container *ngIf="dataSource && dataSource.length > 0; else noSubEquipments">  
+              <div class="table-responsive">  
+                <table mat-table [dataSource]="dataSource" class="w-100 tab">  
+                  <!-- Sub-equipment Name Column -->  
+                  <ng-container matColumnDef="name">  
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-name">Name</th>  
+                    <td mat-cell *matCellDef="let sub" class="text-center">{{ sub.name }}</td>  
+                  </ng-container>  
+      
+                  <ng-container matColumnDef="cycle">  
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-cycle">Cycle</th>  
+                    <td mat-cell *matCellDef="let sub" class="text-center">{{ sub.cycle }}</td>  
+                  </ng-container>  
+      
+                  <ng-container matColumnDef="status">  
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>  
+                    
+                    <td mat-cell *matCellDef="let sub" class="text-right">  
+                      <span  
+                        [ngClass]="{  
+                          'bg-light-success text-success': sub.status === 'bon_etat',  
+                          'bg-light-warning text-warning': sub.status === 'avant_panne',  
+                          'bg-light-error text-error': sub.status === 'en_panne'  
+                        }"  
+                        class="rounded f-w-600 p-6 p-y-4 f-s-12"  
+                      >  
+                         {{ getStatusLabel(sub.status) }}   
+                      </span>  
+                    </td>  
+                  </ng-container>  
+    
+                  <!-- Actions Column: Edit and Delete -->  
+                  <ng-container matColumnDef="actions">  
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Actions</th>  
+                    <td mat-cell *matCellDef="let sub" class="text-center">  
+                      <button mat-icon-button color="primary" (click)="openEditDialog(sub)" aria-label="Edit sub-equipment">  
+                        <mat-icon>edit</mat-icon>  
+                      </button>  
+                        
+                    </td>  
+                  </ng-container>  
+                  
+                  <!-- Table Rows with Actions -->  
+                  <tr mat-header-row *matHeaderRowDef="['name', 'cycle', 'status', 'actions']"></tr>  
+                  <tr mat-row *matRowDef="let row; columns: ['name', 'cycle', 'status', 'actions']"></tr>  
+                </table>  
+              </div>  
+            </ng-container>  
+      
+            <!-- No Sub-Equipment Message -->  
+            <ng-template #noSubEquipments>  
+              <p class="no-data">No sub-equipments available.</p>  
+            </ng-template>  
+          </div>  
+          
+         
+        </div>  
+      </div>  
+    </mat-card-content>  
+  </mat-card>  
+</div>  

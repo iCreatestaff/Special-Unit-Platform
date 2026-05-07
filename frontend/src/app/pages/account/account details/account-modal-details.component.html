@@ -1,0 +1,151 @@
+<mat-card class="account-details-modal">
+  <!-- Modal Header -->
+  <mat-card-header class="modal-header">
+    <div class="header-content d-flex justify-content-between align-items-center">
+      <div class="header-title d-flex align-items-center">
+       
+        <h2 class="modal-title" style="color: rgb(0, 0, 0);">Account Details</h2>
+      </div>
+      
+    </div>
+  </mat-card-header>
+
+  <!-- Modal Content -->
+  <mat-card-content class="modal-content">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading account details...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!loading" class="content-wrapper">
+      <!-- Profile Section -->
+      <section class="profile-section">
+        <div class="profile-display">
+          <div class="profile-image-container">
+            <img [src]="account?.photo || './assets/default-avatar.png'" 
+                 class="profile-image" 
+                 alt="Account photo">
+            <div class="badge-container" *ngIf="account?.badge">
+              <img [src]="account?.badge" class="profile-badge" alt="Account badge">
+            </div>
+          </div>
+          
+          <div class="quick-actions">
+            <button mat-flat-button color="primary" (click)="openUpdateAccountModal()" class="action-btn">
+              <mat-icon>edit</mat-icon>
+              Edit Profile
+            </button>
+            <button mat-stroked-button color="accent" (click)="openNonAvailabilityModal()" class="action-btn">
+              <mat-icon>event_available</mat-icon>
+              Set Availability
+            </button>
+          </div>
+        </div>
+
+        <!-- Account Info Section -->
+        <div class="account-info">
+          <div class="info-section">
+            <h3 class="section-title">
+              <mat-icon class="section-icon">info</mat-icon>
+              Personal Information
+            </h3>
+            
+            <div class="info-grid">
+              <div class="info-item">
+                <mat-icon class="info-icon">badge</mat-icon>
+                <div class="info-text">
+                  <span class="info-label">Full Name</span>
+                  <span class="info-value">{{ account?.name || 'Not provided' }}</span>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <mat-icon class="info-icon">alternate_email</mat-icon>
+                <div class="info-text">
+                  <span class="info-label">Username</span>
+                  <span class="info-value">{{ account?.username || 'Not provided' }}</span>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <mat-icon class="info-icon">category</mat-icon>
+                <div class="info-text">
+                  <span class="info-label">Account Type</span>
+                  <span class="info-value">{{ account?.type || 'Not provided' }}</span>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <mat-icon class="info-icon">verified_user</mat-icon>
+                <div class="info-text">
+                  <span class="info-label">Role</span>
+                  <span class="info-value" [ngClass]="'role-' + (account?.role?.toLowerCase() || '')">
+                    {{ account?.role || 'Not provided' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Missions Section -->
+      <section *ngIf="account?.role === 'Agent'" class="missions-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <mat-icon class="section-icon">assignment</mat-icon>
+            Assigned Missions
+            <span class="mission-count" *ngIf="(missions?.length ?? 0) > 0">
+              ({{ missions.length }})
+            </span>
+          </h3>
+        </div>
+        
+        <div *ngIf="(missions?.length ?? 0) > 0; else noMissions" class="missions-container">
+          <div *ngFor="let mission of missions" class="mission-card" (click)="openMissionDetails(mission)">
+            <div class="mission-header">
+              <h4 class="mission-title">{{ mission.description || 'Untitled Mission' }}</h4>
+              <span class="mission-status" [ngClass]="'status-' + mission.status?.toLowerCase()">
+                {{ mission.status }}
+              </span>
+            </div>
+            
+            <div class="mission-dates">
+              <div class="date-item">
+                <mat-icon class="date-icon">schedule</mat-icon>
+                <span class="date-label">Start:</span>
+                <span class="date-value">{{ mission.startTime | date:'short' }}</span>
+              </div>
+              <div class="date-item">
+                <mat-icon class="date-icon">timer_off</mat-icon>
+                <span class="date-label">End:</span>
+                <span class="date-value">{{ mission.endTime | date:'short' }}</span>
+              </div>
+            </div>
+            
+            <div class="mission-actions">
+              <button mat-icon-button (click)="openMissionDetails(mission); $event.stopPropagation()" 
+                      matTooltip="View details" aria-label="View mission details">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noMissions>
+          <div class="empty-state">
+            <mat-icon class="empty-icon">assignment_late</mat-icon>
+            <h4>No Missions Assigned</h4>
+            <p>This agent doesn't have any active missions</p>
+            <button mat-stroked-button (click)="assignNewMission()">
+              <mat-icon>add_task</mat-icon>
+              Assign New Mission
+            </button>
+          </div>
+        </ng-template>
+      </section>
+    </div>
+  </mat-card-content>
+</mat-card>

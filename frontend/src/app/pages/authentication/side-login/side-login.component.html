@@ -1,0 +1,51 @@
+<div class="login-container" >
+  <div class="login-overlay">
+    <mat-card class="login-card">
+      <div class="logo-container">
+        <a [routerLink]="['/dashboard']">
+          <img src="./assets/images/logos/Untitled-3.png" class="logo" alt="Company Logo">
+        </a>
+   
+        <p style="opacity: 0.8; margin-bottom: 0;">Please sign in to continue</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <!-- Username Field -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label  style="color:rgb(255, 255, 255)">Username</mat-label>
+          <input style="color:rgb(255, 255, 255)" matInput formControlName="username" required>
+          <mat-icon  style="color:rgb(207, 207, 207)" matSuffix>person</mat-icon>
+          <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+            Username is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label  style="color:rgb(255, 255, 255)">Password</mat-label>
+          <input  style="color:rgb(255, 255, 255)" matInput type="password" formControlName="password" required>
+          <mat-icon  style="color:rgb(207, 207, 207)" matSuffix>lock</mat-icon>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+        </mat-form-field>
+
+        
+
+        <!-- Submit Button -->
+        <button mat-stroked-button class="login-btn" style="color:rgb(255, 255, 255)" type="submit" [disabled]="loginForm.invalid">
+          SIGN IN
+        </button>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-message">
+          <mat-icon style="vertical-align: middle; margin-right: 5px;">error</mat-icon>
+          {{ errorMessage }}
+        </div>
+
+        <!-- Forgot Password Link -->
+      
+      </form>
+    </mat-card>
+  </div>
+</div>

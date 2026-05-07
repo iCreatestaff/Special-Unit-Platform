@@ -1,0 +1,94 @@
+<div class="container-fluid mt-5">
+  <mat-card class="cardWithShadow theme-card b-1">
+    <mat-card-header class="card-header d-flex justify-content-between align-items-center">
+      <mat-card-title>Liste des Équipements</mat-card-title>
+      <div class="button-container d-flex gap-3 mt-3">
+        <button mat-raised-button (click)="openUpdateAllModal()" style="color:black;border:1px solid #000000;background-color:transparent;" class="primary">
+          <mat-icon>update</mat-icon><span>Update All Equipment</span>
+        </button>
+        <button mat-icon-button class="close-btn" (click)="onCancel()" aria-label="Close">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="b-t-1">
+      <div *ngIf="isLoading" class="loading-indicator">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading equipment data...</p>
+      </div>
+
+      <div *ngIf="!isLoading" class="table-responsive">
+        <table mat-table [dataSource]="dataSource" class="w-100 tab">
+          <ng-container matColumnDef="photo">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-photo">Photo</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-photo elm">
+              <img [src]="equipment.photo" style="border-radius: 10px; width: 100px;" alt="Equipment Photo" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-name">Nom</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-name elm">
+              {{ equipment.name }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-type">Type</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-type elm">
+              {{ equipment.type }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="availability">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Disponibilité</th>
+            <td mat-cell *matCellDef="let equipment">
+              <span class="status-badge" [ngClass]="equipment.availability ? 'available' : 'unavailable'">
+                {{ equipment.availability ? 'Available' : 'Unavailable' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 mat-column-actions">Actions</th>
+            <td mat-cell *matCellDef="let equipment" class="mat-column-actions">
+              <div class="actions-container">
+                <button mat-icon-button matTooltip="View Details" (click)="openEquipmentDetails(equipment.id)">
+                  <mat-icon color="primary">visibility</mat-icon>
+                </button>
+
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" class="custom-menu">
+                  <button mat-menu-item (click)="openEquipmentModal(equipment)" class="menu-item">
+                    <mat-icon class="menu-icon" color="primary">edit</mat-icon>
+                    <span class="menu-text" style="color: #635bff; margin-top: 10px">Edit</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteEquipment(equipment.id)" class="menu-item">
+                    <mat-icon class="menu-icon" color="warn">delete</mat-icon>
+                    <span class="menu-text" style="color: #ff6565">Delete</span>
+                  </button>
+                </mat-menu>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator
+          style="background-color: transparent; margin-top:50px"
+          class="custom-pagination"
+           [length]="fullEquipmentList.length"
+          [pageSize]="pageSize"
+          (page)="onPageChange($event)"
+          hidePageSize="true"
+          showFirstLastButtons="true"
+        ></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

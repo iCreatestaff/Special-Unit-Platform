@@ -1,0 +1,131 @@
+<div class="account-dialog">
+<div class="dialog-header">
+  <div class="header-identity">
+    <div class="avatar-preview">
+      <img [src]="account.photo || './assets/default-avatar.png'" alt="Account photo">
+    </div>
+    <div>
+      <h2>{{ isEditMode ? 'Edit Account' : 'Add Account' }}</h2>
+      <div class="header-meta">
+        <span *ngIf="account.role" class="role-chip">{{ account.role }}</span>
+        <span *ngIf="account.username" class="username-chip">{{ account.username }}</span>
+      </div>
+    </div>
+  </div>
+
+  <button mat-icon-button class="icon-close" (click)="onCancel()" aria-label="Close">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="account-modal">
+  <div *ngIf="loadingAccount" class="modal-loading">
+    <mat-spinner diameter="42"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loadingAccount && errorMessage" class="modal-error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="modal-content" *ngIf="!loadingAccount && !errorMessage">
+    <section class="form-panel">
+      <div class="section-heading">
+        <mat-icon>manage_accounts</mat-icon>
+        <span>Account</span>
+      </div>
+
+      <div class="fields-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="account.name" name="name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput [(ngModel)]="account.username" name="username" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Role</mat-label>
+          <mat-select [(ngModel)]="account.role" name="role" required>
+            <mat-option *ngIf="checkRole()==='SuperAdmin'" value="SuperAdmin">SuperAdmin</mat-option>
+            <mat-option *ngIf="checkRole()==='SuperAdmin'" value="Admin">Admin</mat-option>
+            <mat-option value="Agent">Agent</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select [(ngModel)]="account.type" name="type" required>
+            <mat-option *ngIf="account.role==='Admin' || account.role==='SuperAdmin'" value="admin">Admin</mat-option>
+            <mat-option *ngIf="account.role==='Agent'" value="maintenance">Maintenance</mat-option>
+            <mat-option *ngIf="account.role==='Agent'" value="operation">Operation</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-field">
+          <mat-label>{{ isEditMode ? 'New Password' : 'Password' }}</mat-label>
+          <input
+            matInput
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            [required]="!isEditMode"
+            [placeholder]="isEditMode ? 'Leave empty to keep current password' : ''" />
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="form-panel media-panel">
+      <div class="section-heading">
+        <mat-icon>image</mat-icon>
+        <span>Media</span>
+      </div>
+
+      <div class="media-grid">
+        <div class="media-block">
+          <div class="media-preview large-preview">
+            <img [src]="account.photo || './assets/default-avatar.png'" alt="Account photo">
+          </div>
+
+          <button mat-stroked-button type="button" class="upload-action" (click)="fileUpload.click()">
+            <mat-icon>upload</mat-icon>
+            <span>Photo</span>
+          </button>
+          <input type="file" class="file-input" (change)="onPhotoFileSelected($event)" #fileUpload />
+          <span class="file-name">{{ fileNamePhoto || 'No photo selected' }}</span>
+        </div>
+
+        <div class="media-block">
+          <div class="media-preview badge-preview">
+            <img *ngIf="account.badge" [src]="account.badge" alt="Account badge">
+            <mat-icon *ngIf="!account.badge">verified</mat-icon>
+          </div>
+
+          <button mat-stroked-button type="button" class="upload-action" (click)="fileUpload1.click()">
+            <mat-icon>upload</mat-icon>
+            <span>Badge</span>
+          </button>
+          <input type="file" class="file-input" (change)="onBadgeFileSelected($event)" #fileUpload1 />
+          <span class="file-name">{{ fileNameBadge || 'No badge selected' }}</span>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="url-field">
+        <mat-label>Image URL</mat-label>
+        <input matInput [(ngModel)]="imageUrl" name="imageUrl" (input)="onUrlEntered($event)" />
+      </mat-form-field>
+    </section>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-stroked-button type="button" class="cancel-action" (click)="onCancel()">
+    Cancel
+  </button>
+  <button mat-flat-button color="primary" class="save-action" (click)="onSave()" [disabled]="loading || loadingAccount || !!errorMessage">
+    <mat-icon>{{ loading ? 'hourglass_empty' : 'save' }}</mat-icon>
+    <span>{{ loading ? 'Saving' : 'Save changes' }}</span>
+  </button>
+</mat-dialog-actions>
+</div>

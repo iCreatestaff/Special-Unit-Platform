@@ -1,0 +1,151 @@
+/* Card with Shadow and Modern Aesthetic */
+.cardWithShadow {
+  position: relative;
+  z-index: 1050;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 32px;
+  background-color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cardWithShadow:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Header with Clean Separation */
+.card-header {
+  border-bottom: 2px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 16px 16px 0 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header mat-card-title {
+  margin: 0;
+}
+
+/* Form Field Styling */
+.mat-form-field {
+  margin-bottom: 20px;
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* Focused form fields with smooth transitions */
+.mat-form-field .mat-input-element:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* Modern Outline appearance */
+.mat-form-field.appearance-outline .mat-input-element {
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  color: #333;
+}
+
+.mat-form-field .mat-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  transition: transform 0.3s ease, font-size 0.3s ease;
+}
+
+.mat-form-field .mat-input-element:not(:placeholder-shown) + .mat-label {
+  transform: translateY(-20px);
+  font-size: 0.875rem;
+  color: #4CAF50;
+}
+
+.mat-form-field .mat-input-element:focus + .mat-label {
+  color: #4CAF50;
+}
+
+/* Datepicker and Timepicker Panel Fix */
+.mat-datepicker-panel,
+::ng-deep .ngx-material-timepicker-panel {
+  z-index: 1100 !important;
+  position: fixed !important;
+}
+
+/* Action buttons with Modern Styling */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+button {
+  border-radius: 8px;
+}
+
+button.mat-raised-button {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+}
+
+button.mat-raised-button:hover {
+  background-color: #45a049;
+}
+
+button.mat-stroked-button {
+  border-color: #f44336;
+  color: #f44336;
+  padding: 12px 24px;
+  border-radius: 12px;
+}
+
+button.mat-stroked-button:hover {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Hint Text Styling */
+.mat-hint {
+  font-size: 14px;
+  color: #888;
+  margin-top: 6px;
+}
+
+/* Modal content container styling */
+.container-fluid.equipment-modal {
+  padding: 24px;
+  background-color: #fafafa;
+  border-radius: 16px;
+}
+
+/* General Layout Adjustments */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.col-md-6 {
+  flex: 1 1 calc(50% - 24px);
+}
+
+.col-md-12 {
+  flex: 1 1 100%;
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    flex: 1 1 100%;
+  }
+}

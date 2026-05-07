@@ -1,0 +1,64 @@
+/* request-maintenance-edit.component.css */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f5f7fa;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.modal-content {
+  padding: 1.5rem !important;
+}
+
+.confirmation-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.warning-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: #ff9800;
+  margin-bottom: 1rem;
+}
+
+.rejection-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #757575;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.rejection-reason {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.modal-actions {
+  padding: 0.75rem 1.5rem !important;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.cancel-btn {
+  margin-right: 0.5rem;
+}
+
+.confirm-btn {
+  min-width: 120px;
+}

@@ -1,0 +1,11 @@
+<div class="sidebar-container">
+    <div class="sidebar-header">
+      <app-branding class="branding"></app-branding>
+      @if (showToggle) {
+      <button mat-icon-button class="sidebar-toggle" (click)="toggleMobileNav.emit()" aria-label="Toggle navigation">
+        <mat-icon style="color: rgb(115, 113, 243);">menu</mat-icon>
+      </button>
+      }
+    </div>
+  </div>
+  

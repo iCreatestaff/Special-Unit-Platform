@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <h2 mat-dialog-title>Confirm Status Change</h2>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="modal-content">
+  <div class="confirmation-message">
+    <mat-icon class="warning-icon">warning</mat-icon>
+    <p>Are you sure you want to change the status of this request to <strong>{{data.newStatus}}</strong>?</p>
+    
+  </div>
+  
+  
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="modal-actions">
+  <button mat-button (click)="onCancel()" class="cancel-btn">Cancel</button>
+  <button mat-raised-button 
+          [color]="data.newStatus === 'Accepted' ? 'primary' : 'warn'" 
+          (click)="onConfirm()"
+          class="confirm-btn">
+    Confirm {{data.newStatus}}
+  </button>
+</mat-dialog-actions>

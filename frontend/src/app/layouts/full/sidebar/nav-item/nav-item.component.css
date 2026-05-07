@@ -1,0 +1,56 @@
+/* Sidebar divider */
+.sidebar-divider {
+    height: 1px;
+    background-color: #ffffff ;
+    margin: 20px 0;
+  }
+  
+  /* Nav caption styling */
+  .nav-caption {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #555;
+    padding: 10px 0;
+  }
+  
+  /* List item hover effect */
+  .menu-list-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .menu-list-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Active menu item styling */
+  .activeMenu {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .hide-menu {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+  
+  .hide-menu:hover {
+    color: #007bff;
+  }
+  
+  /* Icon styling */
+  .routeIcon {
+    font-size: 20px;
+    color: #666;
+    transition: color 0.3s ease;
+  }
+  
+  .menu-list-item:hover .routeIcon {
+    color: #007bff;
+  }
+  

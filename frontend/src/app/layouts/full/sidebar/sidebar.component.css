@@ -1,0 +1,40 @@
+.sidebar-container {
+  width: 100%;
+ 
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+ width: 100%;
+}
+
+.branding {
+  font-size: 1.25rem;
+  font-weight: bold;
+
+}
+
+.sidebar-toggle {
+  color: white;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-toggle:hover,
+.sidebar-toggle:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  outline: none;
+  border-radius: 4px;
+}
+
+@media (min-width: 768px) {
+  .sidebar-toggle {
+    display: none; /* Hide toggle on desktop */
+  }
+}

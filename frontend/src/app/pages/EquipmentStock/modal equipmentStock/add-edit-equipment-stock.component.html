@@ -1,0 +1,48 @@
+<mat-card-header class="card-header d-flex justify-content-between align-items-center">
+  <mat-card-title>{{ isEditMode ? 'Edit Equipment Stock' : 'Add Equipment Stock' }}</mat-card-title>
+  <button mat-icon-button class="close-btn" (click)="close()" aria-label="Close" style="border:none;width:51px;background-color:transparent">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-card-header>
+
+<mat-dialog-content class="container-fluid stock-modal modal">
+  <form [formGroup]="stockForm">
+    <div class="modal-content">
+      <div class="row">
+        <!-- Left Column: Equipment Name -->
+        <div class="col-12">
+          <mat-label class="f-w-600 m-b-8">Equipment Name</mat-label>
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput formControlName="equipmentName" placeholder="Enter equipment name" required />
+            <mat-error *ngIf="stockForm.get('equipmentName')?.hasError('required')">Name is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Right Column: Upload Image -->
+        <div class="col-12">
+          <mat-label class="f-w-600 m-b-8">Upload Image</mat-label>
+          <div class="file-upload-container">
+            <div class="file-upload" (click)="fileUpload.click()">
+              <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload />
+              <span class="file-name">{{ fileName || 'No file uploaded yet.' }}</span>
+              <button mat-mini-fab color="primary" class="upload-btn">
+                <mat-icon>attach_file</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="stockForm.get('photo')?.value" class="img-preview-container">
+            <img [src]="stockForm.get('photo')?.value" class="img-preview" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" color="warn" (click)="close()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="stockForm.invalid">
+    {{ isEditMode ? 'Update' : 'Add' }}
+  </button>
+</mat-dialog-actions>

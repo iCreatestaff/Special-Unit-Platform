@@ -1,0 +1,280 @@
+.account-dialog {
+  width: 100%;
+  background: #fff;
+  color: #1f2937;
+}
+
+.dialog-header {
+  min-height: 88px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.header-identity {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 14px;
+}
+
+.avatar-preview {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #eef2f7;
+  border: 1px solid #d9e1ec;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111827;
+}
+
+.header-meta {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.role-chip,
+.username-chip {
+  min-height: 26px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.username-chip {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.icon-close {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.account-modal {
+  width: 100%;
+  max-height: 72vh;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.modal-loading,
+.modal-error {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-error {
+  color: #b42318;
+  font-weight: 600;
+}
+
+.modal-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: 20px;
+}
+
+.form-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 18px;
+  background: #fff;
+}
+
+.section-heading {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #111827;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.section-heading mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: #635bff;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 14px;
+  row-gap: 2px;
+}
+
+.full-field,
+.url-field {
+  grid-column: 1 / -1;
+}
+
+.media-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.media-block {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.media-preview {
+  height: 150px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.media-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-preview img {
+  object-fit: contain;
+  padding: 16px;
+}
+
+.badge-preview mat-icon {
+  width: 42px;
+  height: 42px;
+  font-size: 42px;
+  color: #9ca3af;
+}
+
+.upload-action {
+  height: 40px;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.upload-action mat-icon,
+.save-action mat-icon {
+  margin-right: 6px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-name {
+  min-height: 20px;
+  color: #667085;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.url-field {
+  margin-top: 16px;
+}
+
+.dialog-actions {
+  padding: 16px 24px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.cancel-action,
+.save-action {
+  min-width: 116px;
+  height: 42px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.save-action {
+  min-width: 150px;
+}
+
+@media (max-width: 900px) {
+  .modal-content,
+  .fields-grid,
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-modal {
+    max-height: 76vh;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .dialog-header {
+    padding: 14px 16px;
+  }
+
+  .dialog-header h2 {
+    font-size: 19px;
+  }
+
+  .avatar-preview {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+  }
+
+  .dialog-actions {
+    padding: 14px 16px;
+    flex-direction: column-reverse;
+  }
+
+  .cancel-action,
+  .save-action {
+    width: 100%;
+  }
+}

@@ -1,0 +1,123 @@
+<div class="mission-details-container">
+  <div class="row g-0" style="min-height: 100vh;">
+    <!-- Map column -->
+    <div class="col-lg-8 map-col position-relative">
+      <!-- Map -->
+      <div id="mission-map"  class="map-container">
+        <div *ngIf="isLoading" class="map-loading">
+          <mat-spinner></mat-spinner>
+          <span>Loading map...</span>
+        </div>
+
+        <!-- Info Toggle Button -->
+        <button mat-icon-button class="info-toggle-btn" (click)="toggleInfoPanel()" aria-label="Show Info">
+          <mat-icon>info</mat-icon>
+        </button>
+      </div>
+
+      <!-- Floating Info Panel -->
+      <div class="floating-info-panel" *ngIf="showInfoPanel" [class.visible]="showInfoPanel">
+        
+        <mat-card class="info-card">
+          <div class="card-header">
+            <h3>Mission Details</h3>
+    
+          </div>
+          <mat-divider></mat-divider>
+          <div class="card-body">
+            <div class="detail-item">
+              <mat-icon class="detail-icon">description</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Description</div>
+                <div class="detail-value">{{ mission?.description }}</div>
+              </div>
+            </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">category</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Type</div>
+                <div class="detail-value">{{ mission?.type }}</div>
+              </div>
+            </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">schedule</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Timeline</div>
+                <div class="detail-value">
+                  {{ mission?.startTime | date: 'short' }} -
+                  {{ mission?.endTime | date: 'short' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Right Info Column -->
+    <div class="col-lg-4 info-col">
+      <div class="info-section">
+        <!-- Personnel -->
+        <div class="section-card">
+          <div class="section-header">
+            <mat-icon class="section-icon">people</mat-icon>
+            <h3>Personnel</h3>
+          </div>
+          <mat-tab-group class="personnel-tabs">
+            <mat-tab label="Admin">
+              <div class="person-card">
+                <img [src]="admin?.photo || 'assets/default-avatar.png'" class="person-avatar">
+                <div class="person-info">
+                  <h4 class="person-name">{{ admin?.name }}</h4>
+                  <div class="person-role">{{ admin?.role }}</div>
+                </div>
+              </div>
+            </mat-tab>
+            <mat-tab label="Agents">
+              <div *ngIf="assignedAccounts.length > 0; else noAgents">
+                <div class="person-card" *ngFor="let agent of assignedAccounts">
+                  <img [src]="agent.photo || 'assets/default-avatar.png'" class="person-avatar">
+                  <div class="person-info">
+                    <h4 class="person-name">{{ agent.name }}</h4>
+                    <div class="person-role">{{ agent.role }}</div>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noAgents>
+                <div class="empty-state">
+                  <mat-icon>group_off</mat-icon>
+                  <p>No agents assigned</p>
+                </div>
+              </ng-template>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+        <!-- Equipment -->
+        <div class="section-card">
+          <div class="section-header">
+            <mat-icon class="section-icon">devices</mat-icon>
+            <h3>Equipment</h3>
+          </div>
+          <div *ngIf="assignedEquipments.length > 0; else noEquipment">
+            <div class="equipment-grid">
+              <div class="equipment-card" *ngFor="let equipment of assignedEquipments">
+                <img [src]="equipment.photo || 'assets/default-equipment.png'" class="equipment-image">
+                <div class="equipment-info">
+                  <h4>{{ equipment.name }}</h4>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noEquipment>
+            <div class="empty-state">
+              <mat-icon>devices_off</mat-icon>
+              <p>No equipment assigned</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

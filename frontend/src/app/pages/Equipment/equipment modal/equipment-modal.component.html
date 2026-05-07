@@ -1,0 +1,68 @@
+<mat-card-header class="card-header d-flex justify-content-between align-items-center">  
+  
+  <mat-card-title class="g">
+    {{ equipment.id === 0 ? 'Add Equipment' : 'Edit Equipment' }} <!-- Dynamic Title based on id -->
+  </mat-card-title>
+  <button mat-icon-button class="close-btn" (click)="onCancel()" aria-label="Close" style="border:none;width:51px;background-color:transparent">  
+    <mat-icon>close</mat-icon>  
+  </button>  
+</mat-card-header> 
+<mat-dialog-content class="container-fluid equipment-modal modal">  
+  <div class="modal-content">
+    <div class="row ">  
+    <!-- Left Column: Equipment Name, Type, and Availability -->  
+    <div class="col-6">  
+      <mat-label class="f-w-600 m-b-8 d-block">Equipment Name</mat-label>  
+      <mat-form-field appearance="outline" class="w-100 readonly-field" matTooltip="This field is readonly" matTooltipPosition="above">  
+        <input matInput [(ngModel)]="equipment.name" name="name" readonly required />
+        <mat-icon matSuffix class="readonly-icon">lock</mat-icon>
+      </mat-form-field>
+      
+
+      <mat-label class="f-w-600 m-b-8 d-block">Type</mat-label>  
+      <mat-form-field appearance="outline" class="w-100">  
+        <input matInput [(ngModel)]="equipment.type" name="type" placeholder="Enter type" required />  
+      </mat-form-field>  
+
+      <!-- <div class="availability-container">  
+        <mat-label class="f-w-600 m-b-8 d-block">Availability</mat-label>  
+        <mat-slide-toggle [(ngModel)]="equipment.availability" color="primary" name="availability">  
+          {{ equipment.availability ? 'Available' : 'Unavailable' }}  
+        </mat-slide-toggle>  
+      </div>   -->
+    </div>  
+
+    <!-- Right Column: Image Upload & URL Input -->  
+    <div class="col-6">  
+      <mat-label class="f-w-600 m-b-8 d-block">Upload Image</mat-label>  
+      <div class="image-upload-container">  
+        <!-- File upload -->  
+        <div class="file-upload" (click)="fileUpload.click()">  
+          <input type="file" id="file-upload-input" class="file-input" (change)="onFileSelected($event)" #fileUpload />  
+          <span class="file-name">{{ fileName || 'No file uploaded yet.' }}</span>  
+          <button mat-mini-fab color="primary" class="upload-btn">  
+            <mat-icon>attach_file</mat-icon>  
+          </button>  
+        </div>
+
+       <!-- Image URL input -->
+        <mat-label class="f-w-600 m-b-8 d-block">Or Enter Image URL</mat-label>
+        <mat-form-field appearance="outline" class="w-100">
+          <input matInput [(ngModel)]="imageUrl" name="imageUrl" placeholder="Enter image URL" (input)="onUrlEntered($event)" />
+        </mat-form-field>
+
+        <!-- Image preview -->  
+        <div style="margin-top:30px" *ngIf="equipment.photo || imageUrl" class="mt-2">  
+          <img *ngIf="equipment.photo" [src]="equipment.photo" class="img-preview" />  
+        </div>  
+      </div>  
+    </div>  
+  </div>  
+  </div>
+  
+</mat-dialog-content>  
+
+<mat-dialog-actions align="end">  
+  <button mat-stroked-button type="button" color="warn" class="close-btn" (click)="onCancel()">Cancel</button>  
+  <button mat-flat-button color="primary" (click)="onSave()">Save</button>  
+</mat-dialog-actions>

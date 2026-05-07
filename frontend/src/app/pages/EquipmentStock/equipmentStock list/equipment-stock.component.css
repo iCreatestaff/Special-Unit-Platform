@@ -1,0 +1,344 @@
+
+  
+ .tab {
+  border-radius: 10px;
+  overflow: hidden;
+  
+}
+
+mat-header-row, mat-row {
+  border-radius: 40px;
+}
+  td{
+    height: 150px;
+  }
+  th, td {
+    padding: 10px; /* Adjust padding for better spacing */
+    background-color: #ffffff;
+   
+  }
+  th{
+    background-color: #f0f0f0 !important;
+
+  }
+  table{
+    border:1px solid #f0f0f0 !important;
+  }
+  .mat-header-row {
+    background-color: #f0f0f0;
+  }
+  /* Optional: Style for table header and rows */
+  mat-header-row {
+    background-color: #ffffff; /* Light background for header */
+  }
+ .elm{
+    color:#555657;
+ }
+ .primary{
+  color:black;
+  background-color: transparent;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-transform: none;
+  font-size: 14px; /* Smaller font size for buttons on mobile */
+  border:1px solid black
+  
+ }
+ button.mat-raised-button {
+  color:black;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-transform: none;
+  font-size: 14px; /* Smaller font size for buttons on mobile */
+  
+}
+button.mat-raised-button .mat-icon {
+  font-size: 18px;
+}
+.button-container {
+  display: flex;
+  justify-content: flex-start;  /* Align buttons to the left */
+  gap: 20px; /* Spacing between buttons */
+}
+  .custom-menu {
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  /* Menu Icon Customization */
+  .menu-icon {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    font-size: 20px;
+    color: #272727;
+  }
+  /* Styling for each menu item */
+.menu-item {
+  
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text */
+  padding: 10px 20px; /* Padding for better clickability */
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+/* Text styling */
+.menu-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000; /* Darker text for better readability */
+}
+
+/* Styling for the menu items when hovered */
+
+/* Hover effect for menu items */
+.menu-item:hover {
+  background-color: #ffffff; /* Light background on hover */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+  .actions-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px; /* Adjust the gap between the icons */
+  }
+
+  .eye-icon {
+    margin-right: 10px; /* Optional: Add some spacing between the eye icon and menu */
+  }
+  
+  .menu-icon .dot {
+    width: 4px;
+    height: 4px;
+    background-color: #333;
+    border-radius: 50%;
+    margin: 2px 0;
+    transition: background-color 0.3s ease;
+  }
+  
+  .menu-icon:hover .dot {
+    background-color:#635bff;
+  }
+  
+  /* Card and Table Styling */
+  .cardWithShadow {
+    border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+  mat-card-title{
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin: 0;
+    color: #2c3e50;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 8px;
+    height: 100px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header .h {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+
+  .table {
+    width: 100%;
+    margin-top: 16px;
+    border-collapse: collapse;
+  }
+  
+  mat-header-cell, mat-cell {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  mat-header-cell {
+    background-color: #f0f0f0;
+    font-weight: 600;
+  }
+  
+  .mat-body-1 {
+    padding-left: 0;
+  }
+  
+  mat-slide-toggle {
+    margin-top: 8px;
+  }
+  
+
+  
+  /* Responsive design adjustments */
+  @media (max-width: 768px) {
+    .button-ajout button {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+  
+    .table-responsive {
+      margin-top: 12px;
+    }
+  
+    .cardWithShadow {
+      padding: 15px;
+    }
+  
+    mat-header-cell, mat-cell {
+      padding: 8px;
+    }
+  }
+/* Center-align all table header and cell content */
+.mat-header-cell, .mat-cell {
+    text-align: center; /* Center the text */
+    padding: 12px 16px; /* Adjust padding as necessary */
+  }
+  
+  /* Optional: Adjust font size and weight for better clarity */
+ 
+  
+  /* Optional: Make sure the table is responsive */
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  /* Modern Menu Button */
+.menu-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.menu-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Mat Menu Styling */
+.custom-menu {
+  min-width: 150px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Menu items */
+.mat-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Menu Icons */
+.mat-menu-item mat-icon {
+  color: #635bff; /* Custom color */
+}
+
+/* Hover effect for menu items */
+.mat-menu-item:hover mat-icon {
+  color: #4434d0; /* Slightly darker on hover */
+}
+.photo{
+  width: 150px;
+  
+  
+  border-radius: 10px; 
+}
+/* Paginator */
+.mission-paginator {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+}
+::ng-deep .mission-paginator .p-paginator {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 30px auto;
+  width: fit-content;
+}
+
+::ng-deep .mission-paginator .p-paginator-page,
+::ng-deep .mission-paginator .p-paginator-first,
+::ng-deep .mission-paginator .p-paginator-prev,
+::ng-deep .mission-paginator .p-paginator-next,
+::ng-deep .mission-paginator .p-paginator-last {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  background-color: #f4f4f4;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 3px;
+}
+
+::ng-deep .mission-paginator .p-paginator-page.p-highlight {
+  background-color: #635bff !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+::ng-deep .mission-paginator .p-paginator-page:not(.p-highlight):hover,
+::ng-deep .mission-paginator .p-paginator-first:hover,
+::ng-deep .mission-paginator .p-paginator-prev:hover,
+::ng-deep .mission-paginator .p-paginator-next:hover,
+::ng-deep .mission-paginator .p-paginator-last:hover {
+  background-color: #e0e0ff !important;
+  color: #000 !important;
+  transform: scale(1.05);
+}
+
+/* Disabled icons */
+::ng-deep .mission-paginator .p-paginator-first.p-disabled,
+::ng-deep .mission-paginator .p-paginator-prev.p-disabled,
+::ng-deep .mission-paginator .p-paginator-next.p-disabled,
+::ng-deep .mission-paginator .p-paginator-last.p-disabled {
+  background-color: #f9f9f9;
+  color: #c0c0c0;
+  pointer-events: none;
+}
+
+/* Dropdown */
+::ng-deep .mission-paginator .p-dropdown {
+  height: 40px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+}
+/* Page info */
+.page-info {
+  font-size: 14px;
+  color: #666;
+  margin-left: 16px;
+}

@@ -1,0 +1,119 @@
+<div class="container-fluid mt-5">
+  <mat-card class="overlay card-container">
+    <mat-card-header class="card-header">
+      <mat-card-title class="title">Update All Equipment</mat-card-title>
+      <button mat-icon-button class="close-btn" (click)="onCancel()" aria-label="Close">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-dialog-content>
+      <mat-horizontal-stepper [linear]="true" #stepper>
+        <!-- Step 1: Equipment Info -->
+        <mat-step [stepControl]="equipmentForm">
+          <form [formGroup]="equipmentForm">
+            <ng-template matStepLabel>Equipment Information</ng-template>
+            <h2>Equipment Information</h2>
+            <div class="row">
+              <!-- Name -->
+              <div class="col-12 col-md-6 form-group">
+                <mat-label class="label">Name</mat-label>
+                <mat-form-field appearance="outline" class="input-field">
+                  <input matInput formControlName="name" required />
+                  <mat-error *ngIf="equipmentForm.get('name')?.hasError('required')">
+                    Name is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Type -->
+              <div class="col-12 col-md-6 form-group">
+                <mat-label class="label">Type</mat-label>
+                <mat-form-field appearance="outline" class="input-field">
+                  <input matInput formControlName="type" required />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Photo (File Input) -->
+            <div class="row">
+              <div class="col-12 form-group">
+                <mat-label class="label">Upload Image</mat-label>
+                <div class="file-upload" (click)="fileUpload.click()">
+                  <input type="file" id="file-upload-input" class="file-input" (change)="onFileSelected($event)" #fileUpload />
+                  <span class="file-name">{{ fileName || 'No file uploaded yet.' }}</span>
+                  <button mat-mini-fab color="primary" class="upload-btn">
+                    <mat-icon>attach_file</mat-icon>
+                  </button>
+                </div>
+                <div *ngIf="equipment.photo" style="margin-bottom: 20px;" class="img-preview-container">
+                  <img [src]="equipment.photo" class="img-preview" />
+                </div>
+              </div>
+            </div>
+
+            <button mat-button matStepperNext class="next-btn">Next</button>
+          </form>
+        </mat-step>
+
+        <!-- Step 2: Sub-Equipment Info -->
+        <mat-step [stepControl]="subEquipmentForm">
+          <form [formGroup]="subEquipmentForm">
+            <ng-template matStepLabel>Sub-Equipment Information</ng-template>
+            <h2>Sub-Equipment Information</h2>
+            <div formArrayName="subEquipments">
+              <div *ngFor="let subEq of subEquipments.controls; let i = index" [formGroupName]="i">
+                <div class="sub-equipment-section">
+                  <mat-divider></mat-divider>
+                  <h3 class="sub-equipment-title">Sub-Equipment {{ i + 1 }}</h3>
+
+                  <div class="row">
+                    <!-- Sub-Equipment Name -->
+                    <div class="col-12">
+                      <mat-label class="label">Sub-Equipment Name</mat-label>
+                      <mat-form-field appearance="outline" class="readonly-field input-field" matTooltip="This field is readonly" matTooltipPosition="above">
+                        <input matInput formControlName="name" [readonly]="!isAddingSubEquipment" readonly/>
+                        <mat-icon matSuffix *ngIf="!isAddingSubEquipment" class="readonly-icon">lock</mat-icon>
+                        <mat-error *ngIf="subEquipments.controls[i].get('name')?.hasError('required')">
+                          Sub-Equipment Name is required.
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <!-- Cycle -->
+                    <div class="col-6 ">
+                      <mat-form-field appearance="outline" class="input-field">
+                        <mat-label>Cycle Number</mat-label>
+                        <input matInput type="number" formControlName="cycleNumber" />
+                      </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                      <mat-form-field appearance="outline" class="input-field">
+                        <mat-select formControlName="cycleUnit">
+                          <mat-option value="year" selected>Year</mat-option>
+                          <mat-option value="month">Month</mat-option>
+                          <mat-option value="day">Day</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <button mat-button color="warn" (click)="removeSubEquipment(i)">Remove Sub-Equipment</button>
+                  
+                </div>
+              </div>
+            </div>
+
+            <button mat-button (click)="addSubEquipment()" class="add-btn"><mat-icon>add</mat-icon>Add Sub-Equipment</button>
+            
+            <div class="action-buttons">
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+            </div>
+          </form>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </mat-dialog-content>
+
+    
+  </mat-card>
+</div>

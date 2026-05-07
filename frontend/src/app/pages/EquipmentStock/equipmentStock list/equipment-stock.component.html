@@ -1,0 +1,78 @@
+<div class="container-fluid mt-4">
+  <mat-card class="cardWithShadow theme-card">
+    <mat-card-header class="card-header d-flex justify-content-between align-items-center">
+      <mat-card-title class="card-title">Equipment Stock</mat-card-title>
+
+      <div class="button-container d-flex gap-3 mt-3">
+        <button mat-raised-button (click)="openAddEditModal()" class="primary">
+          <mat-icon>add</mat-icon> Add Equipment
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="card-content">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" class="tab">
+          <ng-container matColumnDef="photo">
+            <th mat-header-cell *matHeaderCellDef class="column-header">Photo</th>
+            <td mat-cell *matCellDef="let stock">
+              <div class="photo-container">
+                <img [src]="stock.photo" class="photo" alt="equipment Photo" />
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="equipmentName">
+            <th mat-header-cell *matHeaderCellDef class="column-header">Equipment Name</th>
+            <td mat-cell *matCellDef="let stock">{{ stock.equipmentName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef class="column-header">Quantity</th>
+            <td mat-cell *matCellDef="let stock">{{ stock.quantity }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="column-header">Actions</th>
+            <td mat-cell *matCellDef="let stock">
+              <div class="actions-container">
+                <button mat-icon-button color="accent" (click)="openAddEditModal(stock)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="openDeleteModal(stock.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="openUpdateModal(stock.id)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['photo','equipmentName', 'quantity', 'actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['photo','equipmentName', 'quantity', 'actions']"></tr>
+        </table>
+
+        <ng-template #noDataTemplate>
+          <div class="no-data">
+            <p>No equipment found.</p>
+          </div>
+        </ng-template>
+
+        <!-- Pagination Controls -->
+        <!-- Replace the existing mat-paginator with this: -->
+        <p-paginator class="mission-paginator" 
+          [first]="first" 
+          [rows]="rows" 
+          [totalRecords]="totalRecords" 
+          (onPageChange)="onPageChange($event)"
+          [showFirstLastIcon]="true">
+        </p-paginator>
+
+<!-- Remove the custom page number display as p-paginator includes this -->
+
+      
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

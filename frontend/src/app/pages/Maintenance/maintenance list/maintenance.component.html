@@ -1,0 +1,63 @@
+<div class="container-fluid mt-4">
+  <mat-card class="maintenance-card">
+    <mat-card-header class="card-header justify-content-between">
+      <mat-card-title>Maintenance Schedule</mat-card-title>
+
+      
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading maintenance schedule...</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-state">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <div *ngIf="!loading && !errorMessage" class="maintenance-grid">
+        <div *ngFor="let group of paginatedDataSource" class="maintenance-group-card">
+          <div class="group-header">
+            <h3>{{ group.name }}</h3>
+            <span class="badge">{{ group.maintenances.length }} scheduled</span>
+          </div>
+
+          <div class="group-content">
+            <p class="description">{{ getLatestDescription(group.maintenances) }}</p>
+            <div class="next-maintenance">
+              <mat-icon>calendar_today</mat-icon>
+              <span *ngIf="getNextMaintenanceDate(group.maintenances); else noUpcoming">
+                Next: {{ getNextMaintenanceDate(group.maintenances) | date }}
+              </span>
+              <ng-template #noUpcoming>
+                <span class="no-upcoming">No upcoming</span>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="group-actions">
+            <button mat-icon-button (click)="openMaintenanceModal(group)" matTooltip="View details">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && !errorMessage && paginatedDataSource.length === 0" class="empty-state">
+        <mat-icon>construction</mat-icon>
+        <p>No maintenance scheduled</p>
+      </div>
+
+      <p-paginator
+        [first]="first"
+        [rows]="rows"
+        [totalRecords]="totalRecords"
+        (onPageChange)="onPageChange($event)"
+        [showFirstLastIcon]="true"
+        class="mission-paginator">
+      </p-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

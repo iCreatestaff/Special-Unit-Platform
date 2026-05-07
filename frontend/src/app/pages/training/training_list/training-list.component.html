@@ -1,0 +1,105 @@
+<div class="container-fluid mt-4">
+    <mat-card class="training-dashboard-card">
+    <!-- Redesigned Card Header -->
+<mat-card-header class="dashboard-header">
+    <div class="header-container">
+        <div class="header-text">
+            <mat-card-title class="dashboard-title">
+               Training Programs
+            </mat-card-title>
+            <mat-card-subtitle class="dashboard-subtitle">
+                Manage and track all training activities
+            </mat-card-subtitle>
+        </div>
+        <button mat-raised-button 
+                class="add-button"
+                style="color: #2b2b2b; background-color: transparent;border:1px solid rgb(68, 68, 68);"
+                (click)="openAddModal()">
+            <mat-icon class="button-icon">add_circle</mat-icon>
+            <span class="button-text">Create Training</span>
+        </button>
+    </div>
+</mat-card-header>
+
+        <!-- Training Cards Grid -->
+        <div class="row training-grid">
+            <div *ngFor="let training of paginatedTrainings" class="col-6 col-md-3 d-flex">
+                <mat-card class="training-card">
+                    <!-- Status Ribbon -->
+                    <div class="status-ribbon" [ngClass]="{
+                        'ongoing': training.status === 'Ongoing',
+                        'completed': training.status === 'Completed',
+                        'pending': training.status === 'Pending'
+                    }">
+                        {{ training.status }}
+                    </div>
+
+                    <!-- Card Header -->
+                    <mat-card-header class="training-card-header">
+                        <mat-card-title class="training-title">
+                            {{ training.title }}
+                        </mat-card-title>
+                        <button mat-icon-button [matMenuTriggerFor]="menu" class="card-menu-button">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu" class="card-context-menu">
+                            <button mat-menu-item (click)="openEditModal(training)">
+                                <mat-icon class="edit">edit</mat-icon>
+                                <span>Edit</span>
+                            </button>
+                            <button mat-menu-item (click)="openDeleteModal(training.id ?? 0)">
+                                <mat-icon class="delete">delete</mat-icon>
+                                <span>Delete</span>
+                            </button>
+                            <!-- Add to training-card-header or near card content -->
+                            <button mat-menu-item (click)="openConsultModal(training)">
+                            <mat-icon class="info">info</mat-icon> 
+                            <span>details</span>
+                            </button>
+
+                            <mat-divider></mat-divider>
+                           
+                        </mat-menu>
+                    </mat-card-header>
+
+                    <!-- Card Content -->
+                    <mat-card-content class="training-card-content">
+                        <!-- Date/Time Section -->
+                        <div class="time-section">
+                            <div class="time-block">
+                                <mat-icon class="time-icon">schedule</mat-icon>
+                                <div class="time-details">
+                                    <span class="time-label">Starts</span>
+                                    <span class="time-value">{{ training.startTime | date: 'MMM d, y, h:mm a' }}</span>
+                                </div>
+                            </div>
+                            <div class="time-block">
+                                <mat-icon class="time-icon">event_available</mat-icon>
+                                <div class="time-details">
+                                    <span class="time-label">Ends</span>
+                                    <span class="time-value">{{ training.endTime | date: 'MMM d, y, h:mm a' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+             
+                    </mat-card-content>
+
+                   
+                </mat-card>
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-container">
+                 <p-paginator class="mission-paginator" [first]="first" 
+            [rows]="rows" 
+            [totalRecords]="totalRecords" 
+            (onPageChange)="onPageChange($event)"
+            styleClass="mission-paginator"
+            [showFirstLastIcon]="true">
+          </p-paginator>
+            
+        </div>
+    </mat-card>
+</div>

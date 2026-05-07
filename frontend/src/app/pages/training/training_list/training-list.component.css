@@ -1,0 +1,390 @@
+/* Main Dashboard Card */
+.training-dashboard-card {
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.training-dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Dashboard Header */
+/* Header Styles */
+.dashboard-header {
+    background: white;
+    padding: 24px;
+    color: rgb(0, 0, 0);
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-title {
+    font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.title-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-title mat-icon {
+    font-size: 2rem;
+    width: auto;
+    height: auto;
+}
+
+.dashboard-subtitle {
+    color: rgba(68, 68, 68, 0.85);
+    font-size: 1rem;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+.add-button {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 48px;
+}
+
+.add-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button-icon {
+    font-size: 1.2rem;
+}
+
+.button-text {
+    font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .add-button {
+        width: 100%;
+        justify-content: center;
+        margin-top: 12px;
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Training Cards Grid */
+.training-grid {
+    padding: 16px;
+    margin: 0;
+    
+}
+
+.training-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    margin: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 24px);
+    width: 100%;
+}
+
+.training-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.training-card-header {
+    padding: 16px 16px 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.training-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #2c3e50;
+}
+
+.card-menu-button {
+    margin-left: auto;
+    color: #757575;
+}
+
+.card-context-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Content */
+.training-card-content {
+    padding: 16px;
+    flex-grow: 1;
+}
+
+.time-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.time-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.time-icon {
+    color: #566df3;
+    font-size: 1.5rem;
+    width: auto;
+    height: auto;
+}
+
+.time-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-label {
+    font-size: 0.75rem;
+    color: #757575;
+    font-weight: 500;
+}
+
+.time-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #424242;
+}
+
+.info-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.info-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+}
+
+.chip-icon {
+    font-size: 1rem;
+    color: #757575;
+}
+
+.chip-value {
+    color: #424242;
+    font-weight: 500;
+}
+
+/* Status Ribbon */
+.status-ribbon {
+    position: absolute;
+    top: 12px;
+    right: -30px;
+    padding: 4px 32px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: white;
+    transform: rotate(45deg);
+    text-align: center;
+    width: 120px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ongoing {
+    background-color: #4caf50;
+}
+
+.completed {
+    background-color: #f44336;
+}
+
+.pending {
+    background-color: #ff9800;
+}
+
+/* Card Actions */
+.training-card-actions {
+    padding: 8px 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background-color: #f5f5f5;
+}
+
+
+
+.page-info {
+    font-size: 0.85rem;
+    color: #757575;
+    margin-top: 8px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .add-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .training-grid {
+        padding: 8px;
+    }
+    
+    .training-card {
+        margin: 8px 0;
+    }
+}
+
+/* Paginator */
+.mission-paginator {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+}
+::ng-deep .mission-paginator .p-paginator {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 30px auto;
+  width: fit-content;
+}
+
+::ng-deep .mission-paginator .p-paginator-page,
+::ng-deep .mission-paginator .p-paginator-first,
+::ng-deep .mission-paginator .p-paginator-prev,
+::ng-deep .mission-paginator .p-paginator-next,
+::ng-deep .mission-paginator .p-paginator-last {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  background-color: #f4f4f4;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 3px;
+}
+
+::ng-deep .mission-paginator .p-paginator-page.p-highlight {
+  background-color: #635bff !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+::ng-deep .mission-paginator .p-paginator-page:not(.p-highlight):hover,
+::ng-deep .mission-paginator .p-paginator-first:hover,
+::ng-deep .mission-paginator .p-paginator-prev:hover,
+::ng-deep .mission-paginator .p-paginator-next:hover,
+::ng-deep .mission-paginator .p-paginator-last:hover {
+  background-color: #e0e0ff !important;
+  color: #000 !important;
+  transform: scale(1.05);
+}
+
+/* Disabled icons */
+::ng-deep .mission-paginator .p-paginator-first.p-disabled,
+::ng-deep .mission-paginator .p-paginator-prev.p-disabled,
+::ng-deep .mission-paginator .p-paginator-next.p-disabled,
+::ng-deep .mission-paginator .p-paginator-last.p-disabled {
+  background-color: #f9f9f9;
+  color: #c0c0c0;
+  pointer-events: none;
+}
+
+/* Dropdown */
+::ng-deep .mission-paginator .p-dropdown {
+  height: 40px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+}
+.delete{
+
+  color: #f57a7a;
+}
+.edit{
+  color:#7abaf5
+}
+.info{
+    color: #5069f7;
+}

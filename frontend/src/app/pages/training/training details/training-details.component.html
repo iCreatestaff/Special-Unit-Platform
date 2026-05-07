@@ -1,0 +1,100 @@
+<div class="training-details-container">
+  <div class="row g-0" style="min-height: 100vh;">
+    <!-- Main Content Column -->
+    <div class="col-lg-8 map-col position-relative">
+      <!-- Training Header Image/Placeholder -->
+      <div class="training-header-image"  id="training-map">
+        <div *ngIf="isLoading" class="map-loading">
+          <mat-spinner></mat-spinner>
+          <span>Loading training details...</span>
+        </div>
+        
+        <!-- Info Toggle Button -->
+        <button mat-icon-button class="info-toggle-btn" (click)="toggleInfoPanel()" aria-label="Show Info">
+          <mat-icon>info</mat-icon>
+        </button>
+      </div>
+
+      <!-- Floating Info Panel -->
+      <div class="floating-info-panel" *ngIf="showInfoPanel" [class.visible]="showInfoPanel">
+        <mat-card class="info-card">
+          <div class="card-header">
+            <h3>Training Details</h3>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="card-body">
+            <div class="detail-item">
+              <mat-icon class="detail-icon">description</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Description</div>
+                <div class="detail-value">{{ training?.description }}</div>
+              </div>
+            </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">schedule</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Timeline</div>
+                <div class="detail-value">
+                  {{ training?.startTime | date: 'short' }} - 
+                  {{ training?.endTime | date: 'short' }}
+                </div>
+              </div>
+            </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">location_on</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Location</div>
+                <div class="detail-value">{{ training?.location }}</div>
+              </div>
+            </div>
+            <div class="detail-item">
+              <mat-icon class="detail-icon">info</mat-icon>
+              <div class="detail-content">
+                <div class="detail-label">Status</div>
+                <div class="detail-value">
+                  <span class="status-badge" [ngClass]="{
+                    'status-ongoing': training?.status === 'Ongoing',
+                    'status-completed': training?.status === 'Completed',
+                    'status-pending': training?.status === 'Pending'
+                  }">
+                    {{ training?.status }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Right Info Column -->
+    <div class="col-lg-4 info-col">
+      <div class="info-section">
+        <!-- Participants Section -->
+        <div class="section-card">
+          <div class="section-header">
+            <mat-icon class="section-icon">people</mat-icon>
+            <h3>Participants</h3>
+          </div>
+          <div *ngIf="assignedAccounts.length > 0; else noParticipants">
+            <div class="person-card" *ngFor="let account of assignedAccounts">
+              <img [src]="account.photo || 'assets/default-avatar.png'" class="person-avatar">
+              <div class="person-info">
+                <h4 class="person-name">{{ account.name }}</h4>
+                <div class="person-role">{{ account.role }}</div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noParticipants>
+            <div class="empty-state">
+              <mat-icon>group_off</mat-icon>
+              <p>No participants assigned</p>
+            </div>
+          </ng-template>
+        </div>
+
+        
+      </div>
+    </div>
+  </div>
+</div>

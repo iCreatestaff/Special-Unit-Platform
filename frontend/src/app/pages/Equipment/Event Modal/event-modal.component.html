@@ -1,0 +1,75 @@
+<div class="modal-container">
+  <!-- Header Section -->
+  <div class="modal-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">calendar_today</mat-icon>
+      <div class="header-text">
+        <h1 class="header-title">Daily Schedule</h1>
+        <p class="header-subtitle">{{ data.date | date:'fullDate' }}</p>
+      </div>
+    </div>
+    <button mat-icon-button class="close-button" (click)="closeDialog()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content Section -->
+  <mat-dialog-content class="modal-content">
+    <!-- No Events State -->
+    <div *ngIf="data.events.length === 0" class="no-events-state">
+      <mat-icon class="no-events-icon">event_available</mat-icon>
+      <h3>No Events Scheduled</h3>
+      <p>Enjoy your day! There are no events planned for {{ data.date | date:'fullDate' }}</p>
+    </div>
+
+    <!-- Events List -->
+    <div *ngIf="data.events.length > 0" class="events-list">
+      <div *ngFor="let event of data.events; trackBy: trackByEvent" class="event-card" [ngClass]="'event-type-' + event.type">
+        <!-- Event Header -->
+        <div class="event-header">
+          <div class="event-icon" [style.background]="getEventConfig(event.type).secondaryColor">
+            <mat-icon [style.color]="getEventConfig(event.type).color">{{ getEventConfig(event.type).icon }}</mat-icon>
+          </div>
+          <div class="event-title-container">
+            <h3 class="event-title">{{ getEventTitle(event) }}</h3>
+            <span class="event-type" [style.color]="getEventConfig(event.type).color">
+              {{ getEventConfig(event.type).displayName }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Event Details -->
+        <div class="event-details">
+          <!-- Time -->
+          <div class="event-detail">
+            <mat-icon class="detail-icon">schedule</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">Time</span>
+              <span class="detail-value">{{ getEventTimeRange(event) }}</span>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="event-detail">
+            <mat-icon class="detail-icon">location_on</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">{{ getEventLocation(event) }}</span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="event-detail">
+            <mat-icon class="detail-icon">notes</mat-icon>
+            <div class="detail-content">
+              <span class="detail-label">Details</span>
+              <span class="detail-value">{{ getEventDescription(event) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+
+</div>

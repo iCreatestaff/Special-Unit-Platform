@@ -1,0 +1,97 @@
+.cardWithShadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-card {
+    margin: 16px;
+    padding: 16px;
+  }
+  
+  .mat-card-header {
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .mat-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .b-t-1 {
+    border-top: 1px solid #ddd;
+  }
+  
+  .mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .mat-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+  }
+  
+  .mat-slide-toggle {
+    margin-top: 8px;
+  }
+  
+  .m-t-12 {
+    margin-top: 12px;
+  }
+  
+  button {
+    margin-right: 8px;
+  }
+  
+  button.mat-flat-button {
+    background-color: #1976d2;
+    color: white;
+    font-weight: 600;
+  }
+  
+  button.mat-stroked-button {
+    border-color: #ff4081;
+    color: #ff4081;
+  }
+  
+  button.mat-flat-button:hover {
+    background-color: #1565c0;
+  }
+  
+  button.mat-stroked-button:hover {
+    border-color: #ff80ab;
+    color: #ff80ab;
+  }
+  
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .col-lg-6 {
+    flex: 1 1 48%;
+    margin-right: 4%;
+  }
+  
+  .col-lg-6:last-child {
+    margin-right: 0;
+  }
+  
+  .f-w-600 {
+    font-weight: 600;
+  }
+  
+  .d-block {
+    display: block;
+  }
+  
+  .m-b-8 {
+    margin-bottom: 8px;
+  }
+
+.mat-form-field {
+    margin-right: 10px; /* Adjusts space between form fields */
+}
+  

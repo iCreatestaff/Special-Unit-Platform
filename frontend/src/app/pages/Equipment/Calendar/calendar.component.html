@@ -1,0 +1,66 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <div class="header-content">
+      <button (click)="navigateToPreviousMonth()" title="Previous Month" class="nav-button">
+        <span class="material-icons">chevron_left</span>
+      </button>
+
+      <div class="month-year-container">
+        <h1 class="month-year" aria-live="polite">{{ currentMonthDisplay }}</h1>
+        <div class="year-subtitle">{{ currentYear }}</div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <button (click)="navigateToNextMonth()" title="Next Month" class="nav-button">
+        <span class="material-icons">chevron_right</span>
+      </button>
+      <button (click)="goToToday()" title="Go to Today" class="today-button">
+        <span class="material-icons">today</span>
+        <span class="button-text">Today</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="calendar-grid">
+    <div class="calendar-weekdays">
+      <div *ngFor="let day of weekDays" class="weekday">
+        <span>{{ day }}</span>
+      </div>
+    </div>
+
+    <div class="calendar-days">
+      <div
+        *ngFor="let cell of calendarCells; trackBy: trackByDate"
+        class="day"
+        [class.today]="cell.isToday"
+        [class.other-month]="!cell.isCurrentMonth"
+        [class.has-events]="cell.events.length > 0"
+        (click)="openEventDialog(cell)"
+      >
+        <div class="day-number">{{ cell.dateObj.getDate() }}</div>
+        <div class="day-content">
+          <div class="event-indicators">
+            <div 
+              *ngFor="let event of cell.events | slice:0:3; trackBy: trackByEvent"
+              class="event-indicator"
+              [style.backgroundColor]="getEventColor(event)"
+              [title]="getEventTitle(event)"
+            ></div>
+          </div>
+          <div class="more-events" *ngIf="cell.events.length > 3">
+            +{{ cell.events.length - 3 }} more
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Add this right before the closing </div> tag of calendar-container -->
+<div class="calendar-legend">
+  <div *ngFor="let item of getEventTypeLabels()" class="legend-item">
+    <div class="legend-color" [style.backgroundColor]="item.color"></div>
+    <span class="legend-label">{{ item.label }}</span>
+  </div>
+</div>
+</div>

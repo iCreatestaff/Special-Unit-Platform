@@ -1,0 +1,154 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header class="card-header d-flex justify-content-between align-items-center">
+    <mat-card-title>{{ data?.id ? 'Edit Mission' : 'Add Mission' }}</mat-card-title>
+    <button mat-icon-button class="close-btn" style="border:none;width:51px;background-color:transparent" (click)="cancel()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-card-header>
+
+  <mat-dialog-content class="container-fluid equipment-modal modal">
+    <form [formGroup]="missionForm">
+      <mat-horizontal-stepper #stepper linear class="custom-stepper center-stepper">
+
+        <!-- Step 1: Mission Info -->
+        <mat-step label="Mission infos" [stepControl]="basicInfo">
+          <div class="modal-content" style="margin-top: 20px;">
+            <div class="row gx-3" formGroupName="basicInfo">
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Description</mat-label>
+                  <input matInput formControlName="description" placeholder="Enter description">
+                  <mat-error *ngIf="basicInfo.get('description')?.hasError('required')">
+                    Description is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6 location-field-wrapper">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Location</mat-label>
+                  <input matInput formControlName="location" readonly placeholder="Pick a location">
+                  <div class="location-buttons">
+                    <button mat-icon-button color="primary" (click)="openLocationModal()" aria-label="Pick Location">
+                      <mat-icon>location_on</mat-icon>
+                    </button>
+                    <button mat-icon-button *ngIf="basicInfo.get('location')?.value" 
+                            (click)="clearLocation()" aria-label="Clear Location">
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  </div>
+                  <mat-error *ngIf="basicInfo.get('location')?.hasError('required')">
+                    Location is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Type</mat-label>
+                  <input matInput formControlName="type" placeholder="Enter type">
+                  <mat-error *ngIf="basicInfo.get('type')?.hasError('required')">
+                    Type is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Date Range</mat-label>
+                  <mat-date-range-input formGroupName="dateRange" [rangePicker]="picker">
+                    <input matStartDate formControlName="start" placeholder="Start date">
+                    <input matEndDate formControlName="end" placeholder="End date">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+                  <mat-error *ngIf="basicInfo.get('dateRange.start')?.hasError('required') || 
+                                   basicInfo.get('dateRange.end')?.hasError('required')">
+                    Start and End Date are required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Start Time</mat-label>
+                  <input matInput type="time" formControlName="startTime">
+                  <mat-error *ngIf="basicInfo.get('startTime')?.hasError('required')">
+                    Start Time is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>End Time</mat-label>
+                  <input matInput type="time" formControlName="endTime">
+                  <mat-error *ngIf="basicInfo.get('endTime')?.hasError('required')">
+                    End Time is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="stepper-navigation text-end mt-3">
+            <button mat-button (click)="nextStep(stepper)" [disabled]="basicInfo.invalid">Next</button>
+          </div>
+        </mat-step>
+
+        <!-- Step 2: Admin and Resources -->
+        <mat-step label="Admin and Resources" [stepControl]="resources">
+          <div class="modal-content" style="margin-top: 20px;">
+            <div class="row gx-3" formGroupName="resources">
+
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Assigned Agents</mat-label>
+                  <mat-select formControlName="assignedAccounts" multiple>
+                    <mat-option *ngFor="let agent of agents" [value]="agent.id">
+                      <div class="option-container">
+                        <img [src]="agent.photo" alt="Account Photo" class="agent-photo">
+                        {{ agent.name }}
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="resources.get('assignedAccounts')?.hasError('required')">
+                    At least one agent is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Assigned Equipment</mat-label>
+                  <mat-select formControlName="assignedEquipments" multiple>
+                    <mat-option *ngFor="let equipment of equipments" [value]="equipment.id">
+                      <div class="option-container">
+                        <img *ngIf="equipment.photo" [src]="equipment.photo" alt="Equipment Image" class="agent-photo">
+                        {{ equipment.name }}
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="resources.get('assignedEquipments')?.hasError('required')">
+                    At least one equipment is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="stepper-navigation d-flex justify-content-between mt-3">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="missionForm.invalid || isLoading">
+              {{ data?.id ? 'Update' : 'Create' }} Mission
+            </button>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" color="warn" (click)="cancel()">Cancel</button>
+  </mat-dialog-actions>
+</mat-card>

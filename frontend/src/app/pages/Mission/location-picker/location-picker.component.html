@@ -1,0 +1,83 @@
+<!-- location-picker.component.html -->
+<div class="location-picker-container">
+  <div class="two-column-layout">
+    <!-- Left Column - Search Section -->
+    <div class="search-column">
+      <div class="search-header">
+        <h2>Select Location</h2>
+        <div class="search-controls">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search address or place</mat-label>
+            <input matInput [(ngModel)]="searchQuery" 
+                   (input)="searchCity()" 
+                   placeholder="e.g. Paris, France"
+                   #searchInput>
+            <button mat-icon-button matSuffix *ngIf="searchQuery" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-icon matSuffix *ngIf="!searchQuery">search</mat-icon>
+          </mat-form-field>
+
+          <button mat-stroked-button class="current-location-button" 
+                  (click)="getCurrentLocation()">
+            <mat-icon>my_location</mat-icon>
+            <span>My Location</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Results Section -->
+      <div class="search-results-wrapper">
+        <div *ngIf="isLoading" class="loading-state">
+          <mat-spinner diameter="24"></mat-spinner>
+          <span>Finding locations...</span>
+        </div>
+
+        <div *ngIf="citySuggestions.length > 0" class="suggestions-dropdown mat-elevation-z2">
+          <mat-nav-list>
+            <mat-list-item *ngFor="let suggestion of citySuggestions" 
+                          (click)="selectCity(suggestion)"
+                          class="suggestion-item">
+              <mat-icon matListItemIcon class="location-icon">place</mat-icon>
+              <div matListItemTitle class="suggestion-title">{{ suggestion.name }}</div>
+              <div matListItemLine class="suggestion-coords">
+                {{ suggestion.lat | number:'1.4-4' }}, {{ suggestion.lon | number:'1.4-4' }}
+              </div>
+            </mat-list-item>
+          </mat-nav-list>
+        </div>
+
+        <div *ngIf="searchQuery && !isLoading && citySuggestions.length === 0" 
+             class="empty-state mat-elevation-z1">
+          <mat-icon>location_off</mat-icon>
+          <p>No results found for "{{ searchQuery }}"</p>
+          <button mat-button (click)="clearSearch()">Clear search</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Map Section -->
+    <div class="map-column">
+      <div class="map-container-wrapper">
+        <div id="map" class="map-container"></div>
+        <div class="map-overlay">
+          <div class="coordinates-display mat-elevation-z2">
+            <mat-icon>gps_fixed</mat-icon>
+            <span>{{ latitude | number:'1.4-4' }}, {{ longitude | number:'1.4-4' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons (sticky at bottom) -->
+  <div class="action-buttons mat-elevation-z4">
+    <button mat-button (click)="closeDialog()">Cancel</button>
+    <button mat-raised-button color="primary" 
+            (click)="selectLocation()"
+            [disabled]="!latitude || !longitude">
+      <mat-icon>check_circle</mat-icon>
+      Confirm Location
+    </button>
+  </div>
+</div>

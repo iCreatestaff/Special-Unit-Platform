@@ -1,0 +1,52 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">Edit Sub-Equipment</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-1">
+    <form (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Sub-Equipment Name</mat-label>
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <input disabled matInput [(ngModel)]="subEquipment.name" name="name" placeholder="Enter name" required />
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Cycle</mat-label>
+          <div class="row">
+            <div class="col-6">
+              <mat-form-field  appearance="outline" class="w-100" floatLabel="always">
+                <mat-label>Number</mat-label>
+                <input disabled matInput type="number" [(ngModel)]="cycleNumber" name="cycleNumber" />
+              </mat-form-field>
+            </div>
+            <div class="col-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-select disabled [(value)]="cycleUnit" name="cycleUnit">
+                  <mat-option value="year" selected>Year</mat-option>
+                  <mat-option value="month">Month</mat-option>
+                
+                  <mat-option value="day">Day</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Status</mat-label>
+          <mat-chip-listbox [(ngModel)]="subEquipment.status" name="status" aria-label="Status selection">
+            <mat-chip-option *ngFor="let status of availableStatuses" [value]="status.value">
+              {{ status.label }}
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </div>
+
+      <div class="m-t-12">
+        <button mat-flat-button color="primary" class="m-r-8" type="submit">Save</button>
+        <button mat-stroked-button color="warn" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

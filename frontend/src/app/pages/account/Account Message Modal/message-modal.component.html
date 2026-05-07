@@ -1,0 +1,135 @@
+<div class="message-page">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="header-content">
+        <h2>Messages</h2>
+        <div class="header-actions">
+          <button mat-icon-button class="refresh-btn" (click)="loadAccounts()" [disabled]="contactsLoading" matTooltip="Refresh contacts">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button mat-icon-button class="new-chat-btn" disabled matTooltip="Select a contact from the list">
+            <mat-icon>add_comment</mat-icon>
+          </button>
+        </div>
+      </div>
+      <mat-form-field appearance="outline"  class="search-field">
+        <mat-label style="color:rgb(255, 255, 255)">Search contacts</mat-label>
+        <input matInput [(ngModel)]="searchQuery" placeholder="Search contacts">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+    </div>
+    
+    <div class="account-list">
+      <div *ngIf="contactsLoading" class="contacts-loading">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Loading contacts...</span>
+      </div>
+
+      <div *ngIf="!contactsLoading && filteredAccounts.length === 0" class="contacts-empty">
+        <mat-icon>person_search</mat-icon>
+        <span>No contacts found</span>
+      </div>
+
+      <div *ngFor="let account of filteredAccounts" 
+           class="account-item" 
+           [class.selected]="account.id === selectedReceiver?.id"
+           (click)="selectReceiver(account)">
+        <div class="avatar-container">
+          <img *ngIf="account.photo" [src]="account.photo" class="avatar" alt="Profile photo">
+          <div *ngIf="!account.photo" class="avatar-fallback">{{ getInitials(account.name) }}</div>
+          <div *ngIf="hasUnreadMessages(account.id)" class="unread-badge"></div>
+          
+        </div>
+        <div class="account-info">
+          <div class="account-name-time">
+            <span class="account-name">{{ account.name }}</span>
+            <span *ngIf="getLastMessageTime(account.id)" class="last-message-time">
+              {{ getLastMessageTime(account.id) }}
+            </span>
+          </div>
+          <span class="account-preview" *ngIf="getLastMessagePreview(account.id)">
+            {{ getTruncatedPreview(account.id) }}
+          </span>
+          <span class="account-role">{{ account.role }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-area" *ngIf="selectedReceiver; else noSelection">
+    <div class="message-header">
+      <div class="conversation-header">
+        <div class="receiver-info">
+          <div class="avatar-container">
+            <img *ngIf="selectedReceiver.photo" [src]="selectedReceiver.photo" class="header-avatar">
+            <div *ngIf="!selectedReceiver.photo" class="avatar-fallback" style="color:#ffffff;">{{ getInitials(selectedReceiver.name) }}</div>
+          </div>
+          <div class="receiver-details">
+            <h3>{{ selectedReceiver.name }}</h3>
+            
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <div #messageContainer class="message-container">
+      <div *ngIf="messagesLoading" class="loading-messages">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Loading conversation...</span>
+      </div>
+      
+      <ng-container *ngIf="!messagesLoading">
+        <div *ngIf="messages.length === 0" class="empty-conversation">
+          <mat-icon>forum</mat-icon>
+          <span>No messages yet</span>
+        </div>
+
+        <div *ngFor="let message of messages; let i = index" class="message-row">
+          <div *ngIf="shouldShowDate(i)" class="message-date-divider">
+            {{ getMessageDate(message.timestamp) }}
+          </div>
+          <div class="message-bubble" [class.sent]="isSentByCurrentUser(message)" [class.received]="!isSentByCurrentUser(message)">
+            <div class="message-content">{{ message.content }}</div>
+            <div class="message-footer">
+              <span class="message-time">{{ message.timestamp ? getMessageTime(message.timestamp) : '' }}</span>
+              <div class="message-status">
+                <mat-icon *ngIf="isSentByCurrentUser(message) && message.isRead" class="read-icon">done_all</mat-icon>
+                <mat-icon *ngIf="isSentByCurrentUser(message) && !message.isRead" class="sent-icon">done</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="message-input-container">
+      <div class="input-actions">
+        <button mat-icon-button>
+          <mat-icon>insert_emoticon</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>attach_file</mat-icon>
+        </button>
+      </div>
+      <input #messageInput [(ngModel)]="newMessage" 
+             placeholder="Type your message..." 
+             (keyup.enter)="sendMessage()"
+             [disabled]="!selectedReceiver || isSending || messagesLoading">
+      <button mat-icon-button (click)="sendMessage()" 
+              [disabled]="!newMessage.trim() || !selectedReceiver || isSending || messagesLoading"
+              class="send-button">
+        <mat-icon *ngIf="!isSending">send</mat-icon>
+        <mat-spinner *ngIf="isSending" diameter="24"></mat-spinner>
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noSelection>
+    <div class="no-selection">
+      <mat-icon class="no-selection-icon">chat</mat-icon>
+      <h3>Select a conversation</h3>
+      <p>Choose a contact to start messaging</p>
+    </div>
+  </ng-template>
+</div>

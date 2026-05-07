@@ -1,0 +1,207 @@
+/* Add Equipment Button */  
+.button-ajout button {  
+  font-size: 16px;  
+  padding: 12px 24px;  
+  text-transform: capitalize;  
+  color: white;  
+  background: #635bff; /* Primary button color */  
+  border: none;  
+  border-radius: 25px;  
+  transition: all 0.3s ease-in-out;  
+  display: flex;  
+  align-items: center;  
+  gap: 8px;  
+  text-align: center;  
+}  
+
+.button-ajout button:hover {  
+  background: #5148ff; /* Darker shade on hover */  
+  box-shadow: 0px 4px 8px rgba(99, 91, 255, 0.3);  
+  transform: translateY(-2px);  
+}  
+
+.button-ajout button mat-icon {  
+  font-size: 20px;  
+}  
+
+/* Table Styling */  
+.tab {  
+  border-radius: 10px;  
+  overflow: hidden;  
+}  
+
+mat-header-row,  
+mat-row {  
+  border-radius: 10px;  
+}  
+
+th, td {  
+  padding: 10px;  
+  text-align: center;  
+}  
+
+mat-header-row {  
+  background-color: #e6f4ff; /* Light header background */  
+}  
+
+.elm {  
+  color: #555657; /* Default text color */  
+}  
+
+.g {  
+  font-size: x-large;  
+}  
+
+/* Actions Menu */  
+.custom-menu {  
+  background-color: #fff;  
+  border-radius: 8px;  
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
+}  
+
+.menu-icon {  
+  cursor: pointer;  
+  display: flex;  
+  flex-direction: column;  
+  gap: 4px;  
+  padding: 8px;  
+}  
+
+.menu-icon .dot {  
+  width: 4px;  
+  height: 4px;  
+  background-color: #333;  
+  border-radius: 50%;  
+  margin: 2px 0;  
+  transition: background-color 0.3s ease;  
+}  
+
+.menu-icon:hover .dot {  
+  background-color: #635bff; /* Hover state */  
+}  
+
+.menu-item {  
+  display: flex;  
+  align-items: center;  
+  gap: 10px;  
+  padding: 10px 20px;  
+  transition: background-color 0.3s ease;  
+}  
+
+.menu-text {  
+  font-size: 14px;  
+  font-weight: 500;  
+  color: #000;  
+}  
+
+.menu-item:hover .menu-icon,  
+.menu-item:hover .menu-text {  
+  color: #635bff; /* Hover state */  
+}  
+
+.menu-item:hover {  
+  background-color: #f9f9f9; /* Hover background */  
+  cursor: pointer;  
+}  
+
+/* Actions Icons */  
+.actions-container {  
+  display: flex;  
+  align-items: center;  
+  justify-content: center;  
+  gap: 10px;  
+}  
+
+.eye-icon {  
+  margin-right: 10px;  
+}  
+
+/* Card and Table Styling */  
+.cardWithShadow {  
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);  
+  border-radius: 12px;  
+  padding: 20px;  
+  width: 100%;  
+}  
+
+.table-responsive {  
+  overflow-x: auto;  
+  margin-top: 20px; /* Space above responsive table */  
+}  
+
+.details-loading,
+.details-error {
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.details-error mat-icon {
+  width: 44px;
+  height: 44px;
+  font-size: 44px;
+}
+
+.card-header {  
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+  background: #ffffff;  
+  padding: 16px;  
+  border-radius: 8px; /* Rounded corners for header */  
+}  
+
+.table {  
+  width: 100%;  
+  margin-top: 16px; /* Space above table */  
+  border-collapse: collapse; /* Collapse borders */  
+}  
+
+mat-header-cell,  
+mat-cell {  
+  padding: 12px 16px; /* Padding for cells */  
+  font-size: 14px;  
+  color: #333; /* Text color for headers and cells */  
+  text-align: center;  
+}  
+
+mat-slide-toggle {  
+  margin-top: 8px; /* Space above toggle */  
+}  
+
+/* Responsive Design */  
+@media (max-width: 768px) {  
+  .button-ajout button {  
+      font-size: 14px;  
+      padding: 8px 16px;  
+  }  
+
+  .table-responsive {  
+      margin-top: 12px; /* Reduced space for smaller screens */  
+  }  
+
+  .cardWithShadow {  
+      padding: 15px; /* Reduced padding on small screens */  
+  }  
+
+  mat-header-cell,  
+  mat-cell {  
+      padding: 8px; /* Adjusted padding for smaller screens */  
+  }  
+}  
+
+.sub-equipment-actions {  
+  display: flex;  
+  justify-content: center;  
+  margin-top: 20px; /* Space above actions */  
+}  
+
+.close-btn {  
+  border: none;  
+  background-color: transparent; /* Transparent close button */  
+}

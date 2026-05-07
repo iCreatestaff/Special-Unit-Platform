@@ -1,0 +1,45 @@
+<div class="calendar-container">
+  <div class="calendar-header ">
+    <button mat-icon-button (click)="prevMonth()" class="nav-button">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <div class="month-title">
+      <h2>{{ selectedDate | date: 'MMMM yyyy' }}</h2>
+    </div>
+
+    <button mat-icon-button (click)="nextMonth()" class="nav-button">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="weekday-header">
+    <div *ngFor="let day of weekdays" class="weekday">
+      {{ day }}
+    </div>
+  </div>
+
+  <div class="calendar-grid">
+    <div
+      *ngFor="let day of getMonthDays(); trackBy: trackByDate"
+      class="day-cell"
+      [class.current-month]="isCurrentMonth(day)"
+      [class.other-month]="!isCurrentMonth(day)"
+      [class.today]="isToday(day)"
+      (click)="openDayModal(day)"
+    >
+      <div class="day-number">{{ day.getDate() }}</div>
+
+      <!-- Maintenance indicator dot -->
+      <div
+        class="maintenance-dot"
+        *ngIf="getMaintenancesForDate(day).length > 0"
+        matTooltip="{{ getMaintenancesForDate(day).length }} maintenance(s)"
+      ></div>
+    </div>
+  </div>
+
+  <div class="calendar-footer">
+    <button mat-raised-button color="primary" (click)="closeDialog()">Close</button>
+  </div>
+</div>

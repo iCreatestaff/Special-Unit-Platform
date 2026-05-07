@@ -1,0 +1,23 @@
+.branding {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 30px;
+    background: transparent;
+  }
+  
+  .branding a {
+    display: block;
+  }
+  
+  .branding img {
+    max-width: 190px;
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+  }
+  
+  .branding img:hover {
+    transform: scale(1.1);
+  }
+  

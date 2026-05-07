@@ -1,0 +1,37 @@
+.cardWithShadow {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 100%;
+  }
+
+  mat-card-header {
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  mat-card-content {
+    padding: 16px;
+    text-align: center;
+  }
+
+  .m-b-0 {
+    margin-bottom: 0;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  button {
+    font-size: 14px;
+  }
+
+  button.mat-raised-button {
+    margin-right: 10px;
+  }

@@ -1,0 +1,107 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="date-display">
+        <div class="date-day">{{ data.date | date:'d' }}</div>
+        <div class="date-month-year">
+          <div class="date-month">{{ data.date | date:'MMM' }}</div>
+          <div class="date-year">{{ data.date | date:'y' }}</div>
+        </div>
+      </div>
+      <h2 class="modal-title">
+        <mat-icon class="title-icon">calendar_today</mat-icon>
+        Maintenance Schedule
+      </h2>
+      <button mat-icon-button class="close-btn" (click)="close()" aria-label="Close modal">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="progress-tracker">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getCompletionPercentage()"></div>
+      </div>
+      <span class="progress-text">{{ getCompletedCount() }}/{{ data.maintenances.length }} completed</span>
+    </div>
+  </div>
+
+  <mat-dialog-content class="modal-content">
+    <ng-container *ngIf="data.maintenances.length; else noMaintenances">
+      <div class="maintenance-list">
+        <div class="maintenance-card" *ngFor="let maintenance of data.maintenances" 
+             [ngClass]="{'completed': maintenance.status === 'Done'}">
+          <div class="card-decoration">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          
+          <div class="card-content">
+            <div class="card-header">
+              <h3 class="maintenance-name">
+                <mat-icon class="icon">build</mat-icon>
+                {{ maintenance.name }}
+                
+              </h3>
+              <div class="time-display">
+                <mat-icon class="time-icon">schedule</mat-icon>
+                <span class="time-value">
+                  {{ maintenance.maintenanceDate | date: 'shortTime' }}
+                </span>
+                <span class="time-value">
+                  {{ maintenance.maintenanceEndDate | date: 'shortTime' }}
+                </span>
+              </div>
+            </div>
+            
+            <p class="maintenance-description">{{ maintenance.description }}</p>
+            
+            <div class="card-details">
+              <div class="detail-chip">
+                <mat-icon class="detail-icon">update</mat-icon>
+                <span>{{ maintenance.cycle }}</span>
+              </div>
+              
+              <div class="detail-chip">
+                <mat-icon class="detail-icon">category</mat-icon>
+                <span>{{ maintenance.type || 'General' }}</span>
+              </div>
+              
+              <div class="status-display" [ngClass]="getStatusClass(maintenance.status)">
+                {{ maintenance.status }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <button mat-mini-fab 
+                    color="primary" 
+                    (click)="toggleStatus(maintenance)"
+                    [disabled]="maintenance.status === 'Done'"
+                    matTooltip="Mark as completed">
+              <mat-icon>check</mat-icon>
+            </button>
+            <button mat-mini-fab 
+              color="accent" 
+              (click)="openEditModal(maintenance)"
+              matTooltip="Edit maintenance">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noMaintenances>
+      <div class="empty-state">
+        <div class="empty-illustration">
+          <mat-icon class="empty-icon">engineering</mat-icon>
+        </div>
+        <h3>Clear Schedule</h3>
+        <p>No maintenance tasks for this day</p>
+        <button mat-stroked-button color="primary" class="add-maintenance-btn">
+          <mat-icon>add</mat-icon>
+          Schedule Maintenance
+        </button>
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+</div>

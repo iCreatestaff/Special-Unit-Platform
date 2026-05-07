@@ -1,0 +1,289 @@
+/* Base Styles */
+.training-details-container {
+  width: 100%;
+  height: 100%;
+}
+
+.row {
+  height: 100%;
+  margin: 0;
+}
+#training-map {
+ margin-top: 10px;
+    border-radius: 5px;
+  width: 100%;
+  height: 90%;
+  min-height: 400px; /* Adjust as needed */
+}
+
+/* Training Header Image */
+.training-header-image {
+  width: 100%;
+  height: 100%;
+  
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Info Toggle Button */
+.info-toggle-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1010;
+}
+
+.info-toggle-btn mat-icon {
+  color: #3498db;
+}
+
+/* Floating Panel */
+.floating-info-panel {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 360px;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.floating-info-panel.visible {
+  transform: translateX(0);
+}
+
+.info-card {
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.card-body {
+  padding: 16px 20px;
+}
+
+.detail-item {
+  display: flex;
+  padding: 12px 0;
+  align-items: flex-start;
+}
+
+.detail-icon {
+  color: #3498db;
+  margin-right: 15px;
+  margin-top: 2px;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+}
+
+.status-ongoing {
+  
+  background: #27ae60;
+}
+
+.status-completed {
+  
+  background: #e74c3c;
+}
+
+.status-pending {
+  background: #f39c12;
+}
+
+/* Right Info Column */
+.info-col {
+  padding: 0;
+  height: 100%;
+  background: white;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+}
+
+.info-section {
+  padding: 25px;
+  height: 100%;
+}
+
+.section-card {
+  margin-bottom: 25px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border-bottom: 1px solid #eaeff5;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.section-icon {
+  color: #3498db;
+  margin-right: 10px;
+}
+
+/* Person Cards */
+.person-card {
+  display: flex;
+  padding: 15px 20px;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.person-card:hover {
+  background: #f8fafc;
+}
+
+.person-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 2px solid #eaeff5;
+}
+
+.person-info {
+  flex: 1;
+}
+
+.person-name {
+  margin: 0 0 3px 0;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.person-role {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+/* Training Materials */
+.materials-list {
+  padding: 15px;
+}
+
+.material-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.material-item mat-icon {
+  color: #3498db;
+  margin-right: 10px;
+}
+
+/* Empty States */
+.empty-state {
+  padding: 30px 20px;
+  text-align: center;
+  color: #95a5a6;
+}
+
+.empty-state mat-icon {
+  font-size: 2.5rem;
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  color: #bdc3c7;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Loading State */
+.map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .map-col, .info-col {
+    width: 100%;
+  }
+  
+  .map-col {
+    height: 50vh;
+  }
+  
+  .info-col {
+    height: auto;
+  }
+
+  .floating-info-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .floating-info-panel {
+    width: 280px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .info-section {
+    padding: 15px;
+  }
+}

@@ -1,0 +1,23 @@
+/* Full width for form fields */
+.full-width {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  /* Outline style for better separation */
+  mat-form-field.mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 4px; /* Less rounded for a sleek look */
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+  
+  /* Focus effect for date input */
+  input[type="date"]:focus {
+    outline: none;
+    border-color: #6200ea; /* Angular Material's purple color */
+  }
+  
+  /* Additional style for better readability */
+  mat-form-field input {
+    font-size: 1rem; /* Adjust font size for better readability */
+  }
+  

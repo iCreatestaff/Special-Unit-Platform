@@ -1,0 +1,477 @@
+/* Modal Backdrop */
+.account-details-modal {
+ 
+  background: #ffffff;
+  transition: box-shadow 0.3s ease-in-out;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* Modal Overlay (optional layer if needed) */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+}
+
+/* Main Modal Container */
+.modal-container {
+  width: 1200px;
+ 
+  height: 80vh;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  height: 100%;
+  background: white;
+}
+
+/* Header Styles */
+.modal-header {
+  background: white;
+  padding: 20px 24px;
+  position: relative;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-title {
+  flex: 1;
+  min-width: 250px;
+}
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  
+}
+
+
+
+.close-btn {
+  color: white;
+  background-color:transparent;
+  border: none;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+  align-items: flex-end;
+
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+.loading-state p {
+  margin-top: 16px;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+/* Main Content Area */
+.modal-content {
+  padding: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Profile Section */
+.profile-section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 24px;
+  gap: 24px;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.profile-display {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.02);
+}
+
+.badge-container {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: white;
+  border-radius: 50%;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.zoom-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #4a6cf7;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: rgba(74, 108, 247, 0.1);
+}
+
+/* Account Info Section */
+.account-info {
+  flex: 2;
+  min-width: 300px;
+}
+
+.info-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  color: #4a6cf7;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background-color: #f8f9fa;
+}
+
+.info-item:hover {
+  background-color: #f0f4ff;
+  transform: translateY(-2px);
+}
+
+.info-icon {
+  color: #4a6cf7;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(74, 108, 247, 0.1);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.role-admin {
+  color: #4a6cf7;
+}
+
+.role-agent {
+  color: #2ecc71;
+}
+
+.role-user {
+  color: #f39c12;
+}
+
+/* Missions Section */
+.missions-section {
+  padding: 0 24px 24px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.mission-count {
+  font-size: 14px;
+  color: #7f8c8d;
+  font-weight: normal;
+}
+
+.missions-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.mission-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-left: 4px solid #4a6cf7;
+  position: relative;
+  overflow: hidden;
+}
+
+.mission-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.mission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.mission-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+  flex: 1;
+}
+
+.mission-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 12px;
+}
+
+.status-started {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+.status-accomplished {
+  background-color: rgba(41, 128, 185, 0.1);
+  color: #2980b9;
+}
+
+.status-pending {
+  background-color: rgba(241, 196, 15, 0.1);
+  color: #f39c12;
+}
+
+.mission-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-icon {
+  font-size: 18px;
+  color: #7f8c8d;
+}
+
+.date-label {
+  font-size: 12px;
+  color: #7f8c8d;
+}
+
+.date-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.mission-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 60px;
+  color: #bdc3c7;
+  margin-bottom: 20px;
+}
+
+.empty-state h4 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #7f8c8d;
+  margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-container {
+    width: 95vw;
+    height: 90vh;
+  }
+
+  .profile-section {
+    flex-direction: column;
+  }
+
+  .profile-display,
+  .account-info {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .missions-container {
+    grid-template-columns: 1fr;
+  }
+}
