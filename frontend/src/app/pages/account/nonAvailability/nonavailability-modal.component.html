@@ -1,62 +1,130 @@
-<mat-card class="cardWithShadow container-fluid">
-  <mat-card-header class="card-header d-flex justify-content-between align-items-center">
-    <mat-card-title>Set Non-Availability</mat-card-title>
-    <button mat-icon-button class="close-btn" (click)="onCancel()" aria-label="Close">
+<div class="nonavailability-dialog">
+  <header class="dialog-header">
+    <div class="title-block">
+      <div class="title-icon">
+        <mat-icon>event_busy</mat-icon>
+      </div>
+      <div>
+        <h2>Set Non-Availability</h2>
+        <p>Account #{{ data.accountId }}</p>
+      </div>
+    </div>
+
+    <button mat-icon-button class="icon-close" type="button" (click)="onCancel()" aria-label="Close">
       <mat-icon>close</mat-icon>
     </button>
-  </mat-card-header>
+  </header>
 
-  <mat-card-content class="container-fluid equipment-modal">
-    <form [formGroup]="nonAvailabilityForm" (ngSubmit)="onSave()">
-      <div class="row">
-        <!-- Left Column: Date Range -->
-        <div class="col-12">
-          <mat-form-field appearance="outline" class="w-100 date-field">
-            <mat-label>Enter a date range</mat-label>
-            <mat-date-range-input [rangePicker]="picker" formGroupName="dateRange">
-              <input matStartDate formControlName="start" placeholder="Start Date" required readonly>
-              <input matEndDate formControlName="end" placeholder="End Date" required readonly>
-            </mat-date-range-input>
-            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-            <mat-error *ngIf="nonAvailabilityForm.get('dateRange.start')?.hasError('required')">Start Date is required</mat-error>
-            <mat-error *ngIf="nonAvailabilityForm.get('dateRange.end')?.hasError('required')">End Date is required</mat-error>
+  <section class="dialog-body">
+    <div class="error-banner" *ngIf="errorMessage">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <div class="content-grid">
+      <form class="form-panel" [formGroup]="nonAvailabilityForm" (ngSubmit)="onSave()">
+        <div class="section-heading">
+          <mat-icon>calendar_month</mat-icon>
+          <span>New period</span>
+        </div>
+
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>Date range</mat-label>
+          <mat-date-range-input [rangePicker]="picker" formGroupName="dateRange">
+            <input matStartDate formControlName="start" placeholder="Start date" readonly>
+            <input matEndDate formControlName="end" placeholder="End date" readonly>
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+          <mat-error *ngIf="dateRangeGroup.get('start')?.hasError('required') || dateRangeGroup.get('end')?.hasError('required')">
+            Start and end dates are required.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="time-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Start time</mat-label>
+            <mat-select formControlName="startTimeOnly">
+              <mat-option *ngFor="let time of timeOptions" [value]="time">
+                {{ time }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>schedule</mat-icon>
+            <mat-error *ngIf="nonAvailabilityForm.get('startTimeOnly')?.hasError('required')">
+              Required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>End time</mat-label>
+            <mat-select formControlName="endTimeOnly">
+              <mat-option *ngFor="let time of timeOptions" [value]="time">
+                {{ time }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>schedule</mat-icon>
+            <mat-error *ngIf="nonAvailabilityForm.get('endTimeOnly')?.hasError('required')">
+              Required.
+            </mat-error>
           </mat-form-field>
         </div>
 
-        <!-- Right Column: Time Pickers (same row) -->
-        <div class="row">
-          <div class="time-fields d-flex justify-content-between">
-            <mat-form-field appearance="outline" class="col-6 time-field w-48">
-              <mat-label>Start Time</mat-label>
-              <mat-select formControlName="startTimeOnly" required>
-                <mat-option *ngFor="let time of timeOptions" [value]="time">
-                  {{ time }}
-                </mat-option>
-              </mat-select>
-              <mat-icon matPrefix>schedule</mat-icon>
-              <mat-error *ngIf="nonAvailabilityForm.get('startTimeOnly')?.hasError('required')">Start Time is required</mat-error>
-            </mat-form-field>
+        <div class="range-error" *ngIf="hasInvalidRange">
+          <mat-icon>warning</mat-icon>
+          <span>End date and time must be after the start.</span>
+        </div>
 
-            <mat-form-field appearance="outline" class="col-6 time-field w-48">
-              <mat-label>End Time</mat-label>
-              <mat-select formControlName="endTimeOnly" required>
-                <mat-option *ngFor="let time of timeOptions" [value]="time">
-                  {{ time }}
-                </mat-option>
-              </mat-select>
-              <mat-icon matPrefix>schedule</mat-icon>
-              <mat-error *ngIf="nonAvailabilityForm.get('endTimeOnly')?.hasError('required')">End Time is required</mat-error>
-            </mat-form-field>
+        <div class="period-preview" *ngIf="selectedStart && selectedEnd && !hasInvalidRange">
+          <mat-icon>event_available</mat-icon>
+          <span>{{ selectedStart | date:'medium' }} - {{ selectedEnd | date:'medium' }}</span>
+        </div>
+
+        <div class="dialog-actions">
+          <button mat-stroked-button type="button" class="cancel-action" (click)="onCancel()">
+            Cancel
+          </button>
+          <button mat-flat-button color="primary" type="submit" class="save-action" [disabled]="!canSave">
+            <mat-icon>{{ saving ? 'hourglass_empty' : 'save' }}</mat-icon>
+            <span>{{ saving ? 'Saving' : 'Save period' }}</span>
+          </button>
+        </div>
+      </form>
+
+      <aside class="periods-panel">
+        <div class="section-heading">
+          <mat-icon>history</mat-icon>
+          <span>Existing periods</span>
+        </div>
+
+        <div class="periods-loading" *ngIf="loadingExisting">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div class="empty-state" *ngIf="!loadingExisting && existingPeriods.length === 0">
+          <mat-icon>event_available</mat-icon>
+          <p>No non-availability periods yet.</p>
+        </div>
+
+        <div class="period-list" *ngIf="!loadingExisting && existingPeriods.length > 0">
+          <div class="period-item" *ngFor="let period of existingPeriods">
+            <div class="period-icon">
+              <mat-icon>event_busy</mat-icon>
+            </div>
+            <div class="period-text">
+              <span>{{ formatPeriod(period) }}</span>
+            </div>
+            <button
+              mat-icon-button
+              class="delete-action"
+              type="button"
+              (click)="deletePeriod(period)"
+              [disabled]="deletingId === period.id"
+              aria-label="Delete period">
+              <mat-icon>{{ deletingId === period.id ? 'hourglass_empty' : 'delete' }}</mat-icon>
+            </button>
           </div>
         </div>
-      </div>
-
-      <div class="actions d-flex justify-content-end mt-4">
-        <button mat-raised-button color="primary" type="submit" class="mr-2" [disabled]="!nonAvailabilityForm.valid">Save</button>
-        <button mat-stroked-button color="warn" type="button" (click)="onCancel()">Cancel</button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+      </aside>
+    </div>
+  </section>
+</div>

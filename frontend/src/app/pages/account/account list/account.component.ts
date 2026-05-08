@@ -270,7 +270,9 @@ private handleLoadedAccounts(accounts: Account[]): void {
 
   openNonAvailabilityModal(accountId: number): void {
     const dialogRef = this.dialog.open(NonAvailabilityModalComponent, {
-      width: '600px',
+      width: '92vw',
+      maxWidth: '900px',
+      maxHeight: '90vh',
       panelClass: 'modern-dialog',
       data: { accountId }
     });
